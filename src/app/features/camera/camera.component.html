@@ -1,0 +1,14 @@
+<div class="camera-wrapper" *ngIf="!isLoading; else loading">
+  <video #video autoplay playsinline></video>
+
+  <button class="capture-btn" (click)="capture()">
+    <span class="material-icons">photo_camera</span>
+  </button>
+</div>
+
+<ng-template #loading>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Iniciando cámara...</p>
+  </div>
+</ng-template>

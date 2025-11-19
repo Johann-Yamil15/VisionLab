@@ -1,0 +1,16 @@
+.preview-wrapper {
+  text-align: center;
+  padding: 20px;
+
+  .preview-img {
+    width: 95%;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+  }
+
+  .actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+  }
+}

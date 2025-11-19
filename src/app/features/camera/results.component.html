@@ -1,0 +1,17 @@
+<div *ngIf="loading" class="loading">
+  <mat-spinner></mat-spinner>
+  <p>Analizando imagen...</p>
+</div>
+
+<div *ngIf="!loading" class="results-wrapper">
+  <img [src]="photo" class="photo" />
+
+  <div class="data">
+    <h2>{{ result?.nombreComun }}</h2>
+    <p><strong>Tipo:</strong> {{ result?.tipo }}</p>
+    <p><strong>Nombre científico:</strong> {{ result?.nombreCientifico }}</p>
+    <p><strong>Confianza:</strong> {{ result?.nivelConfianza }}%</p>
+
+    <p class="desc">{{ result?.descripcion }}</p>
+  </div>
+</div>
