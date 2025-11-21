@@ -10,6 +10,8 @@ import { PreviewComponent } from './features/camera/preview.component';
 import { ResultsComponent } from './features/camera/results.component';
 import { ChatComponent } from './features/chat/chat.component'; // 🟢 AÑADIDO: ChatComponent
 import { AnalysisViewComponent } from './features/camera/analysis-view.component'; // 🟢 AÑADIDO: Vista Contenedora
+import { LegalComponent } from './settings/legal.component';
+import { AlmanacListComponent } from './features/almanac/almanac-list.component';
 // import { ChatComponent } from './features/chat/chat.component';
 
 // import { AlmanacListComponent } from './features/almanac/almanac-list.component';
@@ -55,7 +57,7 @@ export const routes: Routes = [
 
 //   // --- Almanac ---
 //   { path: 'almanac', component: AlmanacListComponent, canActivate: [AuthGuard] },
-//   { path: 'almanac/:id', component: AlmanacDetailComponent, canActivate: [AuthGuard] },
+  { path: 'almanac', component: AlmanacListComponent },
 
 //   // --- Gamification ---
 //   { path: 'achievements', component: AchievementsComponent, canActivate: [AuthGuard] },
@@ -65,6 +67,7 @@ export const routes: Routes = [
 //   { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
 //   { path: 'theme', component: ThemeToggleComponent, canActivate: [AuthGuard] },
 //   { path: 'legal', component: LegalComponent, canActivate: [AuthGuard] },
+  { path: 'legal', component: LegalComponent},
 
   // --- Default & wildcard ---
   { path: '', redirectTo: '/camera', pathMatch: 'full' },
