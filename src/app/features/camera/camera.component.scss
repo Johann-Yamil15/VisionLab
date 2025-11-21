@@ -1,48 +1,550 @@
+/* Paleta de Colores de Laboratorio */
+$dark-green: #0d3010;
+$deep-green: #1b5e20;
+$accent-cyan: #64ffda;
+$soft-green: #81c784;
+$light-bg: #1c4d21;
+$error-red: #ff5252;
+
 .camera-wrapper {
+  width: 100%;
+  height: 100vh;
+  background: radial-gradient(ellipse at bottom, $deep-green 0%, $dark-green 100%);
+  color: $soft-green;
+  font-family: 'Courier New', monospace;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --- ESTADO DE CARGA (LOADING) --- */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(ellipse at bottom, $deep-green 0%, $dark-green 100%);
+  z-index: 1000;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.spinner-container {
+  margin-bottom: 20px;
+  
+  // Forzar color del spinner de Material
+  ::ng-deep .mat-progress-spinner circle,
+  ::ng-deep .mat-mdc-progress-spinner circle {
+    stroke: $accent-cyan !important;
+  }
+}
+
+.loading-text {
+  font-size: 1.5rem;
+  color: $accent-cyan;
+  margin: 15px 0 5px 0;
+  text-shadow: 0 0 10px rgba(100, 255, 218, 0.7);
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.loading-subtext {
+  font-size: 0.9rem;
+  color: $soft-green;
+  margin: 0;
+}
+
+/* --- VISTA DE CÁMARA (ACTIVE VIEW) --- */
+.camera-view {
   position: relative;
   width: 100%;
   height: 100vh;
-  background: #000;
+}
 
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.video-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  filter: brightness(0.9) contrast(1.1);
+
+  &.active {
+    opacity: 1;
+  }
+}
+
+.camera-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+/* --- INDICADORES SUPERIORES --- */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 10px;
+}
+
+.info-badge {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid $accent-cyan;
+  color: $accent-cyan;
+  padding: 8px 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 
+    0 0 15px rgba(100, 255, 218, 0.5),
+    inset 0 0 10px rgba(100, 255, 218, 0.1);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+}
+
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  background: $accent-cyan;
+  border-radius: 50%;
+  animation: pulse-live 1.5s infinite;
+  box-shadow: 0 0 5px $accent-cyan;
+}
+
+@keyframes pulse-live {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(100, 255, 218, 0.7);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(100, 255, 218, 0);
+    transform: scale(1.1);
+  }
+  100% { 
+    box-shadow: 0 0 0 0 rgba(100, 255, 218, 0);
+    transform: scale(1);
+  }
+}
+
+.badge-text {
+  font-weight: bold;
+}
+
+.camera-tips {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid $soft-green;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 0 10px rgba(129, 199, 132, 0.3),
+    inset 0 0 10px rgba(129, 199, 132, 0.1);
+}
+
+.tip-icon {
+  font-size: 1.2rem;
+}
+
+/* --- MARCO DE ESCANEO (SCAN FRAME) --- */
+.scan-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85%;
+  aspect-ratio: 1 / 1;
+  max-width: 450px;
+  pointer-events: none;
+}
+
+.corner {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 4px solid $accent-cyan;
+  box-shadow: 
+    0 0 20px $accent-cyan,
+    inset 0 0 10px rgba(100, 255, 218, 0.3);
+  animation: corner-glow 2s ease-in-out infinite;
+}
+
+@keyframes corner-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px $accent-cyan,
+      inset 0 0 10px rgba(100, 255, 218, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px $accent-cyan,
+      0 0 40px rgba(100, 255, 218, 0.5),
+      inset 0 0 15px rgba(100, 255, 218, 0.5);
+  }
+}
+
+.corner-tl { 
+  top: 0; 
+  left: 0; 
+  border-right: none; 
+  border-bottom: none; 
+  border-top-left-radius: 5px;
+}
+
+.corner-tr { 
+  top: 0; 
+  right: 0; 
+  border-left: none; 
+  border-bottom: none; 
+  border-top-right-radius: 5px;
+}
+
+.corner-bl { 
+  bottom: 0; 
+  left: 0; 
+  border-right: none; 
+  border-top: none; 
+  border-bottom-left-radius: 5px;
+}
+
+.corner-br { 
+  bottom: 0; 
+  right: 0; 
+  border-left: none; 
+  border-top: none; 
+  border-bottom-right-radius: 5px;
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(100, 255, 218, 0.3), 
+    $accent-cyan, 
+    rgba(100, 255, 218, 0.3), 
+    transparent
+  );
+  box-shadow: 
+    0 0 15px $accent-cyan,
+    0 0 30px rgba(100, 255, 218, 0.5);
+  animation: scan 3s infinite linear;
+}
+
+@keyframes scan {
+  0% { 
+    top: 0; 
+    opacity: 0.8; 
+  }
+  50% { 
+    opacity: 1; 
+  }
+  100% { 
+    top: calc(100% - 4px); 
+    opacity: 0.8; 
+  }
+}
+
+/* --- CONTROLES INFERIORES --- */
+.bottom-controls {
+  padding: 25px 0 30px 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    transparent 100%
+  );
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+}
+
+.controls-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 15px auto;
+}
+
+.control-btn {
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid $soft-green;
+  border-radius: 50%;
+  color: $soft-green;
+  font-size: 1.5rem;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(129, 199, 132, 0.3);
+
+  &:hover:not(:disabled) {
+    opacity: 1;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(129, 199, 132, 0.6);
   }
 
-  .capture-btn {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    border: 6px solid rgba(255, 255, 255, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: rgba(129, 199, 132, 0.3);
+  }
 
-    transition: 0.2s;
+  // Ajuste para el nuevo ícono de galería/archivo
+  &.gallery-btn {
+    opacity: 1; // Hacer el botón de carga más visible por defecto
+    border-color: $accent-cyan;
+    color: $accent-cyan;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
 
-    &:active {
-      transform: translateX(-50%) scale(0.9);
-    }
-
-    .material-icons {
-      font-size: 40px;
-      color: #000;
+    &:hover:not(:disabled) {
+      opacity: 1;
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(100, 255, 218, 0.8);
     }
   }
 }
 
-.loading {
-  height: 100vh;
+.btn-icon {
+  font-size: 1.5rem;
+}
+
+/* Botón de Captura Central */
+.capture-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  width: 90px;
+  height: 90px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #555;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.capture-ring {
+  position: absolute;
+  width: 85px;
+  height: 85px;
+  border: 5px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.capture-inner {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, $accent-cyan 0%, lighten($accent-cyan, 10%) 100%);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 
+    0 0 25px $accent-cyan,
+    0 0 40px rgba(100, 255, 218, 0.5),
+    inset 0 0 15px rgba(255, 255, 255, 0.3);
+  animation: capture-pulse 2s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.capture-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+
+.capture-btn:active .capture-ring {
+  transform: scale(0.9);
+  border-color: $accent-cyan;
+  border-width: 6px;
+  box-shadow: 
+    0 0 30px $accent-cyan,
+    inset 0 0 15px rgba(100, 255, 218, 0.5);
+}
+
+.capture-btn:active .capture-inner {
+  transform: scale(0.9);
+  box-shadow: 
+    0 0 35px $accent-cyan,
+    0 0 50px rgba(100, 255, 218, 0.7),
+    inset 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes capture-pulse {
+  0%, 100% { 
+    opacity: 1;
+    box-shadow: 
+      0 0 25px $accent-cyan,
+      0 0 40px rgba(100, 255, 218, 0.5),
+      inset 0 0 15px rgba(255, 255, 255, 0.3);
+  }
+  50% { 
+    opacity: 0.9;
+    box-shadow: 
+      0 0 35px $accent-cyan,
+      0 0 55px rgba(100, 255, 218, 0.7),
+      inset 0 0 20px rgba(255, 255, 255, 0.4);
+  }
+}
+
+.capture-hint {
+  text-align: center;
+  color: $soft-green;
+  font-size: 0.85rem;
+  margin: 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(129, 199, 132, 0.5);
+  font-weight: 500;
+}
+
+/* --- ESTADO DE ERROR (ERROR) --- */
+.error-state {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(ellipse at bottom, $deep-green 0%, $dark-green 100%);
+  z-index: 100;
+}
+
+.error-content {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 40px 30px;
+  border-radius: 15px;
+  border: 3px solid $error-red;
+  box-shadow: 
+    0 0 30px $error-red,
+    inset 0 0 20px rgba(255, 82, 82, 0.1);
+  max-width: 90%;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.error-icon {
+  font-size: 4rem;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 0 10px $error-red);
+}
+
+.error-title {
+  color: $error-red;
+  margin: 0 0 20px 0;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-shadow: 0 0 10px rgba(255, 82, 82, 0.5);
+  letter-spacing: 1px;
+}
+
+.error-description {
+  color: $soft-green;
+  margin: 0 0 20px 0;
+  font-size: 1rem;
+  line-height: 1.6;
+
+  strong {
+    color: $error-red;
+  }
+}
+
+.error-list {
+  text-align: left;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 25px 0;
+  
+  li {
+    color: #fff;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 25px;
+    line-height: 1.5;
+    
+    &::before {
+      content: '→';
+      color: $accent-cyan;
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, $light-bg 0%, $deep-green 100%);
+  color: $accent-cyan;
+  border: 3px solid $accent-cyan;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, $deep-green 0%, $light-bg 100%);
+    transform: scale(1.05);
+    box-shadow: 
+      0 0 30px $accent-cyan,
+      inset 0 0 15px rgba(100, 255, 218, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 }

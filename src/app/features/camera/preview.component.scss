@@ -1,16 +1,189 @@
-.preview-wrapper {
-  text-align: center;
-  padding: 20px;
+/* Colores clave de la paleta */
+$dark-bg: #101c13; // Fondo principal oscuro (casi negro)
+$medium-bg: #1b3d20; // Fondo para secciones
+$accent-neon: #64ffda; // Acento primario (Neón)
+$text-light: #b3ffeb; // Texto brillante
+$text-soft: #81c784; // Texto secundario
+$warning: #ff9800; // Advertencia/Secundario
+$terminal-border: #3c6e42; // Borde sutil
 
-  .preview-img {
-    width: 95%;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+// Animación de Neón (tomada del segundo ejemplo y adaptada)
+@keyframes neon-pulse-strong {
+  0%, 100% {
+    box-shadow: 0 0 5px $accent-neon, 0 0 15px rgba($accent-neon, 0.7);
   }
+  50% {
+    box-shadow: 0 0 8px $accent-neon, 0 0 25px rgba($accent-neon, 0.9);
+  }
+}
 
-  .actions {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-around;
+.lab-terminal-screen {
+  min-height: 100vh;
+  // Fondo oscuro con sutil gradiente radial para profundidad
+  background: radial-gradient(circle at center, $medium-bg 5%, $dark-bg 100%);
+  color: $text-soft;
+  font-family: 'Courier New', monospace;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+// --------------------------------------------------
+// Encabezado de la Terminal
+// --------------------------------------------------
+.terminal-header {
+  width: 95%;
+  max-width: 450px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid $terminal-border;
+  background-color: $medium-bg;
+  border-radius: 5px 5px 0 0;
+  box-shadow: inset 0 0 5px rgba($accent-neon, 0.3);
+
+  .header-title {
+    color: $accent-neon;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .header-metadata {
+    font-size: 0.75rem;
+    color: $text-soft;
+  }
+}
+
+// --------------------------------------------------
+// Marco del Monitor (Estructura de Captura)
+// --------------------------------------------------
+.monitor-frame {
+  position: relative;
+  width: 95%;
+  max-width: 450px;
+  aspect-ratio: 1 / 1.2;
+  border: 2px solid $terminal-border;
+  overflow: hidden;
+  border-radius: 0 0 10px 10px;
+  background-color: #000;
+}
+
+.monitor-glow {
+  // Borde exterior con brillo neón
+  box-shadow: 0 0 15px rgba($accent-neon, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 0.5s ease-in-out;
+  animation: neon-pulse-strong 3s infinite alternate;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(0.1) saturate(1.3) contrast(1.1); /* Efecto de escaneo más sutil */
+}
+
+/* Efectos de la Terminal */
+.scanline {
+  // Scanline más sutil
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.4),
+    rgba(0, 0, 0, 0.4) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  // ... (otros estilos permanecen igual)
+}
+.glitch-overlay {
+  // Glitch más transparente
+  background: rgba(100, 255, 218, 0.03); 
+  // ... (otros estilos permanecen igual)
+}
+
+/* Retícula (Mira) - Mejorada */
+.reticle-h, .reticle-v {
+  background: $accent-neon;
+  opacity: 0.4; // Opacidad reducida
+}
+.reticle-crosshair {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  border: 1px solid $accent-neon;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 5px $accent-neon;
+}
+
+/* Overlays y Badge de Estado */
+.data-overlay {
+  color: $accent-neon;
+  text-shadow: 0 0 5px rgba(100, 255, 218, 0.5);
+}
+
+.status-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+.status-ready {
+  background-color: $accent-neon;
+  color: $dark-bg;
+  box-shadow: 0 0 8px rgba($accent-neon, 0.7);
+}
+
+
+// --------------------------------------------------
+// Panel de Acciones (Botones)
+// --------------------------------------------------
+.action-panel {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.lab-button {
+  // Estilo general de botón más moderno
+  padding: 1.1rem 1.5rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease-in-out;
+  
+  .material-icons { font-size: 1.2rem; }
+}
+
+.primary-btn {
+  // Botón Principal: Brillo Neón
+  background-color: $medium-bg;
+  color: $accent-neon;
+  border: 2px solid $accent-neon;
+  
+  &:hover {
+    transform: scale(1.02);
+    background-color: rgba($accent-neon, 0.1);
+    box-shadow: 0 0 10px $accent-neon, inset 0 0 5px $accent-neon;
+  }
+}
+
+.secondary-btn {
+  // Botón Secundario: Advertencia
+  background-color: $dark-bg;
+  color: $warning;
+  border: 2px solid $warning;
+  
+  &:hover {
+    transform: scale(1.02);
+    background-color: rgba($warning, 0.1);
+    box-shadow: 0 0 10px $warning, inset 0 0 5px $warning;
   }
 }

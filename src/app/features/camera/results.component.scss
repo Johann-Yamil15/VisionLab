@@ -1,36 +1,224 @@
-.results-container {
-  padding: 20px;
-  text-align: center;
+// src/app/results/results.component.scss
 
-  img {
-    width: 90%;
-    max-width: 350px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
+/* Colores clave de la paleta */
+$dark-bg: #101c13; 
+$medium-bg: #1b3d20; 
+$accent-neon: #64ffda; 
+$text-light: #b3ffeb; 
+$text-soft: #81c784; 
+$warning: #ff9800; 
+$terminal-border: #3c6e42; 
 
-  .card {
-    margin-top: 20px;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+// Base del Contenedor
+.lab-terminal-screen {
+  min-height: 100vh;
+  background: radial-gradient(circle at center, $medium-bg 5%, $dark-bg 100%);
+  color: $text-soft;
+  font-family: 'Courier New', monospace;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
-    h2 {
-      margin-bottom: 10px;
-      color: #1976d2;
-    }
-
-    p {
-      font-size: 15px;
-      margin: 4px 0;
-    }
+// Estilos de Carga
+.analysis-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  .loading-text {
+    color: $accent-neon;
+    text-shadow: 0 0 5px $accent-neon;
   }
 }
 
-.loader {
+// PANEL DE RESULTADOS GENERAL
+.results-panel {
+  width: 100%;
+  max-width: 900px;
+}
+
+.header-section {
   text-align: center;
-  font-size: 18px;
-  margin-top: 30px;
+  margin-bottom: 30px;
+  .subtitle {
+    font-size: 0.8rem;
+    color: $text-soft;
+    margin-top: 5px;
+  }
+}
+
+.main-title {
+  color: $accent-neon;
+  text-shadow: 0 0 12px $accent-neon;
+  .neon-icon {
+    font-size: 1.8rem;
+  }
+}
+
+// --------------------------------------------------
+// DISPOSICIÓN: AHORA USAMOS UN SOLO CONTENEDOR CENTRALIZADO
+// --------------------------------------------------
+
+/* 🛑 ELIMINAMOS LA LÓGICA DE CUADRÍCULA DE DOS COLUMNAS ANTERIOR */
+.results-content-grid {
+    /* Este bloque ya no se usa, lo reemplazamos por results-content-grid-single 
+       o ajustamos el max-width en data-card. Lo eliminamos para limpiar. */
+    display: none; // Lo ocultamos para asegurar que no interfiera
+}
+
+/* 🟢 NUEVO CONTENEDOR SIMPLE PARA ENVOLVER LA TARJETA ÚNICA */
+.results-content-grid-single {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+
+// --------------------------------------------------
+// ESTILOS DE LA TARJETA COLECCIONABLE ÚNICA
+// --------------------------------------------------
+.data-card {
+  background: $medium-bg;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid $terminal-border;
+  box-shadow: 0 0 15px rgba($accent-neon, 0.15); 
+  max-width: 600px; /* 🟢 Ancho máximo para que la tarjeta única no sea demasiado ancha */
+  width: 100%;
+}
+
+.terminal-frame-glow {
+  box-shadow: 0 0 10px rgba($accent-neon, 0.5), inset 0 0 5px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+.identification-card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  
+  // Estilo de la imagen integrada 
+  .image-viewer-small {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9; 
+    overflow: hidden;
+    border-radius: 8px;
+    border: 2px solid $accent-neon; 
+    background-color: #000;
+  }
+  
+  .analyzed-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(1.1) contrast(1.05);
+  }
+
+  .image-overlay-text {
+    position: absolute;
+    padding: 5px 8px;
+    font-size: 0.7rem;
+    color: $accent-neon;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px dashed $text-soft;
+    z-index: 10;
+  }
+  .top-left { top: 5px; left: 5px; }
+  .bottom-right { bottom: 5px; right: 5px; }
+
+  .card-type-label {
+    background: rgba($accent-neon, 0.8);
+    color: $dark-bg; 
+    font-weight: bold;
+    border: none;
+    border-radius: 3px;
+    text-shadow: none;
+  }
+
+  .card-title {
+    font-size: 1.6rem;
+    color: $text-light;
+    text-shadow: 0 0 5px rgba($accent-neon, 0.5);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: 3px double $terminal-border; 
+  }
+
+  .card-details-container {
+    padding-top: 5px;
+  }
+}
+
+/* 🛑 ELIMINAMOS ESTILOS OBSOLETOS DE LA TARJETA SECUNDARIA */
+.description-card {
+    /* Esto ya no se usa */
+}
+
+/* 🟢 NUEVA SECCIÓN: Estilos para la descripción dentro de la tarjeta */
+.description-section-inside {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid $terminal-border; /* Separador de la descripción */
+    border-bottom: 1px solid $terminal-border; /* Separador inferior opcional */
+    padding-bottom: 15px;
+}
+
+.card-subtitle {
+  color: $accent-neon;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  .mini-icon {
+    font-size: 1.1rem;
+  }
+}
+
+.data-field {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  .field-label {
+    font-weight: bold;
+    color: $text-soft;
+    margin-right: 5px;
+  }
+  .field-value { color: $text-light; }
+}
+
+.scientific {
+  .field-value { color: $accent-neon; } // Nombre científico en neón
+}
+
+/* BARRA DE CONFIANZA */
+.confidence-bar {
+  margin-top: 15px;
+  margin-bottom: 15px; /* 🟢 Espacio adicional para separar de la descripción */
+  .bar-label {
+    display: block;
+    font-size: 0.8rem;
+    color: $text-soft;
+    margin-bottom: 5px;
+  }
+  .bar-fill {
+    height: 20px;
+    line-height: 20px;
+    padding: 0 5px;
+    color: $dark-bg; 
+    font-weight: bold;
+    text-align: right;
+    background: linear-gradient(90deg, #1c4d21 0%, $accent-neon 100%);
+    transition: width 1s ease-out; 
+    box-shadow: 0 0 5px rgba($accent-neon, 0.7);
+    border-radius: 2px;
+  }
+}
+
+.description-text {
+  color: $text-soft;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }

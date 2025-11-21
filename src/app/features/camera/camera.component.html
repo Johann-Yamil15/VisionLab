@@ -1,14 +1,72 @@
-<div class="camera-wrapper" *ngIf="!isLoading; else loading">
-  <video #video autoplay playsinline></video>
+<div class="camera-wrapper">
+  <div *ngIf="isLoading" class="loading-overlay">
+    </div>
 
-  <button class="capture-btn" (click)="capture()">
-    <span class="material-icons">photo_camera</span>
-  </button>
-</div>
+  <div *ngIf="showVideo" class="camera-view" [class.loading]="isLoading">
+    <video 
+      #videoElement 
+      autoplay 
+      playsinline 
+      class="video-feed"
+      [class.active]="videoStream && !isLoading">
+    </video>
 
-<ng-template #loading>
-  <div class="loading">
-    <mat-spinner></mat-spinner>
-    <p>Iniciando cámara...</p>
+    <div class="camera-overlay" *ngIf="!isLoading">
+      <div class="top-bar">
+        <div class="info-badge">
+          <span class="pulse-dot"></span>
+          <span class="badge-text">{{ videoStream ? 'En vivo' : 'Simulación' }}</span>
+        </div>
+        <div class="camera-tips">
+          <span class="tip-icon">💡</span>
+          <span class="tip-text">{{ videoStream ? 'Apunta a una planta o insecto' : 'Carga o habilita la cámara' }}</span>
+        </div>
+      </div>
+
+      <div class="scan-frame">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+        <div class="scan-line"></div>
+      </div>
+
+      <div class="bottom-controls">
+        <div class="controls-container">
+          <button (click)="fileInput.click()" class="control-btn gallery-btn">
+            <span class="btn-icon">📁</span>
+          </button>
+          
+          <input 
+            type="file" 
+            #fileInput 
+            (change)="onFileSelected($event)" 
+            accept="image/*" 
+            style="display: none;"
+          >
+
+          <button 
+            (click)="capture()" 
+            class="capture-btn" 
+            [disabled]="!videoStream">
+            <div class="capture-ring"></div>
+            <div class="capture-inner">
+              <span class="capture-icon">📷</span>
+            </div>
+          </button>
+
+          <button class="control-btn flash-btn" disabled>
+            <span class="btn-icon">⚡</span>
+          </button>
+        </div>
+        
+        <p class="capture-hint">
+          {{ videoStream ? 'Toca para capturar' : 'Carga una imagen o intenta de nuevo' }}
+        </p>
+      </div>
+    </div>
   </div>
-</ng-template>
+
+  <div *ngIf="!isLoading && !showVideo && errorMessage" class="error-state">
+    </div>
+</div>

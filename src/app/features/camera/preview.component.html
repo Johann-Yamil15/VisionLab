@@ -1,8 +1,34 @@
-<div class="preview-wrapper">
-  <img [src]="photo" class="preview-img" />
+<div class="lab-terminal-screen">
+  <div class="terminal-header">
+    <span class="header-title">PROCESO DE CAPTURA</span>
+    <div class="header-metadata top-right">{{ 'PreviewComponent' | uppercase }}</div>
+  </div>
+  
+  <div class="monitor-frame monitor-glow">
+    <div class="scanline"></div>
+    <div class="glitch-overlay"></div>
+    <img [src]="photo" alt="Imagen capturada" class="preview-img">
+    
+    <div class="reticle-h"></div>
+    <div class="reticle-v"></div>
+    <div class="reticle-crosshair"></div>
+    
+    <div class="data-overlay top-left">[ID: CAPTURA_001]</div>
+    <div class="status-badge status-ready">LISTO</div>
+  </div>
 
-  <div class="actions">
-    <button mat-raised-button color="warn" (click)="retake()">Repetir</button>
-    <button mat-raised-button color="primary" (click)="analyze()">Analizar</button>
+  <div class="action-panel">
+    <button (click)="retake()" class="lab-button secondary-btn">
+      <span class="button-content">
+        <span class="material-icons">refresh</span>
+        REPETIR CAPTURA
+      </span>
+    </button>
+    <button (click)="analyze()" class="lab-button primary-btn">
+      <span class="button-content">
+        <span class="material-icons">science</span>
+        INICIAR ANÁLISIS
+      </span>
+    </button>
   </div>
 </div>
