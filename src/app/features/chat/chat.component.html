@@ -1,0 +1,58 @@
+<div class="whatsapp-container">
+  
+  <!-- Encabezado de la Especie (Eje superior) -->
+  <header class="chat-header">
+    <div class="species-info">
+      <!-- Icono de Material: ícono genérico para especies -->
+      <span class="material-icons chat-icon">eco</span> 
+      <div class="header-text">
+        <h1 class="species-name">{{ analyzedSpecies | uppercase }}</h1>
+        <p class="status">Asistente experto en línea</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor de Mensajes (Área de scroll) -->
+  <div class="message-area" #messageContainer>
+    <div 
+      class="message-bubble-wrapper" 
+      *ngFor="let message of messages"
+      [class.user-message-wrapper]="message.sender === 'user'">
+
+      <div class="message-bubble" 
+           [class.user-bubble]="message.sender === 'user'"
+           [class.ai-bubble]="message.sender === 'ai'">
+        
+        <p class="message-text">{{ message.text }}</p>
+        <span class="message-time">{{ message.timestamp | date:'shortTime' }}</span>
+        
+      </div>
+    </div>
+
+    <!-- Indicador de Escritura de la IA -->
+    <div class="typing-indicator" *ngIf="loadingResponse">
+        <div class="message-bubble ai-bubble">
+            <div class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <p class="typing-text">Escribiendo...</p>
+        </div>
+    </div>
+  </div>
+
+  <!-- Área de Input (Eje inferior) -->
+  <footer class="chat-input-area">
+    <input 
+      [(ngModel)]="userInput" 
+      (keyup.enter)="sendMessage()"
+      placeholder="Pregúntale sobre la especie..."
+      type="text"
+      [disabled]="loadingResponse"
+    >
+    <button (click)="sendMessage()" [disabled]="loadingResponse || !userInput.trim()">
+      <span class="material-icons send-icon">send</span>
+    </button>
+  </footer>
+</div>

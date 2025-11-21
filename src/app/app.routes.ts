@@ -8,7 +8,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { CameraComponent } from './features/camera/camera.component';
 import { PreviewComponent } from './features/camera/preview.component';
 import { ResultsComponent } from './features/camera/results.component';
-
+import { ChatComponent } from './features/chat/chat.component'; // 🟢 AÑADIDO: ChatComponent
+import { AnalysisViewComponent } from './features/camera/analysis-view.component'; // 🟢 AÑADIDO: Vista Contenedora
 // import { ChatComponent } from './features/chat/chat.component';
 
 // import { AlmanacListComponent } from './features/almanac/almanac-list.component';
@@ -38,7 +39,15 @@ export const routes: Routes = [
   // --- Camera ---
 { path: 'camera', component: CameraComponent },
 { path: 'camera/preview', component: PreviewComponent },
-{ path: 'camera/results', component: ResultsComponent },
+// 🟢 RUTA DE ANÁLISIS MEJORADA (Destino final del flujo)
+    // Usamos 'analysis' para englobar tanto los resultados como el chat.
+    { path: 'analysis', component: AnalysisViewComponent }, 
+    
+    // Si quieres acceder a Results solo:
+    // { path: 'camera/results', component: ResultsComponent }, 
+
+    // Si quieres acceder a Chat solo:
+    { path: 'chat', component: ChatComponent },
 
 
 //   // --- Chat ---

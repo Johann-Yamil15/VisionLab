@@ -5,29 +5,43 @@
   </div>
   
   <div class="monitor-frame monitor-glow">
-    <div class="scanline"></div>
-    <div class="glitch-overlay"></div>
-    <img [src]="photo" alt="Imagen capturada" class="preview-img">
-    
-    <div class="reticle-h"></div>
-    <div class="reticle-v"></div>
-    <div class="reticle-crosshair"></div>
-    
-    <div class="data-overlay top-left">[ID: CAPTURA_001]</div>
-    <div class="status-badge status-ready">LISTO</div>
+    <div class="loading-overlay" *ngIf="loading">
+        <mat-progress-spinner 
+            mode="indeterminate"
+            diameter="50"
+            strokeWidth="5"
+            color="accent">
+        </mat-progress-spinner>
+        <span class="loading-text">EJECUTANDO ANÁLISIS...</span>
+    </div>
+
+    <div [class.blur-content]="loading">
+        <div class="scanline"></div>
+        <div class="glitch-overlay"></div>
+        <img [src]="photo" alt="Imagen capturada" class="preview-img">
+        
+        <div class="reticle-h"></div>
+        <div class="reticle-v"></div>
+        <div class="reticle-crosshair"></div>
+        
+        <div class="data-overlay top-left">[ID: CAPTURA_001]</div>
+        <div class="status-badge" [ngClass]="loading ? 'status-analyzing' : 'status-ready'">
+            {{ loading ? 'ANALIZANDO' : 'LISTO' }}
+        </div>
+    </div>
   </div>
 
   <div class="action-panel">
-    <button (click)="retake()" class="lab-button secondary-btn">
+    <button (click)="retake()" [disabled]="loading" class="lab-button secondary-btn">
       <span class="button-content">
         <span class="material-icons">refresh</span>
         REPETIR CAPTURA
       </span>
     </button>
-    <button (click)="analyze()" class="lab-button primary-btn">
+    <button (click)="analyze()" [disabled]="loading" class="lab-button primary-btn">
       <span class="button-content">
-        <span class="material-icons">science</span>
-        INICIAR ANÁLISIS
+        <span class="material-icons">{{ loading ? 'lock' : 'science' }}</span>
+        {{ loading ? 'EN PROCESO...' : 'INICIAR ANÁLISIS' }}
       </span>
     </button>
   </div>

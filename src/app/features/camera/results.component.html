@@ -1,53 +1,53 @@
 <div class="lab-terminal-screen">
-  
+
   <div *ngIf="loading" class="analysis-loader">
     <mat-spinner diameter="50"></mat-spinner>
     <p class="loading-text">Analizando muestra con IA Géminis...</p>
   </div>
 
   <div *ngIf="!loading && result" class="results-panel">
-    
+
     <div class="header-section">
       <h1 class="main-title"><span class="material-icons neon-icon">check_circle</span> ANÁLISIS COMPLETO</h1>
       <p class="subtitle">LOG DE DATOS GÉMINIS</p>
     </div>
 
-    <div class="results-content-grid-single"> 
-      
+    <div class="results-content-grid-single">
+
       <div class="data-card identification-card terminal-frame-glow">
-          
+
         <div class="image-viewer-small">
           <img [src]="photo" alt="Imagen analizada" class="analyzed-img">
           <div class="image-overlay-text top-left">[Análisis de Muestra]</div>
-          <div class="image-overlay-text bottom-right card-type-label">{{ result?.tipo | uppercase }}</div>
+          <div class="image-overlay-text bottom-right card-type-label">{{ result.tipo | uppercase }}</div>
         </div>
-        
-        <div class="card-details-container">
-            <h2 class="card-title">{{ result?.nombreComun }}</h2>
-            
-            <p class="data-field scientific">
-              <span class="field-label">Nombre Científico:</span> 
-              <span class="field-value">{{ result?.nombreCientifico }}</span>
-            </p>
-            
-            <p class="data-field">
-              <span class="field-label">Tipo de Muestra:</span> 
-              <span class="field-value">{{ result?.tipo }}</span>
-            </p>
 
-            <div class="confidence-bar">
-              <span class="bar-label">Nivel de Confianza:</span>
-              <div class="bar-fill" [style.width.%]="result?.nivelConfianza">
-                {{ result?.nivelConfianza }}%
-              </div>
+        <div class="card-details-container">
+          <h2 class="card-title">{{ result.nombreComun }}</h2>
+
+          <p class="data-field scientific">
+            <span class="field-label">Nombre Científico:</span>
+            <span class="field-value">{{ result.nombreCientifico }}</span>
+          </p>
+
+          <p class="data-field">
+            <span class="field-label">Tipo de Muestra:</span>
+            <span class="field-value">{{ result.tipo }}</span>
+          </p>
+
+          <div class="confidence-bar">
+            <span class="bar-label">Nivel de Confianza:</span>
+            <div class="bar-fill" [style.width.%]="result.nivelConfianza">
+              {{ result.nivelConfianza }}%
             </div>
-            
-            <div class="description-section-inside">
-              <h3 class="card-subtitle"><span class="material-icons mini-icon">info</span> DESCRIPCIÓN TÉCNICA:</h3>
-              <p class="description-text">{{ result?.descripcion }}</p>
-            </div>
-            </div>
+          </div>
+
+          <div class="description-section-inside">
+            <h3 class="card-subtitle"><span class="material-icons mini-icon">info</span> DESCRIPCIÓN TÉCNICA:</h3>
+            <p class="description-text">{{ result.descripcion }}</p>
+          </div>
+        </div>
       </div>
-      </div>
+    </div>
   </div>
 </div>

@@ -1,39 +1,76 @@
-// Variables para los colores principales
-$sidebar-bg: #273347;
+// ============================================
+// 🎨 VARIABLES DE DISEÑO
+// ============================================
+$sidebar-bg: #1a1d29;
 $sidebar-color: #a4a9b0;
-$sidebar-hover-bg: #1e2837;
+$sidebar-hover-bg: #252837;
 $sidebar-active-color: #ffffff;
 $topbar-bg: #ffffff;
-$topbar-border-color: #eaeaea;
+$topbar-border-color: #e5e7eb;
 $main-bg: #f4f6f9;
 $neon-green: #00c9a7;
+$neon-glow: rgba(0, 201, 167, 0.4);
 
-// Colores de los badges
+// Colores de badges
 $info-color: #3f79ff;
 $success-color: #00c9a7;
 $primary-color: #7966f0;
+$danger-color: #ff4757;
 
-// Estructura del Layout con Flexbox
+// Breakpoints
+$mobile: 768px;
+$desktop: 992px;
+
+// Transiciones
+$transition-fast: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ============================================
+// 📱 LAYOUT PRINCIPAL
+// ============================================
 .dashboard-layout {
   display: flex;
   height: 100vh;
   width: 100vw;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  position: relative;
 }
 
-// --------------------------------------------------
-// Sidebar (Menú Lateral)
-// --------------------------------------------------
-
+// ============================================
+// 🎯 SIDEBAR (Menú Lateral Colapsable)
+// ============================================
 .sidebar {
-  width: 250px;
+  width: 260px;
   flex-shrink: 0;
-  background-color: $sidebar-bg;
+  background: linear-gradient(180deg, $sidebar-bg 0%, darken($sidebar-bg, 5%) 100%);
   color: $sidebar-color;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
+  transition: transform $transition-smooth, width $transition-smooth;
+  z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+
+  // Scrollbar personalizado
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
   
-  // Borde derecho neón verde con profundidad
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  // Borde derecho con efecto neón
   &::after {
     content: '';
     position: absolute;
@@ -41,16 +78,59 @@ $primary-color: #7966f0;
     right: 0;
     width: 3px;
     height: 100%;
-    background: linear-gradient(
-      to right,
+    background: linear-gradient(to bottom, 
       transparent,
-      $neon-green
+      $neon-green 20%,
+      $neon-green 80%,
+      transparent
     );
     box-shadow: 
       0 0 10px $neon-green,
-      0 0 20px rgba($neon-green, 0.5),
-      0 0 30px rgba($neon-green, 0.3);
+      0 0 20px $neon-glow,
+      0 0 30px rgba($neon-green, 0.2);
     animation: neon-pulse 2s ease-in-out infinite;
+  }
+
+  // Mobile: Sidebar oculto por defecto
+  @media (max-width: $mobile) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    
+    &.sidebar-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+// Estado colapsado (Desktop)
+.sidebar.sidebar-collapsed {
+  @media (min-width: $desktop) {
+    width: 80px;
+
+    .sidebar-header .logo-text {
+      opacity: 0;
+      width: 0;
+    }
+
+    .nav-heading,
+    .nav-list li a span,
+    .badge {
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+
+    .nav-list li a {
+      justify-content: center;
+      padding: 10px;
+
+      [class^="icon-"] {
+        margin-right: 0;
+      }
+    }
   }
 }
 
@@ -60,52 +140,102 @@ $primary-color: #7966f0;
     opacity: 1;
     box-shadow: 
       0 0 10px $neon-green,
-      0 0 20px rgba($neon-green, 0.5),
-      0 0 30px rgba($neon-green, 0.3);
+      0 0 20px $neon-glow,
+      0 0 30px rgba($neon-green, 0.2);
   }
   50% {
-    opacity: 0.8;
+    opacity: 0.85;
     box-shadow: 
       0 0 15px $neon-green,
-      0 0 30px rgba($neon-green, 0.7),
-      0 0 45px rgba($neon-green, 0.5);
+      0 0 30px $neon-glow,
+      0 0 45px rgba($neon-green, 0.3);
   }
 }
 
+// ============================================
+// 📌 HEADER DEL SIDEBAR
+// ============================================
 .sidebar-header {
-  height: 60px;
+  height: 70px;
   display: flex;
   align-items: center;
-  padding: 0 15px;
+  justify-content: space-between;
+  padding: 0 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
 
   .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     color: $sidebar-active-color;
-    font-size: 1.25rem;
-    font-weight: bold;
+    font-size: 1.3rem;
+    font-weight: 700;
     text-decoration: none;
+    transition: transform $transition-fast;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    .logo-icon {
+      font-size: 1.8rem;
+      filter: drop-shadow(0 0 8px $neon-green);
+    }
+
+    .logo-text {
+      transition: opacity $transition-fast, width $transition-fast;
+      white-space: nowrap;
+    }
+  }
+
+  // Botón para colapsar (solo desktop)
+  .sidebar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: $sidebar-color;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: $sidebar-hover-bg;
+      color: $neon-green;
+      transform: rotate(180deg);
+    }
+
+    @media (min-width: $desktop) {
+      display: block;
+    }
   }
 }
 
+// ============================================
+// 🧭 NAVEGACIÓN DEL SIDEBAR
+// ============================================
 .sidebar-nav {
-  padding: 15px 0;
+  padding: 20px 0;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 70px);
 }
 
 .nav-heading {
-  color: $sidebar-color;
-  font-size: 0.75rem;
-  font-weight: 500;
+  color: rgba($sidebar-color, 0.7);
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  margin: 15px 15px 5px;
+  letter-spacing: 1px;
+  margin: 20px 20px 10px;
   padding-left: 10px;
+  transition: opacity $transition-fast;
 }
 
-// Línea divisoria
 .nav-divider {
-  margin: auto 15px 15px 15px;
+  margin: 20px 20px;
   height: 1px;
   background: linear-gradient(
     to right,
@@ -121,149 +251,407 @@ $primary-color: #7966f0;
   padding: 0;
   margin: 0;
 
-  // Último nav-list (User & Utility) se empuja al final
   &:last-of-type {
     margin-top: auto;
   }
 
   li {
+    position: relative;
+
     a {
       display: flex;
       align-items: center;
-      padding: 10px 25px;
+      padding: 12px 25px;
       color: $sidebar-color;
       text-decoration: none;
-      transition: background-color 0.2s, color 0.2s;
+      transition: all $transition-fast;
+      position: relative;
+      cursor: pointer;
 
-      &:hover, &.active {
-        background-color: $sidebar-hover-bg;
+      &:hover {
+        background: $sidebar-hover-bg;
         color: $sidebar-active-color;
+        padding-left: 30px;
       }
-      
+
       &.active {
-        border-left: 3px solid $neon-green;
-        background-color: $sidebar-hover-bg;
+        background: $sidebar-hover-bg;
+        color: $neon-green;
+        font-weight: 600;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 4px;
+          background: $neon-green;
+          box-shadow: 0 0 10px $neon-green;
+        }
+
+        [class^="icon-"] {
+          color: $neon-green;
+          filter: drop-shadow(0 0 6px $neon-green);
+        }
       }
 
-      // Ícono
       [class^="icon-"] {
-        margin-right: 10px;
-        font-size: 16px;
+        margin-right: 12px;
+        font-size: 1.2rem;
+        transition: all $transition-fast;
+        flex-shrink: 0;
       }
 
-      // Indicador de submenú
+      span {
+        transition: opacity $transition-fast;
+        white-space: nowrap;
+      }
+
       .submenu-indicator {
         margin-left: auto;
-        font-size: 10px;
+        font-size: 0.8rem;
+        transition: transform $transition-fast;
+      }
+
+      &.has-submenu:hover .submenu-indicator {
+        transform: rotate(90deg);
       }
     }
   }
 }
 
-// Badges (Contadores)
+// ============================================
+// 🏷️ BADGES (Contadores)
+// ============================================
 .badge {
   margin-left: auto;
-  min-width: 20px;
-  padding: 2px 6px;
-  border-radius: 10px;
+  min-width: 22px;
+  padding: 3px 7px;
+  border-radius: 12px;
   font-size: 0.7rem;
+  font-weight: 600;
   text-align: center;
   line-height: 1;
   color: #fff;
+  transition: opacity $transition-fast;
 
   &.badge-info {
-    background-color: $info-color;
+    background: linear-gradient(135deg, $info-color 0%, darken($info-color, 10%) 100%);
+    box-shadow: 0 0 8px rgba($info-color, 0.4);
   }
+
   &.badge-success {
-    background-color: $success-color;
+    background: linear-gradient(135deg, $success-color 0%, darken($success-color, 10%) 100%);
+    box-shadow: 0 0 8px rgba($success-color, 0.4);
   }
+
   &.badge-primary {
-    background-color: $primary-color;
+    background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 10%) 100%);
+    box-shadow: 0 0 8px rgba($primary-color, 0.4);
   }
+
   &.badge-sm {
-    background-color: $primary-color;
-    padding: 1px 4px;
+    padding: 2px 5px;
     font-size: 0.65rem;
   }
 }
 
-// --------------------------------------------------
-// Main Content Area
-// --------------------------------------------------
+// ============================================
+// 📱 OVERLAY PARA MOBILE
+// ============================================
+.sidebar-overlay {
+  display: none;
+  
+  @media (max-width: $mobile) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity $transition-smooth;
 
+    &.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
+// ============================================
+// 🎯 MAIN CONTENT WRAPPER
+// ============================================
 .main-content-wrapper {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   background-color: $main-bg;
+  transition: margin-left $transition-smooth;
+
+  @media (max-width: $mobile) {
+    width: 100%;
+  }
 }
 
-// Topbar (Barra Superior)
+// ============================================
+// 📌 TOPBAR (Barra Superior)
+// ============================================
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px;
-  padding: 0 20px;
+  height: 70px;
+  padding: 0 25px;
   background-color: $topbar-bg;
   border-bottom: 1px solid $topbar-border-color;
   flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 100;
 }
 
-.topbar-left, .topbar-right {
+.topbar-left,
+.topbar-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+}
+
+// Botón hamburguesa (mobile y toggle desktop)
+.menu-toggle {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #f3f4f6;
+    color: $neon-green;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .topbar-icon {
   text-decoration: none;
   color: #6c757d;
-  font-size: 18px;
-  padding: 0 10px;
+  font-size: 0.95rem;
+  padding: 8px 15px;
   cursor: pointer;
-  transition: color 0.2s;
+  border-radius: 8px;
+  transition: all $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
 
   &:hover {
+    background: #f3f4f6;
     color: $neon-green;
+  }
+
+  [class^="icon-"] {
+    font-size: 1.1rem;
+  }
+
+  // Ocultar en mobile
+  @media (max-width: $mobile) {
+    span {
+      display: none;
+    }
   }
 }
 
-// Icono de Perfil
+// ============================================
+// 👤 MENÚ DE PERFIL (Dropdown)
+// ============================================
 .profile-menu-container {
+  position: relative;
   cursor: pointer;
-  margin-left: 10px;
-  transition: transform 0.2s;
 
-  &:hover {
-    transform: scale(1.1);
+  .profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all $transition-fast;
+    background: #f3f4f6;
+
+    &:hover {
+      background: #e5e7eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-icon {
+      font-size: 1.8rem;
+      color: #6c757d;
+      transition: color $transition-fast;
+    }
+
+    .profile-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #374151;
+      
+      @media (max-width: $mobile) {
+        display: none;
+      }
+    }
+
+    .dropdown-arrow {
+      font-size: 0.7rem;
+      color: #9ca3af;
+      transition: transform $transition-fast;
+    }
   }
 
-  .profile-icon {
-    font-size: 24px;
-    color: #6c757d;
-    transition: color 0.2s;
+  &.active .profile-trigger {
+    background: #e5e7eb;
+    
+    .dropdown-arrow {
+      transform: rotate(180deg);
+    }
   }
 
-  &:hover .profile-icon {
-    color: $neon-green;
+  // Menú desplegable
+  .profile-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 220px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: all $transition-fast;
+    overflow: hidden;
+    z-index: 1000;
+
+    &.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .dropdown-header {
+      padding: 15px;
+      background: linear-gradient(135deg, $neon-green 0%, darken($neon-green, 10%) 100%);
+      color: white;
+
+      .user-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+
+      .user-email {
+        font-size: 0.75rem;
+        opacity: 0.9;
+      }
+    }
+
+    .dropdown-menu {
+      padding: 8px 0;
+
+      a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 15px;
+        color: #374151;
+        text-decoration: none;
+        transition: all $transition-fast;
+        font-size: 0.9rem;
+
+        [class^="icon-"] {
+          font-size: 1.1rem;
+          color: #9ca3af;
+        }
+
+        &:hover {
+          background: #f3f4f6;
+          color: $neon-green;
+
+          [class^="icon-"] {
+            color: $neon-green;
+          }
+        }
+      }
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 5px 0;
+    }
+
+    .dropdown-logout {
+      padding: 12px 15px;
+      color: $danger-color;
+      font-weight: 600;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: rgba($danger-color, 0.1);
+      }
+    }
   }
 }
 
-// Main Content
+// ============================================
+// 📄 MAIN CONTENT
+// ============================================
 .main-content {
   flex-grow: 1;
-  padding: 20px;
+  padding: 25px;
   overflow-y: auto;
+  overflow-x: hidden;
+
+  // Scrollbar personalizado
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 5px;
+    
+    &:hover {
+      background: #94a3b8;
+    }
+  }
 }
 
-// --------------------------------------------------
-// Iconos Unicode
-// --------------------------------------------------
+// ============================================
+// 🎨 ICONOS UNICODE
+// ============================================
 [class^="icon-"]::before {
   font-style: normal;
   font-weight: normal;
-  margin-right: 8px;
   display: inline-block;
 }
 
@@ -280,11 +668,13 @@ $primary-color: #7966f0;
 // Navigation Icons
 .icon-chevron-right::before { content: "›"; }
 .icon-bars::before { content: "☰"; }
-
-// User Icons
 .icon-user::before { content: "👤"; }
-.icon-user-circle::before { 
-  content: "👤"; 
-  font-size: 24px;
-}
+.icon-user-circle::before { content: "👤"; }
 .icon-register::before { content: "📝"; }
+.icon-logout::before { content: "🚪"; }
+.icon-profile::before { content: "👤"; }
+.icon-dashboard::before { content: "📊"; }
+.icon-arrow-down::before { content: "▼"; }
+
+// Logo icon
+.icon-leaf::before { content: "🌿"; }

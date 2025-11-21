@@ -6,12 +6,16 @@ $text-light: #b3ffeb; // Texto brillante
 $text-soft: #81c784; // Texto secundario
 $warning: #ff9800; // Advertencia/Secundario
 $terminal-border: #3c6e42; // Borde sutil
+$analyzing-color: #ffc107; // Color amarillo para el estado de análisis
 
-// Animación de Neón (tomada del segundo ejemplo y adaptada)
+// Animación de Neón (adaptada)
 @keyframes neon-pulse-strong {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 5px $accent-neon, 0 0 15px rgba($accent-neon, 0.7);
   }
+
   50% {
     box-shadow: 0 0 8px $accent-neon, 0 0 25px rgba($accent-neon, 0.9);
   }
@@ -50,6 +54,7 @@ $terminal-border: #3c6e42; // Borde sutil
     font-size: 1.1rem;
     font-weight: 700;
   }
+
   .header-metadata {
     font-size: 0.75rem;
     color: $text-soft;
@@ -77,50 +82,129 @@ $terminal-border: #3c6e42; // Borde sutil
   animation: neon-pulse-strong 3s infinite alternate;
 }
 
+// Contenido dentro del monitor que se difumina durante la carga
+.blur-content {
+  filter: blur(5px) grayscale(0.2);
+  transition: filter 0.3s ease;
+}
+
 .preview-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  filter: grayscale(0.1) saturate(1.3) contrast(1.1); /* Efecto de escaneo más sutil */
+  filter: grayscale(0.1) saturate(1.3) contrast(1.1);
+  /* Efecto de escaneo más sutil */
 }
 
-/* Efectos de la Terminal */
+// --------------------------------------------------
+// Efectos de la Terminal (Scanline, Glitch, Retícula)
+// --------------------------------------------------
+
 .scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   // Scanline más sutil
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.4),
-    rgba(0, 0, 0, 0.4) 1px,
-    transparent 1px,
-    transparent 4px
-  );
-  // ... (otros estilos permanecen igual)
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.4) 1px,
+      transparent 1px,
+      transparent 4px);
+  pointer-events: none;
 }
+
 .glitch-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   // Glitch más transparente
-  background: rgba(100, 255, 218, 0.03); 
-  // ... (otros estilos permanecen igual)
+  background: rgba(100, 255, 218, 0.03);
+  pointer-events: none;
 }
 
 /* Retícula (Mira) - Mejorada */
-.reticle-h, .reticle-v {
+.reticle-h,
+.reticle-v {
+  position: absolute;
   background: $accent-neon;
   opacity: 0.4; // Opacidad reducida
+  pointer-events: none;
 }
+
+.reticle-h {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.reticle-v {
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
 .reticle-crosshair {
   position: absolute;
-  top: 50%; left: 50%;
-  width: 10px; height: 10px;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
   border: 1px solid $accent-neon;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0 0 5px $accent-neon;
+  pointer-events: none;
 }
 
-/* Overlays y Badge de Estado */
+// --------------------------------------------------
+// Overlay de Carga (NUEVO)
+// --------------------------------------------------
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($dark-bg, 0.9); // Fondo semi-transparente oscuro
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+
+  .loading-text {
+    color: $accent-neon;
+    font-size: 1rem;
+    font-weight: bold;
+    text-shadow: 0 0 5px $accent-neon;
+  }
+
+  // Estilo para el spinner de Angular Material (sobreescribe si es necesario)
+  mat-progress-spinner ::ng-deep circle {
+    stroke: $accent-neon !important; // Fuerza el color neón para el spinner
+  }
+}
+
+
+// --------------------------------------------------
+// Overlays y Badge de Estado
+// --------------------------------------------------
 .data-overlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   color: $accent-neon;
+  font-size: 0.8rem;
   text-shadow: 0 0 5px rgba(100, 255, 218, 0.5);
 }
 
@@ -134,10 +218,18 @@ $terminal-border: #3c6e42; // Borde sutil
   font-size: 0.8rem;
   font-weight: bold;
 }
+
 .status-ready {
   background-color: $accent-neon;
   color: $dark-bg;
   box-shadow: 0 0 8px rgba($accent-neon, 0.7);
+}
+
+.status-analyzing {
+  // Clase para el estado de carga
+  background-color: $analyzing-color;
+  color: $dark-bg;
+  box-shadow: 0 0 8px rgba($analyzing-color, 0.7);
 }
 
 
@@ -158,8 +250,25 @@ $terminal-border: #3c6e42; // Borde sutil
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
   transition: all 0.2s ease-in-out;
-  
-  .material-icons { font-size: 1.2rem; }
+  flex-grow: 1; // Permite que los botones se expandan
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .material-icons {
+    font-size: 1.2rem;
+    margin-right: 8px;
+  }
+
+  // Separación del ícono
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
 }
 
 .primary-btn {
@@ -167,8 +276,8 @@ $terminal-border: #3c6e42; // Borde sutil
   background-color: $medium-bg;
   color: $accent-neon;
   border: 2px solid $accent-neon;
-  
-  &:hover {
+
+  &:not(:disabled):hover {
     transform: scale(1.02);
     background-color: rgba($accent-neon, 0.1);
     box-shadow: 0 0 10px $accent-neon, inset 0 0 5px $accent-neon;
@@ -180,8 +289,8 @@ $terminal-border: #3c6e42; // Borde sutil
   background-color: $dark-bg;
   color: $warning;
   border: 2px solid $warning;
-  
-  &:hover {
+
+  &:not(:disabled):hover {
     transform: scale(1.02);
     background-color: rgba($warning, 0.1);
     box-shadow: 0 0 10px $warning, inset 0 0 5px $warning;
