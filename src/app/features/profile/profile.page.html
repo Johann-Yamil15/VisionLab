@@ -1,0 +1,90 @@
+<section class="page profile">
+  <header class="page-header">
+    <div>
+      <h1>Mi perfil</h1>
+      <p class="page-subtitle">Tus puntos, tu nivel y tus medallas.</p>
+    </div>
+  </header>
+
+  @switch (estado()) {
+    @case ('cargando') {
+      <div class="skeleton" style="height: 220px" aria-busy="true" aria-label="Cargando perfil"></div>
+    }
+
+    @case ('error') {
+      <div class="clay">
+        <div class="empty-state" role="alert">
+          <span class="empty-icon"><lucide-icon [img]="icons.CircleAlert" [size]="40" aria-hidden="true" /></span>
+          <h2>No pudimos cargar tu perfil</h2>
+          <p>El servidor no responde. Inténtalo en un momento.</p>
+          <button class="btn btn--primary" type="button" (click)="cargar()">
+            <lucide-icon [img]="icons.RotateCcw" [size]="20" aria-hidden="true" />
+            Reintentar
+          </button>
+        </div>
+      </div>
+    }
+
+    @case ('listo') {
+      @if (perfil(); as p) {
+        <div class="hero clay">
+          <span class="avatar" aria-hidden="true">{{ iniciales() }}</span>
+          <div class="hero-text">
+            <h2>{{ p.nombreUsuario }}</h2>
+            <span class="level">
+              <lucide-icon [img]="icons.Award" [size]="18" aria-hidden="true" />
+              {{ p.nivelActual }}
+            </span>
+          </div>
+        </div>
+
+        <ul class="stats">
+          <li class="stat clay stat--sun">
+            <lucide-icon [img]="icons.Star" [size]="28" aria-hidden="true" />
+            <strong>{{ p.puntos | number }}</strong>
+            <span>puntos</span>
+          </li>
+          <li class="stat clay stat--green">
+            <lucide-icon [img]="icons.Compass" [size]="28" aria-hidden="true" />
+            <strong>{{ p.hallazgosContador | number }}</strong>
+            <span>descubrimientos</span>
+          </li>
+          <li class="stat clay stat--blue">
+            <lucide-icon [img]="icons.Medal" [size]="28" aria-hidden="true" />
+            <strong>{{ p.logros.length }}</strong>
+            <span>medallas</span>
+          </li>
+        </ul>
+
+        <section class="medals" aria-labelledby="medallas-titulo">
+          <h2 id="medallas-titulo">Mis medallas</h2>
+
+          @if (p.logros.length === 0) {
+            <div class="clay">
+              <div class="empty-state">
+                <span class="empty-icon"><lucide-icon [img]="icons.Trophy" [size]="40" aria-hidden="true" /></span>
+                <h3>Aún no tienes medallas</h3>
+                <p>Sigue explorando: con cada descubrimiento te acercas a tu primera medalla.</p>
+                <a class="btn btn--primary" routerLink="/microscopio">
+                  <lucide-icon [img]="icons.Microscope" [size]="20" aria-hidden="true" />
+                  Ir a explorar
+                </a>
+              </div>
+            </div>
+          } @else {
+            <ul class="medal-grid">
+              @for (l of p.logros; track l.id) {
+                <li class="medal clay">
+                  <span class="medal-icon"><lucide-icon [img]="icons.Medal" [size]="32" aria-hidden="true" /></span>
+                  <h3>{{ l.nombre }}</h3>
+                  <p>{{ l.descripcion }}</p>
+                  <span class="medal-points">+{{ l.puntosOtorgados }} pts</span>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+      }
+    }
+  }
+</section>

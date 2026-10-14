@@ -1,0 +1,67 @@
+@if (resultado) {
+  <section class="page discovery">
+    <header class="hero">
+      <span class="hero-burst" aria-hidden="true"><lucide-icon [img]="icons.Sparkles" [size]="30" /></span>
+      <div>
+        <p class="hero-kicker">¡Nuevo descubrimiento!</p>
+        <h1>{{ resultado.nombreComun || 'Especie misteriosa' }}</h1>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="col">
+        <app-species-card class="card-pop" [especie]="resultado" [imagen]="foto" size="lg" />
+
+        <div class="save" role="status" aria-live="polite">
+          @switch (guardado()) {
+            @case ('guardando') {
+              <span class="spinner" style="color: var(--c-primary)" aria-hidden="true"></span>
+              <span>Guardando en tu almanaque…</span>
+            }
+            @case ('guardado') {
+              <span class="save-ok"><lucide-icon [img]="icons.Check" [size]="18" aria-hidden="true" /></span>
+              <span>¡Guardado en tu almanaque!</span>
+              <span class="points"><lucide-icon [img]="icons.Star" [size]="16" aria-hidden="true" /> +{{ puntos() }}</span>
+            }
+            @case ('error') {
+              <lucide-icon [img]="icons.CircleAlert" [size]="20" aria-hidden="true" />
+              <span>No se pudo guardar.</span>
+              <button class="btn btn--sun save-retry" type="button" (click)="guardar()">Reintentar</button>
+            }
+          }
+        </div>
+
+        <article class="info clay">
+          <h2><lucide-icon [img]="icons.BookOpen" [size]="22" aria-hidden="true" /> ¿Qué es?</h2>
+          <p>{{ resultado.descripcion }}</p>
+
+          <div class="meter">
+            <span class="meter-label">
+              <span>Seguridad de la IA</span>
+              <span class="meter-value">{{ resultado.nivelConfianza }}%</span>
+            </span>
+            <div class="meter-track" role="progressbar" aria-label="Seguridad de la IA" [attr.aria-valuenow]="resultado.nivelConfianza" aria-valuemin="0" aria-valuemax="100">
+              <div class="meter-fill" [style.width.%]="resultado.nivelConfianza"></div>
+            </div>
+          </div>
+          <p class="note">La IA puede equivocarse. ¡Compara con un libro o pregúntale a un adulto!</p>
+        </article>
+
+        <div class="actions">
+          <a class="btn btn--secondary" routerLink="/almanaque">
+            <lucide-icon [img]="icons.BookOpen" [size]="20" aria-hidden="true" />
+            Ver mi almanaque
+          </a>
+          <button class="btn btn--primary" type="button" (click)="explorarOtraVez()">
+            <lucide-icon [img]="icons.Microscope" [size]="20" aria-hidden="true" />
+            Explorar otra vez
+          </button>
+        </div>
+      </div>
+
+      <div class="col">
+        <app-expert-chat [especie]="resultado" />
+      </div>
+    </div>
+  </section>
+}

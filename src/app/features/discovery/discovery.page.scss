@@ -1,0 +1,141 @@
+.hero {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-bottom: var(--s-5);
+
+  h1 {
+    font-size: var(--fs-2xl);
+    @media (min-width: 768px) {
+      font-size: var(--fs-3xl);
+    }
+  }
+}
+
+.hero-kicker {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--c-primary);
+  font-size: var(--fs-lg);
+}
+
+.hero-burst {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--c-sun);
+  color: var(--c-on-sun);
+  border: var(--border-clay);
+  box-shadow: 0 5px 0 var(--c-ink);
+  animation: burst 700ms var(--ease-spring);
+}
+
+@keyframes burst {
+  from {
+    transform: scale(0) rotate(-90deg);
+  }
+}
+
+.layout {
+  display: grid;
+  gap: var(--s-5);
+  align-items: start;
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.col {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.card-pop {
+  max-width: 420px;
+  width: 100%;
+  justify-self: center;
+  animation: card-pop 600ms var(--ease-spring);
+}
+
+@keyframes card-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85) rotate(-3deg);
+  }
+}
+
+.save {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  font-weight: 700;
+  min-height: 48px;
+}
+
+.save-ok {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: #fff;
+}
+
+.points {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 12px;
+  border-radius: var(--r-pill);
+  background: var(--c-sun);
+  color: var(--c-on-sun);
+  border: 2px solid var(--c-ink);
+  font-family: var(--font-display);
+  animation: burst 500ms var(--ease-spring);
+}
+
+.save-retry {
+  min-height: 40px;
+  padding: 0 var(--s-4);
+}
+
+.info {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-5);
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-size: var(--fs-xl);
+    color: var(--c-primary);
+  }
+
+  > p {
+    font-size: var(--fs-md);
+    line-height: 1.7;
+  }
+}
+
+.note {
+  font-size: var(--fs-sm);
+  color: var(--c-text-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+
+  .btn {
+    flex: 1 1 200px;
+  }
+}

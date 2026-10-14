@@ -1,0 +1,45 @@
+<article class="card" [attr.aria-label]="especie().nombreComun + ', ' + tipo().label">
+  <header class="card-head">
+    <h3 class="card-name">{{ especie().nombreComun || 'Especie misteriosa' }}</h3>
+    <span class="card-type-icon" [attr.title]="tipo().label">
+      <lucide-icon [img]="tipo().icon" [size]="18" aria-hidden="true" />
+    </span>
+  </header>
+
+  <div class="card-window">
+    @if (imagen(); as src) {
+      <img [src]="src" [alt]="'Foto de ' + especie().nombreComun" loading="lazy" decoding="async" />
+    } @else {
+      <div class="card-noimg">
+        <lucide-icon [img]="tipo().icon" [size]="48" aria-hidden="true" />
+      </div>
+    }
+
+    @if (veces() > 1) {
+      <span class="card-count" [attr.aria-label]="'Encontrado ' + veces() + ' veces'">×{{ veces() }}</span>
+    }
+  </div>
+
+  <p class="card-sci" [attr.title]="especie().nombreCientifico">
+    {{ especie().nombreCientifico || 'Nombre científico desconocido' }}
+  </p>
+
+  <footer class="card-foot">
+    <span class="type-badge">
+      <lucide-icon [img]="tipo().icon" [size]="14" aria-hidden="true" />
+      {{ tipo().label }}
+    </span>
+
+    <span class="card-conf" [attr.aria-label]="'Confianza ' + confianza() + ' por ciento'">
+      <lucide-icon [img]="icons.Sparkles" [size]="14" aria-hidden="true" />
+      {{ confianza() }}%
+    </span>
+  </footer>
+
+  @if (fecha(); as f) {
+    <p class="card-date">
+      <lucide-icon [img]="icons.CalendarDays" [size]="13" aria-hidden="true" />
+      {{ f | date: 'd MMM y' }}
+    </p>
+  }
+</article>

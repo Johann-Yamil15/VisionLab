@@ -1,0 +1,139 @@
+.hero {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.25), transparent 50%),
+    var(--c-primary);
+  color: #fff;
+
+  h2 {
+    font-size: var(--fs-xl);
+  }
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--c-sun);
+  color: var(--c-on-sun);
+  border: var(--border-clay);
+  box-shadow: 0 5px 0 var(--c-ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+}
+
+.hero-text {
+  display: grid;
+  gap: var(--s-2);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.level {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: start;
+  padding: 4px 14px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--c-primary-strong);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-3);
+  margin: var(--s-5) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stat {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: var(--s-4) var(--s-2);
+  text-align: center;
+
+  strong {
+    font-family: var(--font-display);
+    font-size: var(--fs-2xl);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  span {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-text-muted);
+  }
+}
+
+.stat--sun lucide-icon {
+  color: var(--c-sun-strong);
+}
+.stat--green lucide-icon {
+  color: var(--c-primary);
+}
+.stat--blue lucide-icon {
+  color: var(--c-secondary);
+}
+
+.medals > h2 {
+  margin-bottom: var(--s-4);
+  font-size: var(--fs-xl);
+}
+
+.medal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.medal {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  padding: var(--s-4);
+  text-align: center;
+
+  h3 {
+    font-size: var(--fs-md);
+  }
+
+  p {
+    font-size: var(--fs-sm);
+    color: var(--c-text-muted);
+  }
+}
+
+.medal-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--c-sun);
+  color: var(--c-on-sun);
+  border: var(--border-clay);
+  box-shadow: 0 4px 0 var(--c-ink);
+}
+
+.medal-points {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--c-primary);
+}
