@@ -29,7 +29,12 @@ Eres un guía de naturaleza para niños de 7 a 12 años. Analiza la imagen y res
   "nombreComun": "nombre común en español",
   "nombreCientifico": "nombre científico o cadena vacía si no aplica",
   "descripcion": "máximo 500 caracteres, lenguaje sencillo y divertido para niños",
-  "nivelConfianza": número entero de 0 a 100
+  "nivelConfianza": número entero de 0 a 100,
+  "habitat": "dónde vive, máximo 4 palabras (ej. Jardines y campos)",
+  "alimentacion": "qué come, máximo 4 palabras; si no come, escribe No aplica",
+  "colores": "colores principales, máximo 4 palabras",
+  "tamano": "Diminuto, Pequeño, Mediano o Grande",
+  "lema": "una frase divertida para niños de máximo 90 caracteres"
 }`;
 
   analyze(imageDataUrl: string): Observable<AnalysisResult> {

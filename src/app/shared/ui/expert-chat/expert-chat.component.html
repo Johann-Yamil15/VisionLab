@@ -1,9 +1,9 @@
-<section class="chat clay" aria-labelledby="chat-titulo">
+<section class="chat" aria-labelledby="chat-titulo">
   <header class="chat-head">
-    <span class="avatar"><lucide-icon [img]="icons.Bot" [size]="26" aria-hidden="true" /></span>
+    <span class="avatar avatar--lg"><lucide-icon [img]="icons.Bot" [size]="26" aria-hidden="true" /></span>
     <div>
-      <h2 id="chat-titulo">Pregúntale al experto</h2>
-      <p>Sabe todo sobre {{ especie().nombreComun || 'tu hallazgo' }}</p>
+      <h2 id="chat-titulo">Asistente experto</h2>
+      <p>Sabe todo sobre {{ sobre() }}</p>
     </div>
   </header>
 
@@ -12,25 +12,26 @@
       <li class="msg" [class.msg--user]="m.sender === 'user'" [class.msg--error]="m.error">
         <span class="sr-only">{{ m.sender === 'user' ? 'Tú dijiste:' : 'El experto dice:' }}</span>
         @if (m.sender === 'ai') {
+          <span class="avatar" aria-hidden="true"><lucide-icon [img]="icons.Bot" [size]="20" /></span>
           <p class="bubble" [innerHTML]="toHtml(m.text)"></p>
         } @else {
           <p class="bubble">{{ m.text }}</p>
         }
-        <time class="time">{{ m.timestamp | date: 'shortTime' }}</time>
       </li>
     }
 
     @if (pensando()) {
       <li class="msg" role="status">
+        <span class="avatar" aria-hidden="true"><lucide-icon [img]="icons.Bot" [size]="20" /></span>
         <p class="bubble typing"><span></span><span></span><span></span><span class="sr-only">El experto está escribiendo</span></p>
       </li>
     }
   </ol>
 
   @if (mensajes().length <= 1) {
-    <div class="chips suggestions" role="group" aria-label="Preguntas sugeridas">
-      @for (s of sugerencias; track s) {
-        <button class="chip" type="button" (click)="enviar(s)" [disabled]="pensando()">{{ s }}</button>
+    <div class="suggestions" role="group" aria-label="Preguntas sugeridas">
+      @for (s of sugerencias; track s.label) {
+        <button class="suggestion" type="button" (click)="enviar(s.pregunta)" [disabled]="pensando()">{{ s.label }}</button>
       }
     </div>
   }
@@ -38,6 +39,7 @@
   <form class="composer" (ngSubmit)="enviar()">
     <label class="sr-only" for="pregunta">Tu pregunta</label>
     <input
+      #campo
       id="pregunta"
       name="pregunta"
       type="text"
@@ -45,10 +47,10 @@
       maxlength="300"
       [(ngModel)]="pregunta"
       [disabled]="pensando()"
-      placeholder="Escribe tu pregunta…"
+      placeholder="Escribe tu pregunta..."
     />
-    <button class="btn btn--primary btn--icon" type="submit" [disabled]="pensando() || !pregunta.trim()" aria-label="Enviar pregunta">
-      <lucide-icon [img]="icons.Send" [size]="20" aria-hidden="true" />
+    <button class="send" type="submit" [disabled]="pensando() || !pregunta.trim()" aria-label="Enviar pregunta">
+      <lucide-icon [img]="icons.Send" [size]="22" aria-hidden="true" />
     </button>
   </form>
 </section>

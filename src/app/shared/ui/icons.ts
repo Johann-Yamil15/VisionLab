@@ -47,6 +47,13 @@ import {
   X,
   ZoomIn,
   ZoomOut,
+  ChartColumn,
+  House,
+  MessageCircle,
+  Palette,
+  Ruler,
+  ShieldCheck,
+  Utensils,
 } from 'lucide-angular';
 
 /**
@@ -102,4 +109,11 @@ export const AppIcons = {
   X,
   ZoomIn,
   ZoomOut,
+  ChartColumn,
+  House,
+  MessageCircle,
+  Palette,
+  Ruler,
+  ShieldCheck,
+  Utensils,
 } as const;

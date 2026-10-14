@@ -1,18 +1,24 @@
 <section class="page detail">
-  <a class="btn back" routerLink="/almanaque">
-    <lucide-icon [img]="icons.ArrowLeft" [size]="20" aria-hidden="true" />
-    Mi almanaque
-  </a>
-
   @switch (estado()) {
     @case ('cargando') {
-      <div class="layout" aria-busy="true">
-        <div class="skeleton" style="aspect-ratio: 3 / 4; max-width: 420px"></div>
-        <div class="skeleton" style="height: 320px"></div>
+      <div class="layout" aria-busy="true" aria-label="Cargando tarjeta">
+        <div class="col">
+          <div class="skeleton" style="height: 48px; width: 180px"></div>
+          <div class="skeleton" style="aspect-ratio: 3 / 4"></div>
+        </div>
+        <div class="col">
+          <div class="skeleton" style="height: 220px"></div>
+          <div class="skeleton" style="height: 200px"></div>
+          <div class="skeleton" style="height: 140px"></div>
+        </div>
       </div>
     }
 
     @case ('no-encontrado') {
+      <a class="btn back" routerLink="/almanaque">
+        <lucide-icon [img]="icons.ArrowLeft" [size]="20" aria-hidden="true" />
+        Mi almanaque
+      </a>
       <div class="clay">
         <div class="empty-state" role="alert">
           <span class="empty-icon"><lucide-icon [img]="icons.ImageOff" [size]="40" aria-hidden="true" /></span>
@@ -26,41 +32,98 @@
     @case ('listo') {
       @if (hallazgo(); as h) {
         <div class="layout">
+          <!-- ===== Columna izquierda: tarjeta ===== -->
           <div class="col">
+            <a class="btn back" routerLink="/almanaque">
+              <lucide-icon [img]="icons.ArrowLeft" [size]="20" aria-hidden="true" />
+              Mi almanaque
+            </a>
+
+            <header class="title">
+              <h1>Detalle del hallazgo</h1>
+              <p>Explora tu tarjeta coleccionable y aprende más con el asistente experto.</p>
+            </header>
+
             <app-species-card
-              class="card"
               [especie]="h"
               [imagen]="imagenSrc(h.imagenBase64)"
               [veces]="otras().length + 1"
               [fecha]="h.fechaCaptura"
-              size="lg"
+              variant="full"
             />
 
-            <article class="info clay">
-              <h1>{{ h.nombreComun }}</h1>
-              <p class="sci">{{ h.nombreCientifico }}</p>
-              <p class="desc">{{ h.descripcion }}</p>
+            <div class="card-actions">
+              <button class="action action--ask" type="button" (click)="chat()?.enfocar()">
+                <lucide-icon [img]="icons.MessageCircle" [size]="24" aria-hidden="true" />
+                Preguntar al experto
+              </button>
+              <button class="action action--delete" type="button" (click)="abrirDialogo()">
+                <lucide-icon [img]="icons.Trash2" [size]="24" aria-hidden="true" />
+                Quitar esta tarjeta
+              </button>
+            </div>
+          </div>
 
-              <div class="meter">
-                <span class="meter-label">
-                  <span>Seguridad de la IA</span>
-                  <span class="meter-value">{{ h.nivelConfianza }}%</span>
+          <!-- ===== Columna derecha: información ===== -->
+          <div class="col">
+            <article class="panel summary">
+              <p class="panel-label">
+                <lucide-icon [img]="icons.Leaf" [size]="24" aria-hidden="true" />
+                Resumen
+              </p>
+              <h2>{{ h.nombreComun }}</h2>
+              @if (h.nombreCientifico) {
+                <p class="sci">{{ h.nombreCientifico }}</p>
+              }
+              <p class="desc">{{ h.descripcion }}</p>
+            </article>
+
+            <section class="panel" aria-labelledby="datos-titulo">
+              <h2 class="panel-label" id="datos-titulo">
+                <lucide-icon [img]="icons.ChartColumn" [size]="24" aria-hidden="true" />
+                Datos rápidos
+              </h2>
+              <dl class="facts">
+                @for (d of datos(); track d.titulo) {
+                  <div class="fact" [style.--fact-color]="d.color" [style.--fact-bg]="d.fondo">
+                    <span class="fact-icon"><lucide-icon [img]="d.icon" [size]="22" aria-hidden="true" /></span>
+                    <div>
+                      <dt>{{ d.titulo }}</dt>
+                      <dd [class.unknown]="!d.valor">{{ d.valor || 'Por descubrir' }}</dd>
+                    </div>
+                  </div>
+                }
+              </dl>
+              @if (faltanDatos()) {
+                <p class="hint">¿Falta algún dato? ¡Pregúntale al experto!</p>
+              }
+            </section>
+
+            <section class="panel trust" aria-labelledby="ia-titulo">
+              <h2 class="panel-label" id="ia-titulo">
+                <lucide-icon class="shield" [img]="icons.ShieldCheck" [size]="24" aria-hidden="true" />
+                Seguridad de la IA
+                <span class="info" tabindex="0" role="img" aria-label="Qué significa: qué tan segura está la IA de que identificó bien la especie. La IA puede equivocarse." title="Qué tan segura está la IA de su respuesta. Puede equivocarse.">
+                  <lucide-icon [img]="icons.Info" [size]="20" aria-hidden="true" />
                 </span>
+              </h2>
+              <div class="trust-bar">
                 <div class="meter-track" role="progressbar" aria-label="Seguridad de la IA" [attr.aria-valuenow]="h.nivelConfianza" aria-valuemin="0" aria-valuemax="100">
                   <div class="meter-fill" [style.width.%]="h.nivelConfianza"></div>
                 </div>
+                <strong>{{ h.nivelConfianza }}%</strong>
               </div>
-
-              <p class="date">
+              <p class="trust-text">La IA identificó esta especie con un nivel de confianza del {{ h.nivelConfianza }}%.</p>
+              <p class="trust-date">
                 <lucide-icon [img]="icons.CalendarDays" [size]="18" aria-hidden="true" />
                 Descubierto el {{ h.fechaCaptura | date: "d 'de' MMMM 'de' y, h:mm a" }}
               </p>
-            </article>
+            </section>
 
             @if (otras().length > 0) {
-              <section class="clay others" aria-labelledby="otras-titulo">
-                <h2 id="otras-titulo">
-                  <lucide-icon [img]="icons.Footprints" [size]="22" aria-hidden="true" />
+              <section class="panel others" aria-labelledby="otras-titulo">
+                <h2 class="panel-label" id="otras-titulo">
+                  <lucide-icon [img]="icons.Footprints" [size]="24" aria-hidden="true" />
                   ¡Lo encontraste {{ otras().length + 1 }} veces!
                 </h2>
                 <ul>
@@ -70,7 +133,7 @@
                         @if (imagenSrc(o.imagenBase64); as src) {
                           <img [src]="src" alt="" loading="lazy" />
                         } @else {
-                          <lucide-icon [img]="icons.ImageOff" [size]="24" aria-hidden="true" />
+                          <span class="noimg"><lucide-icon [img]="icons.ImageOff" [size]="24" aria-hidden="true" /></span>
                         }
                         <span>{{ o.fechaCaptura | date: 'd MMM' }}</span>
                       </a>
@@ -80,13 +143,6 @@
               </section>
             }
 
-            <button class="btn delete" type="button" (click)="abrirDialogo()">
-              <lucide-icon [img]="icons.Trash2" [size]="20" aria-hidden="true" />
-              Quitar esta tarjeta
-            </button>
-          </div>
-
-          <div class="col">
             <app-expert-chat [especie]="h" />
           </div>
         </div>
@@ -94,7 +150,7 @@
         @if (dialogoAbierto()) {
           <div class="dialog-backdrop" (click)="cerrarDialogo()">
             <div class="dialog clay" role="alertdialog" aria-modal="true" aria-labelledby="dlg-titulo" aria-describedby="dlg-desc" (click)="$event.stopPropagation()">
-              <span class="empty-icon dlg-icon"><lucide-icon [img]="icons.Trash2" [size]="32" aria-hidden="true" /></span>
+              <span class="dlg-icon"><lucide-icon [img]="icons.Trash2" [size]="32" aria-hidden="true" /></span>
               <h2 id="dlg-titulo">¿Quitar "{{ h.nombreComun }}"?</h2>
               <p id="dlg-desc">La tarjeta se borrará de tu almanaque y no se puede recuperar.</p>
               @if (errorEliminar()) {

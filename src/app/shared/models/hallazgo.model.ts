@@ -1,5 +1,15 @@
+/** Datos rápidos opcionales (los hallazgos antiguos no los tienen). */
+export interface DatosRapidos {
+  habitat?: string | null;
+  alimentacion?: string | null;
+  colores?: string | null;
+  tamano?: string | null;
+  /** Frase corta y divertida para el pie de la tarjeta. */
+  lema?: string | null;
+}
+
 /** Hallazgo guardado en el almanaque (GET /api/hallazgos). */
-export interface Hallazgo {
+export interface Hallazgo extends DatosRapidos {
   id: string;
   usuarioId: string;
   tipo: string;
@@ -12,7 +22,7 @@ export interface Hallazgo {
 }
 
 /** Resultado del análisis de la IA. */
-export interface AnalysisResult {
+export interface AnalysisResult extends DatosRapidos {
   tipo: string;
   nombreComun: string;
   nombreCientifico: string;
@@ -26,7 +36,7 @@ export interface NuevoHallazgo extends AnalysisResult {
 }
 
 /** Datos mínimos para mostrar una tarjeta (sirve para análisis y para hallazgos guardados). */
-export interface Especie {
+export interface Especie extends DatosRapidos {
   tipo: string;
   nombreComun: string;
   nombreCientifico: string;

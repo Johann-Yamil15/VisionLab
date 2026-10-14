@@ -43,6 +43,7 @@ export class AlmanacDetailPage {
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
   private readonly cancelarBtn = viewChild<ElementRef<HTMLButtonElement>>('cancelar');
+  protected readonly chat = viewChild(ExpertChatComponent);
 
   protected readonly icons = AppIcons;
   protected readonly imagenSrc = imagenSrc;
@@ -60,6 +61,18 @@ export class AlmanacDetailPage {
     const clave = claveEspecie(h.nombreCientifico, h.nombreComun);
     return this.todos().filter((o) => o.id !== h.id && claveEspecie(o.nombreCientifico, o.nombreComun) === clave);
   });
+
+  /** Datos rápidos de la tarjeta; los hallazgos antiguos pueden no tenerlos. */
+  protected readonly datos = computed(() => {
+    const h = this.hallazgo();
+    return [
+      { titulo: 'Hábitat', valor: h?.habitat, icon: AppIcons.House, color: '#15803d', fondo: '#dcfce7' },
+      { titulo: 'Alimentación', valor: h?.alimentacion, icon: AppIcons.Utensils, color: '#166534', fondo: '#d9f99d' },
+      { titulo: 'Colores', valor: h?.colores, icon: AppIcons.Palette, color: '#b91c1c', fondo: '#fee2e2' },
+      { titulo: 'Tamaño', valor: h?.tamano, icon: AppIcons.Ruler, color: '#047857', fondo: '#d1fae5' },
+    ];
+  });
+  protected readonly faltanDatos = computed(() => this.datos().some((d) => !d.valor));
 
   constructor() {
     effect(() => this.cargar(this.id()));

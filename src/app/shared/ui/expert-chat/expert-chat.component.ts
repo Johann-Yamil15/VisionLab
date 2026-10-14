@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { GeminiService, IaNoDisponibleError } from '../../../core/ai/gemini.service';
 import { ChatMessage } from '../../models/chat-message.model';
@@ -21,11 +20,16 @@ import { Especie } from '../../models/hallazgo.model';
 import { textoIaAHtml } from '../../utils/texto-ia';
 import { AppIcons } from '../icons';
 
-const SUGERENCIAS = ['¿Qué come?', '¿Dónde vive?', '¿Es peligroso?', 'Dime un dato curioso'];
+const SUGERENCIAS = [
+  { label: '¿Qué come?', pregunta: '¿Qué come?' },
+  { label: '¿Dónde vive?', pregunta: '¿Dónde vive?' },
+  { label: '¿Es peligroso?', pregunta: '¿Es peligroso?' },
+  { label: 'Dato curioso', pregunta: 'Dime un dato curioso' },
+];
 
 @Component({
   selector: 'app-expert-chat',
-  imports: [FormsModule, DatePipe, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: './expert-chat.component.html',
   styleUrl: './expert-chat.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +41,7 @@ export class ExpertChatComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
   private readonly lista = viewChild<ElementRef<HTMLElement>>('lista');
+  private readonly campo = viewChild<ElementRef<HTMLInputElement>>('campo');
 
   protected readonly icons = AppIcons;
   protected readonly sugerencias = SUGERENCIAS;
@@ -44,6 +49,19 @@ export class ExpertChatComponent implements OnInit {
   protected readonly pensando = signal(false);
   protected readonly toHtml = textoIaAHtml;
   protected pregunta = '';
+
+  /** Nombre en minúscula inicial para frases como "Sabe todo sobre la mariquita…". */
+  protected readonly sobre = () => {
+    const n = this.especie().nombreComun?.trim();
+    return n ? n.charAt(0).toLowerCase() + n.slice(1) : 'tu hallazgo';
+  };
+
+  /** Lleva el foco al campo de pregunta (botón "Preguntar al experto"). */
+  enfocar(): void {
+    const el = this.campo()?.nativeElement;
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el?.focus({ preventScroll: true });
+  }
 
   ngOnInit(): void {
     const nombre = this.especie().nombreComun || 'esta especie';

@@ -14,3 +14,61 @@
     padding-left: var(--rail-w);
   }
 }
+
+.shell-main {
+  position: relative;
+  z-index: 1;
+}
+
+// --- Hojas decorativas ---
+.decor {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
+}
+
+.decor-leaves {
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+
+  .l1 {
+    fill: #4caf50;
+    opacity: 0.85;
+  }
+  .l2 {
+    fill: #7cc576;
+    opacity: 0.8;
+  }
+  .l3 {
+    fill: #a5d6a7;
+    opacity: 0.8;
+  }
+  .vein {
+    fill: none;
+    stroke: #2e7d32;
+    stroke-width: 3;
+    opacity: 0.5;
+  }
+  .dot {
+    fill: #81c784;
+  }
+}
+
+.decor-leaves--tr {
+  top: 0;
+  right: 0;
+  width: 180px;
+}
+
+.decor-leaves--bl {
+  bottom: 0;
+  left: 0;
+  width: 170px;
+
+  @media (min-width: 1024px) {
+    left: var(--rail-w);
+  }
+}
