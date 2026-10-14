@@ -48,3 +48,6 @@ Thumbs.db
 !.env.example
 *.local.json
 src/environments/environment.local.ts
+
+# Originales de diseño de las cartas (pesados). La app usa public/cards/*.webp
+/assets/images/cards/*.png

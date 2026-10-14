@@ -1,113 +1,57 @@
-@if (variant() === 'full') {
-  <article class="full" [attr.aria-label]="'Tarjeta de ' + especie().nombreComun">
-    <header class="full-head">
-      <h2 class="full-name">{{ especie().nombreComun || 'Especie misteriosa' }}</h2>
-      <span class="type-pill">
-        <span class="type-pill-icon"><lucide-icon [img]="tipo().icon" [size]="18" aria-hidden="true" /></span>
+<article
+  class="carta"
+  [style]="estilo()"
+  [class.cab-clara]="tipo().cabeceraClara"
+  [attr.aria-label]="'Carta de ' + (especie().nombreComun || 'especie misteriosa') + ', ' + tipo().label"
+>
+  <!-- Cabecera -->
+  <div class="slot slot-cab">
+    <h2 class="nombre" [attr.title]="especie().nombreComun">{{ especie().nombreComun || 'Especie misteriosa' }}</h2>
+    @if (variant() === 'full') {
+      <span class="tipo-pill">
+        <span class="tipo-pill-icon"><lucide-icon [img]="tipo().icon" [size]="18" aria-hidden="true" /></span>
         {{ tipo().label }}
       </span>
-    </header>
-
-    <div class="window">
-      @if (imagen(); as src) {
-        <img [src]="src" [alt]="'Foto de ' + especie().nombreComun" decoding="async" />
-      } @else {
-        <div class="noimg"><lucide-icon [img]="tipo().icon" [size]="64" aria-hidden="true" /></div>
-      }
-      @if (veces() > 1) {
-        <span class="count" [attr.aria-label]="'Encontrado ' + veces() + ' veces'">×{{ veces() }}</span>
-      }
-    </div>
-
-    <p class="sci-pill">
-      <span>{{ especie().nombreCientifico || 'Nombre científico desconocido' }}</span>
-      <lucide-icon [img]="icons.Leaf" [size]="22" aria-hidden="true" />
-    </p>
-
-    <div class="lower">
-      <svg class="landscape" viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
-        <path class="far" d="M0 92 Q 70 58 140 80 T 270 70 T 400 78 V160 H0Z" />
-        <path class="near" d="M0 118 Q 90 92 180 112 T 400 104 V160 H0Z" />
-        <g class="plants">
-          <path d="M24 160 C 26 120 30 100 22 78 M22 78 c-6 -10 6 -14 6 -2" />
-          <path d="M44 160 C 42 128 48 110 56 92" />
-          <path d="M362 160 C 360 120 366 98 358 74 M358 74 c-7 -10 6 -15 7 -2" />
-          <path d="M384 160 C 386 130 380 110 372 96" />
-          <ellipse cx="22" cy="72" rx="5" ry="13" />
-          <ellipse cx="358" cy="68" rx="5" ry="13" />
-        </g>
-      </svg>
-
-      <dl class="rows">
-        <div class="row">
-          <dt><lucide-icon [img]="tipo().icon" [size]="22" aria-hidden="true" /> Tipo</dt>
-          <dd>{{ tipo().label }}</dd>
-        </div>
-        <div class="row">
-          <dt><lucide-icon [img]="icons.ShieldCheck" [size]="22" aria-hidden="true" /> Nivel de confianza</dt>
-          <dd>{{ confianza() }}%</dd>
-        </div>
-        @if (fecha(); as f) {
-          <div class="row">
-            <dt><lucide-icon [img]="icons.CalendarDays" [size]="22" aria-hidden="true" /> Descubierto</dt>
-            <dd>{{ f | date: 'd MMM y' }}</dd>
-          </div>
-        }
-      </dl>
-
-      <footer class="motto-row">
-        <p class="motto">
-          <lucide-icon [img]="icons.Leaf" [size]="26" aria-hidden="true" />
-          <span>{{ lema() }}</span>
-        </p>
-        <span class="seal" aria-hidden="true"><lucide-icon [img]="icons.Microscope" [size]="30" /></span>
-      </footer>
-    </div>
-  </article>
-} @else {
-  <article class="card" [attr.aria-label]="especie().nombreComun + ', ' + tipo().label">
-    <header class="card-head">
-      <h3 class="card-name">{{ especie().nombreComun || 'Especie misteriosa' }}</h3>
-      <span class="card-type-icon" [attr.title]="tipo().label">
-        <lucide-icon [img]="tipo().icon" [size]="18" aria-hidden="true" />
+    } @else {
+      <span class="tipo-icon" [attr.title]="tipo().label">
+        <lucide-icon [img]="tipo().icon" [size]="16" aria-hidden="true" />
       </span>
-    </header>
-
-    <div class="card-window">
-      @if (imagen(); as src) {
-        <img [src]="src" [alt]="'Foto de ' + especie().nombreComun" loading="lazy" decoding="async" />
-      } @else {
-        <div class="card-noimg">
-          <lucide-icon [img]="tipo().icon" [size]="48" aria-hidden="true" />
-        </div>
-      }
-
-      @if (veces() > 1) {
-        <span class="count" [attr.aria-label]="'Encontrado ' + veces() + ' veces'">×{{ veces() }}</span>
-      }
-    </div>
-
-    <p class="card-sci" [attr.title]="especie().nombreCientifico">
-      {{ especie().nombreCientifico || 'Nombre científico desconocido' }}
-    </p>
-
-    <footer class="card-foot">
-      <span class="type-badge">
-        <lucide-icon [img]="tipo().icon" [size]="14" aria-hidden="true" />
-        {{ tipo().label }}
-      </span>
-
-      <span class="card-conf" [attr.aria-label]="'Confianza ' + confianza() + ' por ciento'">
-        <lucide-icon [img]="icons.Sparkles" [size]="14" aria-hidden="true" />
-        {{ confianza() }}%
-      </span>
-    </footer>
-
-    @if (fecha(); as f) {
-      <p class="card-date">
-        <lucide-icon [img]="icons.CalendarDays" [size]="13" aria-hidden="true" />
-        {{ f | date: 'd MMM y' }}
-      </p>
     }
-  </article>
-}
+  </div>
+
+  <!-- Ventana de la foto (si no hay foto, se ve la escena del fondo) -->
+  <div class="slot slot-win">
+    @if (imagen(); as src) {
+      <img [src]="src" [alt]="'Foto de ' + especie().nombreComun" [attr.loading]="variant() === 'full' ? null : 'lazy'" decoding="async" />
+    }
+    @if (veces() > 1) {
+      <span class="count" [attr.aria-label]="'Encontrado ' + veces() + ' veces'">×{{ veces() }}</span>
+    }
+  </div>
+
+  <!-- Nombre científico -->
+  <p class="slot slot-pil" [attr.title]="especie().nombreCientifico">
+    {{ especie().nombreCientifico || 'Nombre científico desconocido' }}
+  </p>
+
+  <!-- Filas de datos -->
+  <dl class="slot slot-fil">
+    @for (f of filas(); track f.label) {
+      <div class="fila">
+        <dt>
+          <lucide-icon [img]="f.icon" [size]="20" aria-hidden="true" />
+          {{ f.label }}
+        </dt>
+        <dd>{{ f.valor }}</dd>
+      </div>
+    }
+  </dl>
+
+  <!-- Lema (solo carta completa) -->
+  @if (variant() === 'full') {
+    <div class="slot-lema">
+      <p class="lema">{{ lema() }}</p>
+      <span class="sello" aria-hidden="true"><lucide-icon [img]="icons.Microscope" [size]="28" /></span>
+    </div>
+  }
+</article>

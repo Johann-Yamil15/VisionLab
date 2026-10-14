@@ -54,6 +54,14 @@ import {
   Ruler,
   ShieldCheck,
   Utensils,
+  Bird,
+  Cpu,
+  Fish,
+  FlaskConical,
+  Gem,
+  Magnet,
+  Rainbow,
+  Shovel,
 } from 'lucide-angular';
 
 /**
@@ -116,4 +124,12 @@ export const AppIcons = {
   Ruler,
   ShieldCheck,
   Utensils,
+  Bird,
+  Cpu,
+  Fish,
+  FlaskConical,
+  Gem,
+  Magnet,
+  Rainbow,
+  Shovel,
 } as const;

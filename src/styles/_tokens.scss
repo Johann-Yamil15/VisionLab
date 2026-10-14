@@ -30,16 +30,21 @@
   --c-success: #15803d;
   --c-warning-bg: #fef3c7;
 
-  // --- Colores por tipo de hallazgo (como los "tipos" de las cartas) ---
-  --t-insecto: #c2410c; // todos ≥ 4.5:1 con texto blanco
-  --t-hoja: #15803d;
-  --t-planta: #047857;
-  --t-flor: #be185d;
-  --t-roca: #57534e;
+  // --- Colores por categoría (chips y etiquetas; todos ≥ 4.5:1 con texto blanco).
+  //     El fondo de cada carta es una imagen: public/cards/<categoria>.webp
+  --t-insecto: #c2410c;
+  --t-planta: #15803d;
+  --t-agua: #0369a1;
+  --t-tierra: #9a3412;
+  --t-roca: #475569;
+  --t-metal: #155e75;
+  --t-ave: #1d4ed8;
+  --t-luz: #b45309;
   --t-hongo: #7e22ce;
-  --t-rama: #92400e;
-  --t-objeto: #1d4ed8;
-  --t-otro: #0e7490;
+  --t-micro: #4338ca;
+  --t-objeto: #0e7490;
+  --t-quimica: #be185d;
+  --t-otro: #4b5563;
 
   // --- Tipografía ---
   --font-display: 'Fredoka', 'Nunito', system-ui, sans-serif;

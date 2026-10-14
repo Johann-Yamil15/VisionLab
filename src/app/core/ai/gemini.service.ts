@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable, throwError } from 'rxjs';
 import { AnalysisResult, Especie } from '../../shared/models/hallazgo.model';
+import { CATEGORIAS_IA } from '../../shared/utils/tipos';
 
 /** Error que se muestra cuando la IA aún no está disponible desde el servidor. */
 export class IaNoDisponibleError extends Error {
@@ -25,7 +26,7 @@ export class GeminiService {
   private readonly promptAnalisis = `
 Eres un guía de naturaleza para niños de 7 a 12 años. Analiza la imagen y responde SOLO con JSON válido:
 {
-  "tipo": "uno de: Insecto, Hoja, Planta, Flor, Roca, Hongo, Rama, Objeto artificial",
+  "tipo": "exactamente una de estas categorías: ${CATEGORIAS_IA}",
   "nombreComun": "nombre común en español",
   "nombreCientifico": "nombre científico o cadena vacía si no aplica",
   "descripcion": "máximo 500 caracteres, lenguaje sencillo y divertido para niños",

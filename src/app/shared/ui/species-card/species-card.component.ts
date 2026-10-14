@@ -1,26 +1,30 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { LucideAngularModule } from 'lucide-angular';
+import { formatDate } from '@angular/common';
+import { LucideAngularModule, LucideIconData } from 'lucide-angular';
 import { Especie } from '../../models/hallazgo.model';
 import { tipoInfo } from '../../utils/tipos';
 import { AppIcons } from '../icons';
 
+interface Fila {
+  icon: LucideIconData;
+  label: string;
+  valor: string;
+}
+
 /**
- * Tarjeta coleccionable de una especie.
- * - `compact`: para la cuadrícula del almanaque.
- * - `full`: carta completa con datos, paisaje y lema (descubrimiento y detalle).
- * Es solo presentación: el contenedor decide si es enlace o botón.
+ * Carta coleccionable de una especie. El marco, la ventana, la píldora y las filas vienen
+ * dibujados en la imagen de fondo de su categoría (public/cards/*.webp); aquí solo se coloca
+ * el contenido encima, en las posiciones definidas en `tipos.ts`.
+ * - `compact`: cuadrícula del almanaque.
+ * - `full`: descubrimiento y detalle (agrega la píldora de tipo y el lema).
  */
 @Component({
   selector: 'app-species-card',
-  imports: [DatePipe, LucideAngularModule],
+  imports: [LucideAngularModule],
   templateUrl: './species-card.component.html',
   styleUrl: './species-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '[class.is-full]': "variant() === 'full'",
-    '[style.--type-color]': 'tipo().color',
-  },
+  host: { '[class.is-full]': "variant() === 'full'" },
 })
 export class SpeciesCardComponent {
   readonly especie = input.required<Especie>();
@@ -35,4 +39,36 @@ export class SpeciesCardComponent {
     Math.max(0, Math.min(100, Math.round(Number(this.especie().nivelConfianza) || 0))),
   );
   protected readonly lema = computed(() => this.especie().lema?.trim() || this.tipo().frase);
+
+  /** Variables CSS con el fondo y la posición de cada espacio de la carta. */
+  protected readonly estilo = computed(() => {
+    const { slots, fondo, color } = this.tipo();
+    return {
+      '--fondo': `url('${fondo}')`,
+      '--type-color': color,
+      '--cab-t': slots.cabecera[0],
+      '--cab-b': slots.cabecera[1],
+      '--win-t': slots.ventana[0],
+      '--win-b': slots.ventana[1],
+      '--pil-t': slots.pildora[0],
+      '--pil-b': slots.pildora[1],
+      '--fil-t': slots.filas[0],
+      '--fil-b': slots.filas[1],
+      '--fil-n': slots.numFilas,
+    };
+  });
+
+  protected readonly filas = computed<Fila[]>(() => {
+    const f = this.fecha();
+    const filas: Fila[] = [
+      { icon: this.tipo().icon, label: 'Tipo', valor: this.tipo().label },
+      { icon: AppIcons.ShieldCheck, label: 'Confianza', valor: `${this.confianza()}%` },
+      { icon: AppIcons.CalendarDays, label: 'Descubierto', valor: f ? formatDate(f, 'd MMM y', 'es-MX') : '¡Hoy!' },
+    ];
+    if (this.tipo().slots.numFilas > 3) {
+      const v = this.veces();
+      filas.push({ icon: AppIcons.Footprints, label: 'Encontrado', valor: v === 1 ? '1 vez' : `${v} veces` });
+    }
+    return filas;
+  });
 }

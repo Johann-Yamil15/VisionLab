@@ -19,6 +19,12 @@
   min-width: 0;
 }
 
+app-species-card {
+  width: 100%;
+  max-width: 520px;
+  justify-self: center;
+}
+
 .back {
   justify-self: start;
   min-height: 44px;

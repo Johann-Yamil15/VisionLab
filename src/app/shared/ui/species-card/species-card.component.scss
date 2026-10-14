@@ -1,357 +1,239 @@
 :host {
   display: block;
-  --type-color: var(--t-otro);
-  // Derivados del color del tipo (más claro / más oscuro / crema).
-  --type-light: color-mix(in srgb, var(--type-color) 62%, #fbbf24);
-  --type-dark: color-mix(in srgb, var(--type-color) 55%, #1c0a00);
-  --cream: #fff6e8;
+}
+
+// La carta es la imagen de fondo de su categoría (720×1080, proporción 2:3).
+.carta {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  container-type: inline-size;
+  border-radius: 4.5cqw;
+  background: var(--fondo) center / 100% 100% no-repeat, var(--type-color);
+  box-shadow:
+    0 6px 0 rgba(15, 42, 28, 0.18),
+    0 16px 32px rgba(15, 42, 28, 0.16);
+  color: var(--c-text);
+}
+
+// Cada espacio se ubica según los % de tipos.ts (inicio y fin en el alto de la carta).
+.slot {
+  position: absolute;
+  margin: 0;
+}
+
+.slot-cab {
+  top: calc(var(--cab-t) * 1%);
+  height: calc((var(--cab-b) - var(--cab-t)) * 1%);
+  left: 6%;
+  right: 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2cqw;
+}
+
+.nombre {
+  min-width: 0;
+  font-size: clamp(14px, 5.6cqw, 30px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.35),
+    0 0 8px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Cabeceras claras (plantas, rocas, metales, luz…): texto oscuro.
+.cab-clara .nombre {
+  color: var(--c-text);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.tipo-icon,
+.tipo-pill-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: clamp(24px, 8cqw, 36px);
+  height: clamp(24px, 8cqw, 36px);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--type-color);
+}
+
+.tipo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5cqw;
+  flex-shrink: 0;
+  padding: 0.8cqw 3cqw 0.8cqw 0.8cqw;
+  border-radius: var(--r-pill);
+  background: rgba(0, 0, 0, 0.32);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(12px, 3.4cqw, 17px);
+  white-space: nowrap;
+}
+
+.cab-clara .tipo-pill {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--c-text);
+}
+
+.slot-win {
+  top: calc(var(--win-t) * 1%);
+  height: calc((var(--win-b) - var(--win-t)) * 1%);
+  left: 4.8%;
+  right: 4.8%;
+
+  img {
+    position: absolute;
+    inset: 1.2cqw;
+    width: calc(100% - 2.4cqw);
+    height: calc(100% - 2.4cqw);
+    object-fit: cover;
+    border-radius: 3.5cqw;
+  }
 }
 
 .count {
   position: absolute;
-  top: var(--s-2);
-  right: var(--s-2);
-  padding: 2px 10px;
+  top: 3cqw;
+  right: 3cqw;
+  padding: 0.5cqw 2.5cqw;
   border-radius: var(--r-pill);
   background: var(--c-sun);
   color: var(--c-on-sun);
   border: 2px solid var(--c-ink);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: var(--fs-sm);
+  font-size: clamp(12px, 3.8cqw, 18px);
   box-shadow: 0 3px 0 var(--c-ink);
 }
 
-/* ================= Variante compacta (almanaque) ================= */
-.card {
-  position: relative;
-  display: grid;
-  gap: var(--s-2);
-  height: 100%;
-  padding: var(--s-3);
-  border: var(--border-clay);
-  border-radius: var(--r-md);
-  background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 45%),
-    var(--type-color);
-  box-shadow: var(--shadow-clay);
-  color: #fff;
-}
-
-.card-head {
+.slot-pil {
+  top: calc(var(--pil-t) * 1%);
+  height: calc((var(--pil-b) - var(--pil-t)) * 1%);
+  left: 14%;
+  right: 14%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--s-2);
-}
-
-.card-name {
-  font-size: var(--fs-md);
-  line-height: 1.2;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
-  overflow-wrap: anywhere;
-}
-
-.card-type-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--type-color);
-  border: 2px solid rgba(0, 0, 0, 0.15);
-}
-
-.card-window {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--r-sm);
-  border: 3px solid rgba(255, 255, 255, 0.9);
-  background: var(--c-surface-2);
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.card-noimg {
-  display: grid;
-  place-items: center;
-  height: 100%;
-  color: var(--type-color);
-  opacity: 0.6;
-}
-
-.card-sci {
-  padding: 4px 10px;
-  border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--c-text);
+  justify-content: center;
   font-style: italic;
   font-weight: 600;
-  font-size: var(--fs-xs);
-  text-align: center;
+  font-size: clamp(12px, 4.2cqw, 21px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.card-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-2);
-
-  .type-badge {
-    background: rgba(0, 0, 0, 0.22);
-    font-size: var(--fs-xs);
-  }
-}
-
-.card-conf,
-.card-date {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 700;
-}
-
-.card-conf {
-  font-family: var(--font-display);
-  font-size: var(--fs-sm);
-  font-variant-numeric: tabular-nums;
-}
-
-.card-date {
-  font-size: var(--fs-xs);
-}
-
-/* ================= Variante completa (detalle / descubrimiento) ================= */
-.full {
-  position: relative;
+.slot-fil {
+  top: calc(var(--fil-t) * 1%);
+  height: calc((var(--fil-b) - var(--fil-t)) * 1%);
+  left: 9%;
+  right: 9%;
   display: grid;
-  --pad: var(--s-4);
-  gap: var(--s-3);
-  padding: var(--pad);
-  border: 4px solid var(--type-dark);
-  border-radius: var(--r-lg);
-  background: linear-gradient(180deg, var(--type-light) 0%, var(--type-color) 70%);
-  // Doble marco: borde oscuro por fuera y filo claro por dentro, como una carta.
-  box-shadow:
-    inset 0 0 0 4px color-mix(in srgb, var(--type-light) 55%, #fde68a),
-    0 8px 0 var(--type-dark),
-    0 18px 36px rgba(15, 42, 28, 0.18);
-  color: #fff;
-  overflow: hidden;
-
-  @media (min-width: 640px) {
-    --pad: var(--s-5);
-  }
+  grid-template-rows: repeat(var(--fil-n), 1fr);
 }
 
-.full-head {
-  display: flex;
+.fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: var(--s-3);
-}
-
-.full-name {
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  text-shadow: 0 2px 0 var(--type-dark);
-  overflow-wrap: anywhere;
-}
-
-.type-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-2);
-  flex-shrink: 0;
-  padding: 4px 14px 4px 4px;
-  border-radius: var(--r-pill);
-  background: color-mix(in srgb, var(--type-dark) 75%, transparent);
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  font-family: var(--font-display);
-  font-weight: 600;
-}
-
-.type-pill-icon {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--cream);
-  color: var(--type-dark);
-}
-
-.window {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  border-radius: var(--r-md);
-  border: 4px solid var(--cream);
-  background: var(--c-surface-2);
-  box-shadow: 0 4px 0 var(--type-dark);
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.noimg {
-  display: grid;
-  place-items: center;
-  height: 100%;
-  color: var(--type-color);
-  opacity: 0.5;
-}
-
-.sci-pill {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 0 48px;
-  border-radius: var(--r-pill);
-  background: var(--cream);
-  color: var(--c-text);
-  font-style: italic;
-  font-size: var(--fs-lg);
-  text-align: center;
-  overflow-wrap: anywhere;
-
-  lucide-icon {
-    position: absolute;
-    right: 14px;
-    color: var(--t-hoja);
-  }
-}
-
-.lower {
-  position: relative;
-  display: grid;
-  gap: var(--s-4);
-  margin: 0 calc(-1 * var(--pad)) calc(-1 * var(--pad));
-  padding: 0 var(--pad) var(--pad);
-}
-
-// Paisaje decorativo detrás de los datos.
-.landscape {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 70px;
-  width: 100%;
-  height: 160px;
-
-  .far {
-    fill: color-mix(in srgb, var(--type-dark) 55%, transparent);
-  }
-  .near {
-    fill: color-mix(in srgb, var(--type-dark) 80%, transparent);
-  }
-  .plants {
-    fill: var(--type-dark);
-    stroke: var(--type-dark);
-    stroke-width: 3;
-    stroke-linecap: round;
-
-    path {
-      fill: none;
-    }
-  }
-}
-
-.rows {
-  position: relative;
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: var(--s-2);
-  border-radius: var(--r-md);
-  background: color-mix(in srgb, var(--cream) 82%, transparent);
-  color: var(--c-text);
-}
-
-.row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  align-items: center;
-  gap: var(--s-3);
-  min-height: 44px;
-  padding: 0 var(--s-3);
-  border-radius: var(--r-sm);
-  background: rgba(255, 255, 255, 0.55);
+  gap: 2cqw;
+  min-height: 0;
 
   dt {
     display: flex;
     align-items: center;
-    gap: var(--s-3);
-    font-size: var(--fs-md);
+    gap: 2.5cqw;
+    min-width: 0;
+    font-size: clamp(11px, 3.9cqw, 19px);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     lucide-icon {
+      display: inline-flex;
       flex-shrink: 0;
-      padding-right: var(--s-3);
-      border-right: 2px solid color-mix(in srgb, var(--type-dark) 30%, transparent);
-      color: var(--type-dark);
-      box-sizing: content-box;
+      padding-right: 2cqw;
+      border-right: 2px solid color-mix(in srgb, var(--type-color) 35%, transparent);
+      color: var(--type-color);
     }
   }
 
   dd {
     margin: 0;
     font-family: var(--font-display);
-    font-size: var(--fs-lg);
     font-weight: 600;
+    font-size: clamp(12px, 4.4cqw, 22px);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
-.motto-row {
-  position: relative;
+// Lema sobre el paisaje (solo variante completa).
+.slot-lema {
+  position: absolute;
+  top: 79%;
+  bottom: 5.5%;
+  left: 6.5%;
+  right: 6.5%;
   display: flex;
   align-items: center;
-  gap: var(--s-3);
+  gap: 3cqw;
 }
 
-.motto {
+.lema {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: var(--s-3);
-  min-height: 64px;
-  padding: var(--s-3) var(--s-4);
-  border-radius: var(--r-md);
-  background: var(--type-dark);
+  height: 100%;
+  padding: 0 4cqw;
+  border-radius: 3.5cqw;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
   border: 2px solid rgba(255, 255, 255, 0.35);
-  font-size: var(--fs-md);
-  font-weight: 600;
-  line-height: 1.4;
-
-  lucide-icon {
-    flex-shrink: 0;
-    color: var(--cream);
-  }
+  color: #fff;
+  font-size: clamp(13px, 3.7cqw, 18px);
+  font-weight: 700;
+  line-height: 1.35;
 }
 
-.seal {
+.sello {
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  width: 68px;
-  height: 68px;
+  width: 15cqw;
+  height: 15cqw;
   border-radius: 50%;
-  background: var(--type-light);
-  border: 4px solid var(--type-dark);
-  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.35);
+  background: var(--type-color);
+  border: 3px solid #fff;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
   color: #fff;
+}
+
+// Íconos de Lucide: escalan con el texto de la carta.
+:host ::ng-deep .carta lucide-icon svg {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+:host ::ng-deep .tipo-icon svg,
+:host ::ng-deep .tipo-pill-icon svg {
+  width: 60%;
+  height: 60%;
+}
+
+:host ::ng-deep .sello svg {
+  width: 55%;
+  height: 55%;
 }

@@ -55,7 +55,7 @@ src/
       ui/icons.ts          AppIcons (set Lucide de la app)
       ui/species-card      tarjeta coleccionable (inputs: especie, imagen, veces, fecha, variant 'compact'|'full')
       ui/expert-chat       chat con el experto (input: especie; método enfocar())
-      utils/               tipos.ts (normaliza tipo → color/ícono), imagen.ts, texto-ia.ts (markdown seguro)
+      utils/               tipos.ts (12 categorías → color, ícono, fondo de carta y posiciones), imagen.ts, texto-ia.ts
       accesibilidad/       servicio (signal + localStorage) + panel flotante
     features/
       microscope/          microscope.page (lente, zoom hw/digital, pinch, linterna, galería),
@@ -87,3 +87,5 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - 2026-10-14: detalle del hallazgo según la referencia del usuario: tarjeta 'full' (filas, paisaje, lema),
   paneles Resumen / Datos rápidos / Seguridad de la IA, chat con avatar, hojas decorativas en el shell.
   La IA ahora devuelve habitat, alimentacion, colores, tamano y lema.
+- 2026-10-14: cartas con los 12 fondos diseñados por el usuario (public/cards/*.webp, originales en
+  assets/images/cards sin versionar). Taxonomía de 9 tipos → 12 categorías; la carta solo superpone contenido.

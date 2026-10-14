@@ -23,10 +23,27 @@ existen, se usa solo este archivo. Implementación: `src/styles/_tokens.scss`,
 | Texto / secundario | `--c-text` / `--c-text-muted` | #0F2A1C / #46594E (7:1) |
 | Peligro | `--c-danger` | #DC2626 |
 
-**Colores por tipo de hallazgo** (marco de las tarjetas; todos ≥ 4.5:1 con texto blanco):
-insecto #C2410C · hoja #15803D · planta #047857 · flor #BE185D · roca #57534E ·
-hongo #7E22CE · rama #92400E · objeto #1D4ED8 · otro #0E7490.
-La normalización del texto de la IA a estas categorías está en `shared/utils/tipos.ts`.
+**Cartas por categoría (12):** cada categoría tiene un fondo diseñado (marco, ventana, píldora,
+filas y paisaje) en `public/cards/<categoria>.webp` (720×1080, 2:3, ~40–85 KB). Los originales
+PNG están en `assets/images/cards/` (no se versionan). La carta solo coloca contenido encima;
+las posiciones (% del alto) y si la cabecera es clara están en `shared/utils/tipos.ts`.
+Para agregar una categoría: exportar el fondo 2:3, convertir a WebP y medir sus espacios.
+
+| Categoría | Clave | Color (chips) | Cabecera |
+|---|---|---|---|
+| Insectos | insecto | #C2410C | oscura |
+| Plantas (4 filas) | planta | #15803D | clara |
+| Vida acuática | agua | #0369A1 | clara |
+| Tierra y suelos | tierra | #9A3412 | oscura |
+| Rocas y minerales | roca | #475569 | clara |
+| Metales y materiales | metal | #155E75 | clara |
+| Aves y cielo | ave | #1D4ED8 | clara |
+| Luz y fenómenos | luz | #B45309 | clara |
+| Hongos | hongo | #7E22CE | oscura |
+| Microscópico | micro | #4338CA | oscura |
+| Objetos | objeto | #0E7490 | clara |
+| Química | quimica | #BE185D | oscura |
+| Otro (fondo de micro) | otro | #4B5563 | oscura |
 
 ## Tipografía
 - **Títulos:** Fredoka 500–700 (redonda y amigable).
