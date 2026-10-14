@@ -50,6 +50,8 @@
               [veces]="otras().length + 1"
               [fecha]="h.fechaCaptura"
               variant="full"
+              [ampliable]="true"
+              (ampliar)="fotoAbierta.set(true)"
             />
 
             <div class="card-actions">
@@ -146,6 +148,10 @@
             <app-expert-chat [especie]="h" />
           </div>
         </div>
+
+        @if (fotoAbierta() && imagenSrc(h.imagenBase64); as src) {
+          <app-photo-viewer [src]="src" [titulo]="h.nombreComun" (cerrar)="fotoAbierta.set(false)" />
+        }
 
         @if (dialogoAbierto()) {
           <div class="dialog-backdrop" (click)="cerrarDialogo()">

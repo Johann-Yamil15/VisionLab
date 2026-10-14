@@ -62,6 +62,8 @@ import {
   Magnet,
   Rainbow,
   Shovel,
+  Maximize2,
+  Move,
 } from 'lucide-angular';
 
 /**
@@ -132,4 +134,6 @@ export const AppIcons = {
   Magnet,
   Rainbow,
   Shovel,
+  Maximize2,
+  Move,
 } as const;

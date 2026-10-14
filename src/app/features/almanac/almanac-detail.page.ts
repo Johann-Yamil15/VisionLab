@@ -21,6 +21,7 @@ import { HallazgosService } from '../../shared/data-access/hallazgos.service';
 import { Hallazgo } from '../../shared/models/hallazgo.model';
 import { AppIcons } from '../../shared/ui/icons';
 import { ExpertChatComponent } from '../../shared/ui/expert-chat/expert-chat.component';
+import { PhotoViewerComponent } from '../../shared/ui/photo-viewer/photo-viewer.component';
 import { SpeciesCardComponent } from '../../shared/ui/species-card/species-card.component';
 import { claveEspecie, imagenSrc } from '../../shared/utils/imagen';
 
@@ -28,7 +29,7 @@ type Estado = 'cargando' | 'listo' | 'no-encontrado';
 
 @Component({
   selector: 'app-almanac-detail-page',
-  imports: [DatePipe, RouterLink, LucideAngularModule, SpeciesCardComponent, ExpertChatComponent],
+  imports: [DatePipe, RouterLink, LucideAngularModule, SpeciesCardComponent, ExpertChatComponent, PhotoViewerComponent],
   templateUrl: './almanac-detail.page.html',
   styleUrl: './almanac-detail.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,6 +52,7 @@ export class AlmanacDetailPage {
   protected readonly hallazgo = signal<Hallazgo | null>(null);
   private readonly todos = signal<Hallazgo[]>([]);
   protected readonly dialogoAbierto = signal(false);
+  protected readonly fotoAbierta = signal(false);
   protected readonly eliminando = signal(false);
   protected readonly errorEliminar = signal(false);
 
@@ -80,6 +82,7 @@ export class AlmanacDetailPage {
 
   private cargar(id: string): void {
     this.estado.set('cargando');
+    this.fotoAbierta.set(false);
     forkJoin({ hallazgo: this.service.obtener(id), todos: this.service.listar() })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

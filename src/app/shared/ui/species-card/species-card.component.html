@@ -22,7 +22,17 @@
   <!-- Ventana de la foto (si no hay foto, se ve la escena del fondo) -->
   <div class="slot slot-win">
     @if (imagen(); as src) {
-      <img [src]="src" [alt]="'Foto de ' + especie().nombreComun" [attr.loading]="variant() === 'full' ? null : 'lazy'" decoding="async" />
+      @if (ampliable()) {
+        <button class="foto-btn" type="button" (click)="ampliar.emit()" [attr.aria-label]="'Ampliar la foto de ' + especie().nombreComun">
+          <img [src]="src" alt="" decoding="async" />
+          <span class="ampliar" aria-hidden="true">
+            <lucide-icon [img]="icons.Maximize2" [size]="18" />
+            Ampliar
+          </span>
+        </button>
+      } @else {
+        <img [src]="src" [alt]="'Foto de ' + especie().nombreComun" [attr.loading]="variant() === 'full' ? null : 'lazy'" decoding="async" />
+      }
     }
     @if (veces() > 1) {
       <span class="count" [attr.aria-label]="'Encontrado ' + veces() + ' veces'">×{{ veces() }}</span>

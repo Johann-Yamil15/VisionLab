@@ -6,13 +6,14 @@ import { HallazgosService } from '../../shared/data-access/hallazgos.service';
 import { AppIcons } from '../../shared/ui/icons';
 import { ExpertChatComponent } from '../../shared/ui/expert-chat/expert-chat.component';
 import { SpeciesCardComponent } from '../../shared/ui/species-card/species-card.component';
+import { PhotoViewerComponent } from '../../shared/ui/photo-viewer/photo-viewer.component';
 import { CapturaStore } from '../microscope/data-access/captura.store';
 
 type Guardado = 'guardando' | 'guardado' | 'error';
 
 @Component({
   selector: 'app-discovery-page',
-  imports: [RouterLink, LucideAngularModule, SpeciesCardComponent, ExpertChatComponent],
+  imports: [RouterLink, LucideAngularModule, SpeciesCardComponent, ExpertChatComponent, PhotoViewerComponent],
   templateUrl: './discovery.page.html',
   styleUrl: './discovery.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +27,7 @@ export class DiscoveryPage {
   protected readonly icons = AppIcons;
   protected readonly foto = this.store.foto();
   protected readonly resultado = this.store.resultado();
+  protected readonly fotoAbierta = signal(false);
   protected readonly guardado = signal<Guardado>(this.store.guardadoId() ? 'guardado' : 'guardando');
 
   /** Misma regla que el backend: 10 puntos + 1 por cada 10% de confianza. */

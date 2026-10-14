@@ -55,6 +55,7 @@ src/
       ui/icons.ts          AppIcons (set Lucide de la app)
       ui/species-card      tarjeta coleccionable (inputs: especie, imagen, veces, fecha, variant 'compact'|'full')
       ui/expert-chat       chat con el experto (input: especie; método enfocar())
+      ui/photo-viewer      visor de foto a pantalla completa: zoom (pellizco, rueda, doble toque, botones, teclado) y arrastre
       utils/               tipos.ts (12 categorías → color, ícono, fondo de carta y posiciones), imagen.ts, texto-ia.ts
       accesibilidad/       servicio (signal + localStorage) + panel flotante
     features/
@@ -89,3 +90,4 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
   La IA ahora devuelve habitat, alimentacion, colores, tamano y lema.
 - 2026-10-14: cartas con los 12 fondos diseñados por el usuario (public/cards/*.webp, originales en
   assets/images/cards sin versionar). Taxonomía de 9 tipos → 12 categorías; la carta solo superpone contenido.
+- 2026-10-14: visor de foto con zoom; la foto de la carta 'full' se amplía con [ampliable] (detalle y descubrimiento).

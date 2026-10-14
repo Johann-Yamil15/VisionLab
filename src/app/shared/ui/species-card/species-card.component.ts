@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { LucideAngularModule, LucideIconData } from 'lucide-angular';
 import { Especie } from '../../models/hallazgo.model';
@@ -32,6 +32,9 @@ export class SpeciesCardComponent {
   readonly veces = input(1);
   readonly fecha = input<string | null>(null);
   readonly variant = input<'compact' | 'full'>('compact');
+  /** Si es true, la foto es un botón que emite `ampliar` (no usar dentro de un enlace). */
+  readonly ampliable = input(false);
+  readonly ampliar = output<void>();
 
   protected readonly icons = AppIcons;
   protected readonly tipo = computed(() => tipoInfo(this.especie().tipo));
