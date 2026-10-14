@@ -1,0 +1,648 @@
+// ============================================
+// 🎨 VARIABLES DE COLOR (Tema Terminal/Neon)
+// Asegúrate de que estas variables sean consistentes con tu aplicación global.
+// ============================================
+$accent-neon: #00a884; // Verde Neón (Principal)
+$terminal-border: rgba(0, 168, 132, 0.4);
+$primary-dark: #0d1418; // Fondo principal del chat/pantalla
+$secondary-dark: #1a2730; // Fondo de headers y footer
+$chat-surface: #202c33; // Fondo de input/superficie media
+$medium-bg: #101c22; // Fondo de la tarjeta
+$message-bg-ai: #2a3942; // Burbuja de la IA
+$message-bg-user: #005c4b; // Burbuja del Usuario
+$text-light: #e9edef; // Texto principal
+$text-soft: #8696a0; // Texto secundario
+$divider: #2a3942;
+$success: #25d366; // Éxito/Online
+$dark-bg: #000;
+$shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+
+// Variables de espaciado y radio
+$radius-sm: 8px;
+$radius-md: 12px;
+$shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+// ============================================
+// 🖥️ LAYOUT PRINCIPAL DEL DETALLE (GRID)
+// ============================================
+.lab-terminal-screen.detail-screen {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: $primary-dark;
+}
+
+.almanac-detail-container {
+    display: grid;
+    grid-template-columns: 1fr; // Móvil: una sola columna
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    
+    // Desktop: dos columnas (3/2 ratio)
+    @media (min-width: 1024px) {
+        grid-template-columns: 3fr 2fr; 
+        height: 85vh; // Control de altura para el chat fijo
+    }
+}
+
+// --------------------------------------------
+// Manejo del loader
+// --------------------------------------------
+.analysis-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    .loading-text {
+        margin-top: 15px;
+        color: $text-soft;
+        font-size: 1rem;
+    }
+}
+
+
+// ============================================
+// 🧭 SECCIÓN IZQUIERDA: DETALLE DE TARJETA
+// ============================================
+.detail-card-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    
+    // Botón de Volver
+    .header-back-button {
+        flex-shrink: 0;
+    }
+    
+    .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 15px;
+        border: 1px solid $terminal-border;
+        background: $secondary-dark;
+        color: $accent-neon;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+            background: $chat-surface;
+        }
+        
+        .material-icons {
+            font-size: 20px;
+        }
+    }
+}
+
+/* -------------------------------------------
+ * 🔮 ESTILOS DE LA TARJETA DEL HALLAZGO
+ * ------------------------------------------- */
+
+.data-card {
+    background: linear-gradient(135deg, $medium-bg 0%, darken($medium-bg, 3%) 100%);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 168, 132, 0.2);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(0, 168, 132, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    flex-grow: 1;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            $accent-neon 50%, 
+            transparent 100%);
+        opacity: 0.6;
+    }
+}
+
+.terminal-frame-glow {
+    box-shadow: 
+        0 0 15px rgba($accent-neon, 0.3), 
+        inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.identification-card {
+    .image-viewer-large {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: 12px;
+        border: 2px solid $accent-neon;
+        background-color: #000;
+        box-shadow: 
+            0 4px 20px rgba(0, 168, 132, 0.3),
+            inset 0 0 20px rgba(0, 0, 0, 0.5);
+        margin-bottom: 25px; 
+    }
+
+    .analyzed-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: saturate(1.15) contrast(1.08);
+    }
+
+    .image-overlay-text {
+        position: absolute;
+        padding: 6px 10px;
+        font-size: 0.7rem;
+        color: $accent-neon;
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px dashed rgba($accent-neon, 0.5);
+        z-index: 10;
+        backdrop-filter: blur(5px);
+        font-family: 'Courier New', monospace;
+    }
+
+    .top-left {
+        top: 8px;
+        left: 8px;
+        border-radius: 4px 0 4px 0;
+    }
+
+    .bottom-right {
+        bottom: 8px;
+        right: 8px;
+        border-radius: 0 4px 0 4px;
+    }
+
+    .card-type-label {
+        background: linear-gradient(135deg, $accent-neon 0%, darken($accent-neon, 10%) 100%);
+        color: $dark-bg;
+        font-weight: bold;
+        border: none;
+        text-shadow: none;
+        box-shadow: 0 0 10px rgba(0, 168, 132, 0.6);
+    }
+
+    .card-title {
+        font-size: 1.6rem;
+        color: $text-light;
+        text-shadow: 0 0 8px rgba($accent-neon, 0.4);
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+        border-bottom: 2px solid $terminal-border;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+}
+
+.data-field {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+
+    .field-label {
+        font-weight: bold;
+        color: $text-soft;
+        margin-right: 6px;
+    }
+
+    .field-value {
+        color: $text-light;
+    }
+
+    &.scientific .field-value {
+        color: $accent-neon;
+        font-style: italic;
+        text-shadow: 0 0 5px rgba($accent-neon, 0.3);
+    }
+}
+
+.confidence-bar {
+    margin: 18px 0;
+    
+    .bar-label {
+        display: block;
+        font-size: 0.8rem;
+        color: $text-soft;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .bar-fill {
+        height: 24px;
+        line-height: 24px;
+        padding: 0 10px;
+        color: $dark-bg;
+        font-weight: bold;
+        font-size: 0.85rem;
+        text-align: right;
+        background: linear-gradient(90deg, 
+            darken($accent-neon, 25%) 0%, 
+            $accent-neon 50%,
+            lighten($accent-neon, 10%) 100%);
+        box-shadow: 
+            0 0 15px rgba($accent-neon, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+    }
+}
+
+.description-section-inside {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid $terminal-border;
+}
+
+.card-subtitle {
+    color: $accent-neon;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+
+    .mini-icon {
+        font-size: 1.1rem;
+    }
+}
+
+.description-text {
+    color: $text-soft;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: justify;
+    margin: 0;
+}
+
+// ============================================
+// 💬 SECCIÓN DERECHA: CHAT
+// ============================================
+
+.chat-section {
+    position: relative;
+    height: 90vh; // Altura fija para el chat en desktop
+    
+    @media (min-width: 1024px) {
+        height: 100%; 
+    }
+}
+
+// ============================================
+// 🎯 CONTENEDOR PRINCIPAL DEL CHAT
+// ============================================
+.whatsapp-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: $primary-dark;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 168, 132, 0.2); 
+}
+
+.chat-detail-frame {
+     padding: 0; 
+}
+
+
+// ============================================
+// 📌 HEADER DEL CHAT
+// ============================================
+.chat-header {
+    background: linear-gradient(180deg, $secondary-dark 0%, $chat-surface 100%);
+    padding: 16px 20px;
+    box-shadow: $shadow-medium;
+    flex-shrink: 0;
+    border-bottom: 1px solid $divider;
+    position: relative;
+    z-index: 10;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(0, 168, 132, 0.3) 50%, 
+            transparent 100%);
+    }
+}
+
+.species-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.chat-icon {
+    font-size: 36px;
+    color: $accent-neon;
+    filter: drop-shadow(0 0 8px rgba(0, 168, 132, 0.5));
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.species-name {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: $text-light;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.status {
+    font-size: 0.8rem;
+    color: $text-soft;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: $success;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 8px rgba(37, 211, 102, 0.6);
+        animation: blink 2s ease-in-out infinite;
+    }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+// ============================================
+// 💬 ÁREA DE MENSAJES (Scrollable)
+// ============================================
+.message-area {
+    flex: 1 1 auto;
+    background: $primary-dark;
+    padding: 16px 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    // Patrón de fondo sutil
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 255, 255, 0.01) 10px,
+            rgba(255, 255, 255, 0.01) 20px
+        );
+
+    // Scrollbar estilizado (Webkit/Chrome/Edge)
+    &::-webkit-scrollbar { width: 8px; }
+    &::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+        &:hover { background: rgba(255, 255, 255, 0.25); }
+    }
+}
+
+// ============================================
+// 🎈 BURBUJAS DE MENSAJES
+// ============================================
+.message-bubble-wrapper {
+    display: flex;
+    margin-bottom: 4px;
+
+    &.user-message-wrapper {
+        justify-content: flex-end;
+    }
+}
+
+.message-bubble {
+    max-width: 75%;
+    min-width: 120px;
+    padding: 10px 14px;
+    border-radius: $radius-md;
+    position: relative;
+    word-wrap: break-word;
+    box-shadow: $shadow-soft;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(5px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+}
+
+.ai-bubble {
+    background: linear-gradient(135deg, $message-bg-ai 0%, darken($message-bg-ai, 3%) 100%);
+    color: $text-light;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-bubble {
+    background: linear-gradient(135deg, $message-bg-user 0%, darken($message-bg-user, 5%) 100%);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    border: 1px solid rgba(0, 168, 132, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 92, 75, 0.4);
+}
+
+.message-text {
+    margin: 0 50px 0 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: inherit;
+    word-break: break-word;
+}
+
+.message-time {
+    position: absolute;
+    bottom: 4px;
+    right: 10px;
+    font-size: 0.68rem;
+    color: rgba($text-light, 0.5);
+    font-weight: 500;
+
+    .user-bubble & {
+        color: rgba(#fff, 0.7);
+    }
+}
+
+// ============================================
+// ⏳ INDICADOR DE ESCRITURA
+// ============================================
+.typing-indicator {
+    margin: 8px 0;
+
+    .ai-bubble {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        max-width: fit-content;
+
+        .typing-text {
+            font-style: italic;
+            font-size: 0.85rem;
+            color: $text-soft;
+            margin: 0;
+        }
+    }
+}
+
+.dots {
+    display: flex;
+    gap: 4px;
+
+    span {
+        width: 7px;
+        height: 7px;
+        background: $accent-neon;
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out;
+        box-shadow: 0 0 6px rgba(0, 168, 132, 0.5);
+
+        &:nth-child(2) { animation-delay: 0.2s; }
+        &:nth-child(3) { animation-delay: 0.4s; }
+    }
+}
+
+@keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.7; }
+    30% { transform: translateY(-8px); opacity: 1; }
+}
+
+// ============================================
+// ⌨️ ÁREA DE INPUT (Footer)
+// ============================================
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, $chat-surface 0%, $secondary-dark 100%);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
+    border-top: 1px solid $divider;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(0, 168, 132, 0.3) 50%, 
+            transparent 100%);
+    }
+
+    input {
+        flex: 1 1 auto;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 24px;
+        background: rgba($message-bg-ai, 0.7);
+        color: $text-light;
+        font-size: 0.95rem;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+
+        &:focus {
+            outline: none;
+            background: rgba($message-bg-ai, 0.9);
+            border-color: $accent-neon;
+            box-shadow: 0 0 0 2px rgba(0, 168, 132, 0.1);
+        }
+
+        &::placeholder {
+            color: $text-soft;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    button {
+        background: linear-gradient(135deg, $accent-neon 0%, darken($accent-neon, 8%) 100%);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(0, 168, 132, 0.3);
+
+        &:hover:not(:disabled) {
+            background: linear-gradient(135deg, lighten($accent-neon, 5%) 0%, $accent-neon 100%);
+            transform: scale(1.05);
+        }
+
+        &:disabled {
+            background: rgba($accent-neon, 0.3);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .send-icon {
+            color: #fff;
+            font-size: 22px;
+            transform: rotate(-30deg);
+        }
+    }
+}
+
+// ============================================
+// 🎯 OPTIMIZACIONES DE PERFORMANCE
+// ============================================
+.message-bubble,
+button,
+input {
+    will-change: transform, box-shadow;
+}

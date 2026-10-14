@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class GeminiService {
 
-  private API_KEY = 'AIzaSyANor9dC8fK5-WxpGiKVNm2u2nx-eT3hZY';
+  // TEMPORAL: Gemini se mueve al backend (ver CLAUDE.md). Nunca pegar keys aquí.
+  private API_KEY = '';
   private URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
   //                                                         ^^^^^^^^^^^^^^^^^^^^^^^ <-- CORRECCIÓN CLAVE
 
@@ -17,7 +18,7 @@ Clasifica qué es (insecto, hoja, roca, hongo, rama, objeto artificial, etc).
 Respóndeme únicamente en formato JSON válido con la siguiente estructura:
 
 {
-  "tipo": "",
+  "tipo": "(Insecto, Hoja, Roca, Hongo, Planta, Rama, Objeto artificial, etc) maneja estos tipos asi como estan escritos.",
   "nombreComun": "",
   "nombreCientifico": "",
   "descripcion": "un mazimo de 500 caracteres no mas",

@@ -1,17 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, UpperCasePipe } from '@angular/common';
+import { CommonModule, UpperCasePipe, DatePipe } from '@angular/common'; // Agregado DatePipe
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { HallazgosService, Hallazgo } from '../../Core/services/hallazgos.service';
 import { Router } from '@angular/router';
 
-// 💡 Interfaz necesaria para que ResultsComponent la reconozca
-export interface AnalysisResult {
-  tipo: string;
-  nombreComun: string;
-  nombreCientifico: string;
-  descripcion: string;
-  nivelConfianza: string; // Espera un string (e.g., "95")
-}
+// 💡 Interfaz Hallazgo (debería venir de hallazgos.service, pero la definimos aquí para contexto)
+// NOTA: Para este ejemplo, asumimos que Hallazgo tiene la estructura de la base de datos
+// y NO usamos AnalysisResult para simplificar la navegación de detalle.
+// Asume que Hallazgo tiene la estructura completa, incluyendo:
+// id, tipo, nombreComun, nombreCientifico, descripcion, nivelConfianza, fechaCaptura, imagenBase64, ubicacion
+// Si Hallazgo no tiene estos campos, debes añadirlos en tu servicio/modelo de Hallazgo.
 
 @Component({
   selector: 'app-almanac-list',
@@ -19,7 +17,8 @@ export interface AnalysisResult {
   imports: [
     CommonModule,
     UpperCasePipe,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    DatePipe // Importado para el uso en el HTML
   ],
   templateUrl: './almanac-list.component.html',
   styleUrls: ['./almanac-list.component.scss']
@@ -108,44 +107,25 @@ export class AlmanacListComponent implements OnInit {
   }
 
   updateCarousel(): void {
-    const offset = -this.currentIndex * 100;
-    this.carouselTransform = `translateX(${offset}%)`;
+    // La lógica de transformación se maneja con getCardTransform en el HTML
   }
 
   // ============================================
-  // 🚀 NAVEGACIÓN Y ACCIONES
+  // 🚀 NAVEGACIÓN A DETALLE (CORRECCIÓN)
   // ============================================
 
   /**
-   * 🚀 Navega a la vista de análisis reutilizando ResultsComponent y ChatComponent.
-   * Mapea el Hallazgo (DB) a AnalysisResult (UI) y usa Router State.
+   * 🚀 Navega a la vista de detalle, pasando el hallazgo completo.
    */
   verDetalle(hallazgo: Hallazgo): void {
-    console.log('👁️ Ver detalle:', hallazgo.nombreComun);
-    console.log('📦 Hallazgo completo:', hallazgo);
+    console.log('👁️ Navegando a detalle para:', hallazgo.nombreComun);
 
-    // 1. Mapeo al formato AnalysisResult que espera ResultsComponent
-    const analysisResultData: AnalysisResult = {
-      tipo: hallazgo.tipo,
-      nombreComun: hallazgo.nombreComun,
-      nombreCientifico: hallazgo.nombreCientifico,
-      descripcion: hallazgo.descripcion,
-      // ✅ Convertimos el número de nivelConfianza a string con validación
-      nivelConfianza: (hallazgo.nivelConfianza ?? 0).toString(),
-    };
-
-    console.log('🔄 Datos mapeados:', analysisResultData);
-
-    // 2. Obtener la imagen en formato correcto
-    const photoData = this.getImageSrc(hallazgo);
-    console.log('🖼️ Imagen procesada:', photoData.substring(0, 50) + '...');
-
-    // 3. Navegación a AnalysisViewComponent (que contiene ResultsComponent + ChatComponent)
-    this.router.navigate(['/analysis-view'], {
+    // Navegación a la ruta de detalle (asegúrate de que 'almanac/detalle' está configurado en tu routing)
+    this.router.navigate(['almanac/detalle'], {
       state: {
-        result: analysisResultData,
-        photo: photoData,
-        fromAlmanac: true // 🚩 Bandera crítica para que ResultsComponent NO guarde
+        // 💡 Pasamos el objeto HALLAZGO completo con la clave 'hallazgo',
+        // que es lo que espera AlmanacDetailComponent.
+        hallazgo: hallazgo 
       }
     });
   }
@@ -196,52 +176,39 @@ export class AlmanacListComponent implements OnInit {
     this.hallazgosService.deleteHallazgo(idAEliminar).subscribe({
       next: () => {
         console.log('✅ Hallazgo eliminado exitosamente:', nombreHallazgo);
-        
-        // Recargar la lista completa para actualizar la UI
         this.cargarHallazgos();
-        
-        // Cerrar el modal
         this.cancelarEliminacion();
       },
       error: (error) => {
         console.error('❌ Error eliminando hallazgo:', error);
-        
-        // Cerrar el modal incluso si hay error (puedes agregar un mensaje de error aquí)
         this.cancelarEliminacion();
-        
-        // TODO: Mostrar mensaje de error al usuario
-        // this.showErrorToast('No se pudo eliminar el hallazgo');
       }
     });
   }
 
   // ============================================
-  // 🛠️ MÉTODOS AUXILIARES
+  // 🛠️ MÉTODOS AUXILIARES Y CARRUSEL
   // ============================================
 
   /**
    * Obtiene la imagen en formato Base64 correctamente formateado.
    */
   getImageSrc(hallazgo: Hallazgo): string {
-    // Verificar si existe la propiedad imagenBase64
+    // Verifica imagenBase64
     if ('imagenBase64' in hallazgo && hallazgo.imagenBase64) {
-      // Si ya tiene el prefijo data:image, retornarlo tal cual
       if (hallazgo.imagenBase64.startsWith('data:image')) {
         return hallazgo.imagenBase64;
       }
-      // Si es base64 puro, agregar el prefijo
       return `data:image/jpeg;base64,${hallazgo.imagenBase64}`;
     }
-    
-    // Fallback a imagen placeholder
-    console.warn('⚠️ No se encontró imagen para el hallazgo:', hallazgo.nombreComun);
     return 'assets/placeholder-image.png';
   }
 
   /**
-   * Formatea la fecha en español (México).
+   * Formatea la fecha en la tarjeta (usado en almanac-list.component.html).
    */
   formatFecha(fecha: string): string {
+    // Usamos DatePipe en el HTML, pero este método queda por si lo requiere la lógica.
     return new Date(fecha).toLocaleDateString('es-MX', {
       day: '2-digit',
       month: 'short',
@@ -264,10 +231,6 @@ export class AlmanacListComponent implements OnInit {
     };
     return iconMap[tipo] || 'category';
   }
-
-  // ============================================
-  // 🎨 TRANSFORMACIONES CSS DEL CARRUSEL 3D
-  // ============================================
 
   /**
    * Calcula la transformación 3D para cada tarjeta del carrusel.

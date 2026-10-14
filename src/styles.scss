@@ -37,3 +37,23 @@ body {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+
+
+/* =============== ESTILOS GLOBALES PARA ACCESIBILIDAD =============== */
+/* Agregar estos estilos en tu archivo styles.css global */
+
+html.grayscale-mode {
+    filter: grayscale(100%);
+}
+
+html.invert-mode {
+    filter: invert(100%) hue-rotate(180deg);
+}
+
+/* Asegurar que la línea de lectura no se vea afectada por los filtros */
+html.grayscale-mode #lineaLectura,
+html.invert-mode #lineaLectura {
+    filter: none !important;
+}

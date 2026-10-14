@@ -23,6 +23,9 @@ import {
   Router
 } from '@angular/router';
 
+// ✨ IMPORTAR EL COMPONENTE DE ACCESIBILIDAD
+import { AccesibilidadComponent } from './accesibilidad/accesibilidad.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -35,7 +38,8 @@ import {
     RouterOutlet,
     RouterModule,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    AccesibilidadComponent  // ✨ AGREGAR AQUÍ
   ]
 })
 export class App {

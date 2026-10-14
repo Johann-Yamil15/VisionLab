@@ -12,6 +12,7 @@ import { ChatComponent } from './features/chat/chat.component'; // 🟢 AÑADIDO
 import { AnalysisViewComponent } from './features/camera/analysis-view.component'; // 🟢 AÑADIDO: Vista Contenedora
 import { LegalComponent } from './settings/legal.component';
 import { AlmanacListComponent } from './features/almanac/almanac-list.component';
+import { AlmanacDetailComponent } from './features/almanac/almanac-detail.component';
 // import { ChatComponent } from './features/chat/chat.component';
 
 // import { AlmanacListComponent } from './features/almanac/almanac-list.component';
@@ -58,6 +59,7 @@ export const routes: Routes = [
 //   // --- Almanac ---
 //   { path: 'almanac', component: AlmanacListComponent, canActivate: [AuthGuard] },
   { path: 'almanac', component: AlmanacListComponent },
+  { path: 'almanac/detalle', component: AlmanacDetailComponent },
 
 //   // --- Gamification ---
 //   { path: 'achievements', component: AchievementsComponent, canActivate: [AuthGuard] },
