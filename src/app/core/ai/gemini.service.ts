@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable, throwError } from 'rxjs';
 import { AnalysisResult, Especie } from '../../shared/models/hallazgo.model';
-import { CATEGORIAS_IA } from '../../shared/utils/tipos';
+import { ETIQUETAS_IA, GUIA_CATEGORIAS_IA } from '../../shared/utils/tipos';
 
 /** Error que se muestra cuando la IA aún no está disponible desde el servidor. */
 export class IaNoDisponibleError extends Error {
@@ -24,19 +24,73 @@ export class GeminiService {
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
   private readonly promptAnalisis = `
-Eres un guía de naturaleza para niños de 7 a 12 años. Analiza la imagen y responde SOLO con JSON válido:
-{
-  "tipo": "exactamente una de estas categorías: ${CATEGORIAS_IA}",
-  "nombreComun": "nombre común en español",
-  "nombreCientifico": "nombre científico o cadena vacía si no aplica",
-  "descripcion": "máximo 500 caracteres, lenguaje sencillo y divertido para niños",
-  "nivelConfianza": número entero de 0 a 100,
-  "habitat": "dónde vive, máximo 4 palabras (ej. Jardines y campos)",
-  "alimentacion": "qué come, máximo 4 palabras; si no come, escribe No aplica",
-  "colores": "colores principales, máximo 4 palabras",
-  "tamano": "Diminuto, Pequeño, Mediano o Grande",
-  "lema": "una frase divertida para niños de máximo 90 caracteres"
-}`;
+Eres un guía de naturaleza para niños de 7 a 12 años que usan un microscopio digital.
+Observa la imagen, identifica el SUJETO PRINCIPAL (lo que está al centro o más enfocado) y
+llena todos los campos en español.
+
+CATEGORÍA ("tipo"): elige SIEMPRE exactamente una de estas 12, escrita igual:
+${GUIA_CATEGORIAS_IA}
+
+Reglas para elegir la categoría:
+- Clasifica el sujeto principal, no el fondo (una mariposa sobre una flor es "Insectos").
+- Si dudas entre dos, elige la más específica (una araña es "Insectos"; un hongo sobre un tronco es "Hongos").
+- Si no es algo de la naturaleza, usa "Objetos" (o "Metales y materiales" si lo importante es el material).
+- Nunca inventes otra categoría ni la dejes vacía.
+
+Campos:
+- nombreComun: nombre común en español.
+- nombreCientifico: nombre científico; cadena vacía si no aplica (objetos, materiales, fenómenos).
+- descripcion: máximo 500 caracteres, lenguaje sencillo y divertido para niños.
+- nivelConfianza: entero de 0 a 100 según qué tan seguro estás de la identificación.
+- habitat: dónde vive o se encuentra, máximo 4 palabras.
+- alimentacion: qué come, máximo 4 palabras; "No aplica" si no come.
+- colores: colores principales, máximo 4 palabras.
+- tamano: Diminuto, Pequeño, Mediano o Grande.
+- lema: una frase divertida para niños, máximo 90 caracteres.`;
+
+  /**
+   * Esquema de respuesta: Gemini devuelve JSON con esta forma y "tipo" queda limitado a las
+   * 12 categorías (enum), así la carta siempre recibe su fondo correcto.
+   */
+  private readonly esquemaAnalisis = {
+    type: 'OBJECT',
+    properties: {
+      tipo: { type: 'STRING', format: 'enum', enum: ETIQUETAS_IA },
+      nombreComun: { type: 'STRING' },
+      nombreCientifico: { type: 'STRING' },
+      descripcion: { type: 'STRING' },
+      nivelConfianza: { type: 'INTEGER' },
+      habitat: { type: 'STRING' },
+      alimentacion: { type: 'STRING' },
+      colores: { type: 'STRING' },
+      tamano: { type: 'STRING', format: 'enum', enum: ['Diminuto', 'Pequeño', 'Mediano', 'Grande'] },
+      lema: { type: 'STRING' },
+    },
+    required: [
+      'tipo',
+      'nombreComun',
+      'nombreCientifico',
+      'descripcion',
+      'nivelConfianza',
+      'habitat',
+      'alimentacion',
+      'colores',
+      'tamano',
+      'lema',
+    ],
+    propertyOrdering: [
+      'tipo',
+      'nombreComun',
+      'nombreCientifico',
+      'descripcion',
+      'nivelConfianza',
+      'habitat',
+      'alimentacion',
+      'colores',
+      'tamano',
+      'lema',
+    ],
+  };
 
   analyze(imageDataUrl: string): Observable<AnalysisResult> {
     if (!this.apiKey) return throwError(() => new IaNoDisponibleError());
@@ -50,7 +104,7 @@ Eres un guía de naturaleza para niños de 7 a 12 años. Analiza la imagen y res
           ],
         },
       ],
-      generationConfig: { responseMimeType: 'application/json' },
+      generationConfig: { responseMimeType: 'application/json', responseSchema: this.esquemaAnalisis },
     };
 
     return this.post(payload).pipe(

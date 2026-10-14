@@ -43,6 +43,8 @@ export interface TipoInfo {
   slots: CartaSlots;
   /** Frase de respaldo cuando la IA no dio un lema. */
   frase: string;
+  /** Qué entra en esta categoría (se le explica a la IA para que clasifique bien). */
+  guiaIa: string;
 }
 
 const SLOTS_BASE: CartaSlots = {
@@ -70,6 +72,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-insecto)',
     cabeceraClara: false,
     frase: 'Pequeño explorador que cumple un gran papel en la naturaleza.',
+    guiaIa: 'insectos y otros artrópodos: escarabajos, mariquitas, mariposas, orugas, hormigas, abejas, moscas, grillos, arañas, ciempiés, cochinillas.',
   },
   planta: {
     label: 'Plantas',
@@ -77,6 +80,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-planta)',
     cabeceraClara: true,
     frase: 'Da oxígeno, alimento y refugio a muchos seres vivos.',
+    guiaIa: 'plantas y sus partes: hojas, flores, ramas, cortezas, semillas, frutos, árboles, pasto, musgo, cactus.',
     slots: { cabecera: [2.6, 9.4], ventana: [11.2, 46.4], pildora: [47.4, 53.5], filas: [56, 75.8], numFilas: 4 },
   },
   agua: {
@@ -85,6 +89,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-agua)',
     cabeceraClara: true,
     frase: 'El agua es el hogar de seres sorprendentes.',
+    guiaIa: 'vida del agua: peces, ranas, renacuajos, algas, conchas, cangrejos, plantas y animales de ríos, estanques o mar.',
     slots: SLOTS_ALTOS,
   },
   tierra: {
@@ -93,6 +98,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-tierra)',
     cabeceraClara: false,
     frase: 'Bajo tus pies vive un mundo lleno de vida.',
+    guiaIa: 'suelo y lo que vive en él: tierra, arena, lodo, composta, lombrices, caracoles de tierra, huellas; también lagartijas, mamíferos y otros animales terrestres que no sean aves ni insectos.',
   },
   roca: {
     label: 'Rocas y minerales',
@@ -100,6 +106,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-roca)',
     cabeceraClara: true,
     frase: 'Guarda millones de años de historia de la Tierra.',
+    guiaIa: 'piedras, rocas, guijarros, cristales naturales, minerales y fósiles.',
   },
   metal: {
     label: 'Metales y materiales',
@@ -107,6 +114,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-metal)',
     cabeceraClara: true,
     frase: 'Los materiales construyen el mundo que nos rodea.',
+    guiaIa: 'materiales: metales, clavos, latas, monedas, plástico, vidrio, tela, papel, cartón.',
     slots: SLOTS_ALTOS,
   },
   ave: {
@@ -115,6 +123,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-ave)',
     cabeceraClara: true,
     frase: 'Mira hacia arriba: el cielo también está lleno de vida.',
+    guiaIa: 'aves, plumas, nidos, huevos de ave, nubes y el cielo.',
   },
   luz: {
     label: 'Luz y fenómenos',
@@ -122,6 +131,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-luz)',
     cabeceraClara: true,
     frase: 'La luz y la naturaleza crean espectáculos increíbles.',
+    guiaIa: 'fenómenos de luz y clima: arcoíris, sombras, reflejos, el sol, rayos, rocío, escarcha, hielo.',
   },
   hongo: {
     label: 'Hongos',
@@ -129,6 +139,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-hongo)',
     cabeceraClara: false,
     frase: 'Recicla la naturaleza y ayuda a que el suelo esté sano.',
+    guiaIa: 'hongos, setas, champiñones, líquenes y moho.',
   },
   micro: {
     label: 'Microscópico',
@@ -136,6 +147,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-micro)',
     cabeceraClara: false,
     frase: 'Hay mundos enteros que solo se ven con lupa.',
+    guiaIa: 'cosas vistas muy de cerca o a escala microscópica: células, polen, bacterias, texturas muy ampliadas.',
   },
   objeto: {
     label: 'Objetos',
@@ -143,6 +155,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-objeto)',
     cabeceraClara: true,
     frase: 'Hecho por personas: ¡obsérvalo y piensa para qué sirve!',
+    guiaIa: 'objetos hechos por personas y tecnología: juguetes, herramientas, utensilios, aparatos, circuitos.',
   },
   quimica: {
     label: 'Química',
@@ -150,6 +163,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-quimica)',
     cabeceraClara: false,
     frase: 'Todo lo que existe está hecho de sustancias asombrosas.',
+    guiaIa: 'sustancias y mezclas: sal, azúcar, líquidos, burbujas, colorantes, cristales de sal o azúcar, reacciones.',
   },
   otro: {
     label: 'Otro',
@@ -157,6 +171,7 @@ const TIPOS: Record<TipoClave, Def> = {
     color: 'var(--t-otro)',
     cabeceraClara: false,
     frase: 'Un misterio de la naturaleza por descubrir.',
+    guiaIa: '',
   },
 };
 
@@ -182,27 +197,40 @@ const REGLAS: [RegExp, TipoClave][] = [
   [/insect|artropod|arana|bicho|escarab|mariquit|hormig|mariposa|abeja|grillo|ciempies|cochinilla|mosca|oruga/, 'insecto'],
   [/hongo|seta|champi|liquen|moho/, 'hongo'],
   [/microsc|celula|bacteria|microb|polen|protozo/, 'micro'],
-  [/acuatic|\bagua\b|pez|peces|rana|renacuajo|alga|concha|caracol/, 'agua'],
+  [/acuatic|\bagua\b|pez|peces|rana|renacuajo|alga|concha|cangrejo/, 'agua'],
   [/\bave\b|\baves\b|pajaro|pluma|nido|cielo|nube/, 'ave'],
   [/planta|flor|hoja|rama|arbol|hierba|pasto|cactus|semilla|tronco|corteza|madera|musgo|flora/, 'planta'],
   [/roca|piedra|mineral|cristal|fosil|gema/, 'roca'],
-  [/tierra|suelo|arena|lodo|barro|composta/, 'tierra'],
+  [/tierra|suelo|arena|lodo|barro|composta|lombriz|caracol|lagart|mamifer/, 'tierra'],
   [/metal|material|plastico|vidrio|tela|papel|carton/, 'metal'],
   [/\bluz\b|fenomeno|arcoiris|sombra|reflejo|\bsol\b/, 'luz'],
   [/quimic|sustancia|\bsal\b|azucar|liquido/, 'quimica'],
   [/objeto|artificial|tecnolog|juguete|herramienta/, 'objeto'],
 ];
 
-/**
- * La IA a veces escribe el tipo distinto ("insecto", "Insecto", "Objeto artificial").
- * Lo normalizamos a una categoría fija para filtros, colores, fondos e íconos.
- */
-export function normalizarTipo(tipo: string | null | undefined): TipoClave {
-  const t = (tipo ?? '')
+const simplificar = (s: string) =>
+  s
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '');
-  return REGLAS.find(([re]) => re.test(t))?.[1] ?? 'otro';
+    .replace(/[̀-ͯ]/g, '')
+    .trim();
+
+/** Etiqueta o clave exacta → categoría (lo que devuelve la IA con el esquema). */
+const EXACTAS = new Map<string, TipoClave>(
+  (Object.keys(TIPOS) as TipoClave[]).flatMap((c): [string, TipoClave][] => [
+    [simplificar(c), c],
+    [simplificar(TIPOS[c].label), c],
+  ]),
+);
+
+/**
+ * Normaliza el tipo a una de las 12 categorías: primero por coincidencia exacta con la
+ * etiqueta (respuestas nuevas de la IA); si no, por palabras clave (datos antiguos como
+ * "insecto", "Hoja" u "Objeto artificial").
+ */
+export function normalizarTipo(tipo: string | null | undefined): TipoClave {
+  const t = simplificar(tipo ?? '');
+  return EXACTAS.get(t) ?? REGLAS.find(([re]) => re.test(t))?.[1] ?? 'otro';
 }
 
 function info(clave: TipoClave): TipoInfo {
@@ -218,8 +246,10 @@ export function todosLosTipos(): TipoInfo[] {
   return (Object.keys(TIPOS) as TipoClave[]).map(info);
 }
 
-/** Nombres de categoría que se le piden a la IA. */
-export const CATEGORIAS_IA = (Object.keys(TIPOS) as TipoClave[])
-  .filter((c) => c !== 'otro')
-  .map((c) => TIPOS[c].label)
-  .join(', ');
+const CLAVES_IA = (Object.keys(TIPOS) as TipoClave[]).filter((c) => c !== 'otro');
+
+/** Las 12 etiquetas que la IA puede devolver en "tipo" (enum del esquema de respuesta). */
+export const ETIQUETAS_IA: string[] = CLAVES_IA.map((c) => TIPOS[c].label);
+
+/** Guía para el prompt: una línea por categoría con lo que incluye. */
+export const GUIA_CATEGORIAS_IA = CLAVES_IA.map((c) => `- ${TIPOS[c].label}: ${TIPOS[c].guiaIa}`).join('\n');

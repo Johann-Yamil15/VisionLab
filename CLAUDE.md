@@ -91,3 +91,6 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - 2026-10-14: cartas con los 12 fondos diseñados por el usuario (public/cards/*.webp, originales en
   assets/images/cards sin versionar). Taxonomía de 9 tipos → 12 categorías; la carta solo superpone contenido.
 - 2026-10-14: visor de foto con zoom; la foto de la carta 'full' se amplía con [ampliable] (detalle y descubrimiento).
+- 2026-10-14: prompt de análisis con responseSchema: "tipo" es un enum con las 12 etiquetas (ETIQUETAS_IA)
+  y el prompt incluye GUIA_CATEGORIAS_IA (tipos.ts). normalizarTipo usa coincidencia exacta y luego palabras clave.
+  Al mover Gemini al backend, portar prompt + esquema tal cual.
