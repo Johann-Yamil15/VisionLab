@@ -26,6 +26,8 @@
     padding: var(--s-4) 0;
     border-top: 0;
     border-right: var(--border-clay);
+    // Líneas topográficas decorativas al pie del riel.
+    background: url('/decor/topografico.webp') left bottom / 100% auto no-repeat, var(--c-surface);
   }
 }
 

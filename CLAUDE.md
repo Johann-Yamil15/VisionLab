@@ -65,7 +65,10 @@ src/
       discovery/           discovery.page (tarjeta, autoguardado único, +puntos, chat)
       almanac/             almanac.page (grid, filtros por tipo, búsqueda), almanac-detail.page
                            (/almanaque/:id, otras capturas, borrar con diálogo, chat)
-      profile/             profile.page + data-access/perfil.service (GET /api/usuarios)
+      profile/             profile.page (portada, nivel/XP, estadísticas, medallas, retos, colección)
+                           data-access/perfil.service (GET /api/usuarios)
+                           data-access/gamificacion.ts TEMPORAL: niveles y 5 medallas calculados con los
+                           hallazgos (las colecciones niveles/logros del backend están vacías) + spec
       info/                about.page
 ```
 Rutas: `/microscopio`, `/microscopio/vista-previa`, `/descubrimiento`, `/almanaque`,
@@ -94,3 +97,6 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - 2026-10-14: prompt de análisis con responseSchema: "tipo" es un enum con las 12 etiquetas (ETIQUETAS_IA)
   y el prompt incluye GUIA_CATEGORIAS_IA (tipos.ts). normalizarTipo usa coincidencia exacta y luego palabras clave.
   Al mover Gemini al backend, portar prompt + esquema tal cual.
+- 2026-10-16: rediseño de Mi perfil con las imágenes del usuario (public/profile/*.webp, originales en
+  assets/images/profile sin versionar). Fondo topográfico del riel en public/decor. El buscador del perfil
+  abre /almanaque?buscar=. Plugin ponytail desactivado en este proyecto (.claude/settings.local.json).

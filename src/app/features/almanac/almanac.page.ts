@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, linkedSignal, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -29,7 +29,9 @@ export class AlmanacPage {
   protected readonly estado = signal<Estado>('cargando');
   private readonly hallazgos = signal<Hallazgo[]>([]);
   protected readonly filtro = signal<TipoClave | 'todos'>('todos');
-  protected readonly busqueda = signal('');
+  /** ?buscar= en la URL (lo usa el buscador del perfil). */
+  readonly textoUrl = input<string | undefined>(undefined, { alias: 'buscar' });
+  protected readonly busqueda = linkedSignal(() => this.textoUrl() ?? '');
 
   protected readonly grupos = computed(() => agruparPorEspecie(this.hallazgos()));
 

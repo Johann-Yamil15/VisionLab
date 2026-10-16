@@ -1,14 +1,31 @@
 <section class="page profile">
-  <header class="page-header">
-    <div>
-      <h1>Mi perfil</h1>
-      <p class="page-subtitle">Tus puntos, tu nivel y tus medallas.</p>
+  <header class="top">
+    <div class="titles">
+      <h1>Mi perfil <lucide-icon class="title-leaf" [img]="icons.Leaf" [size]="34" aria-hidden="true" /></h1>
+      <p>Tus puntos, tu nivel y tus medallas.</p>
     </div>
+
+    <form class="search" role="search" (submit)="buscar($event, q.value)">
+      <lucide-icon [img]="icons.Search" [size]="20" aria-hidden="true" />
+      <label class="sr-only" for="buscar-perfil">Buscar en VisionLab</label>
+      <input #q id="buscar-perfil" type="search" placeholder="Buscar en VisionLab..." />
+    </form>
+
+    @if (perfil()) {
+      <span class="avatar avatar--sm" aria-hidden="true">{{ inicial() }}</span>
+    }
   </header>
 
   @switch (estado()) {
     @case ('cargando') {
-      <div class="skeleton" style="height: 220px" aria-busy="true" aria-label="Cargando perfil"></div>
+      <div aria-busy="true" aria-label="Cargando perfil">
+        <div class="skeleton" style="height: 220px"></div>
+        <div class="stats">
+          <div class="skeleton" style="height: 130px"></div>
+          <div class="skeleton" style="height: 130px"></div>
+          <div class="skeleton" style="height: 130px"></div>
+        </div>
+      </div>
     }
 
     @case ('error') {
@@ -27,63 +44,169 @@
 
     @case ('listo') {
       @if (perfil(); as p) {
-        <div class="hero clay">
-          <span class="avatar" aria-hidden="true">{{ iniciales() }}</span>
-          <div class="hero-text">
-            <h2>{{ p.nombreUsuario }}</h2>
-            <span class="level">
-              <lucide-icon [img]="icons.Award" [size]="18" aria-hidden="true" />
-              {{ p.nivelActual }}
-            </span>
+        <!-- ===== Portada ===== -->
+        <div class="hero">
+          <div class="who">
+            <span class="avatar avatar--lg" aria-hidden="true">{{ inicial() }}</span>
+            <div>
+              <h2 [attr.title]="p.nombreUsuario">{{ nombreCorto() }}</h2>
+              <span class="rank">
+                <lucide-icon [img]="icons.User" [size]="20" aria-hidden="true" />
+                {{ nivel().actual.titulo }}
+              </span>
+            </div>
+          </div>
+
+          <div class="level">
+            <div class="level-head">
+              <span class="level-name">
+                <lucide-icon class="crown" [img]="icons.Crown" [size]="26" aria-hidden="true" />
+                Nivel {{ nivel().actual.numero }}
+              </span>
+              @if (nivel().siguiente; as sig) {
+                <strong>{{ p.puntos | number }} / {{ sig.desde | number }} XP</strong>
+              } @else {
+                <strong>{{ p.puntos | number }} XP</strong>
+              }
+            </div>
+            <div class="bar" role="progressbar" aria-label="Avance al siguiente nivel" [attr.aria-valuenow]="nivel().porcentaje" aria-valuemin="0" aria-valuemax="100">
+              <span [style.width.%]="nivel().porcentaje"></span>
+            </div>
+            <p>
+              @if (nivel().siguiente) {
+                Te faltan <strong>{{ nivel().faltan | number }} puntos</strong> para subir de nivel.
+              } @else {
+                ¡Llegaste al nivel máximo!
+              }
+            </p>
           </div>
         </div>
 
+        <!-- ===== Estadísticas ===== -->
         <ul class="stats">
-          <li class="stat clay stat--sun">
-            <lucide-icon [img]="icons.Star" [size]="28" aria-hidden="true" />
-            <strong>{{ p.puntos | number }}</strong>
-            <span>puntos</span>
+          <li class="stat stat--puntos">
+            <img class="stat-icon" src="profile/stat-puntos.webp" alt="" width="104" height="104" />
+            <div>
+              <strong>{{ p.puntos | number }}</strong>
+              <span class="stat-label">puntos</span>
+              <p>¡Sigue explorando para ganar más!</p>
+            </div>
           </li>
-          <li class="stat clay stat--green">
-            <lucide-icon [img]="icons.Compass" [size]="28" aria-hidden="true" />
-            <strong>{{ p.hallazgosContador | number }}</strong>
-            <span>descubrimientos</span>
+          <li class="stat stat--descubrimientos">
+            <img class="stat-icon" src="profile/stat-descubrimientos.webp" alt="" width="104" height="104" />
+            <div>
+              <strong>{{ descubrimientos() | number }}</strong>
+              <span class="stat-label">descubrimientos</span>
+              <p>Has conocido {{ descubrimientos() }} elementos de la naturaleza.</p>
+            </div>
           </li>
-          <li class="stat clay stat--blue">
-            <lucide-icon [img]="icons.Medal" [size]="28" aria-hidden="true" />
-            <strong>{{ p.logros.length }}</strong>
-            <span>medallas</span>
+          <li class="stat stat--medallas">
+            <img class="stat-icon" src="profile/stat-medallas.webp" alt="" width="104" height="104" />
+            <div>
+              <strong>{{ desbloqueadas() }}</strong>
+              <span class="stat-label">{{ desbloqueadas() === 1 ? 'medalla' : 'medallas' }}</span>
+              <p>¡Completa retos para desbloquear medallas!</p>
+            </div>
           </li>
         </ul>
 
-        <section class="medals" aria-labelledby="medallas-titulo">
-          <h2 id="medallas-titulo">Mis medallas</h2>
+        <div class="grid">
+          <div class="col">
+            <!-- ===== Medallas ===== -->
+            <section class="panel" aria-labelledby="medallas-titulo">
+              <header class="panel-head">
+                <h2 id="medallas-titulo">
+                  <lucide-icon class="ico-trophy" [img]="icons.Trophy" [size]="30" aria-hidden="true" />
+                  Mis medallas
+                </h2>
+                <span class="count-pill">{{ desbloqueadas() }}/{{ medallas().length }} desbloqueadas</span>
+              </header>
 
-          @if (p.logros.length === 0) {
-            <div class="clay">
-              <div class="empty-state">
-                <span class="empty-icon"><lucide-icon [img]="icons.Trophy" [size]="40" aria-hidden="true" /></span>
-                <h3>Aún no tienes medallas</h3>
-                <p>Sigue explorando: con cada descubrimiento te acercas a tu primera medalla.</p>
-                <a class="btn btn--primary" routerLink="/microscopio">
-                  <lucide-icon [img]="icons.Microscope" [size]="20" aria-hidden="true" />
-                  Ir a explorar
-                </a>
-              </div>
-            </div>
-          } @else {
-            <ul class="medal-grid">
-              @for (l of p.logros; track l.id) {
-                <li class="medal clay">
-                  <span class="medal-icon"><lucide-icon [img]="icons.Medal" [size]="32" aria-hidden="true" /></span>
-                  <h3>{{ l.nombre }}</h3>
-                  <p>{{ l.descripcion }}</p>
-                  <span class="medal-points">+{{ l.puntosOtorgados }} pts</span>
+              <ul class="medals">
+                @for (m of medallas(); track m.id) {
+                  <li class="medal" [class.locked]="!m.desbloqueada">
+                    <span class="medal-img" [class.gris]="m.gris">
+                      <img [src]="m.imagen" alt="" width="104" height="104" />
+                      @if (m.gris) {
+                        <span class="lock" aria-hidden="true"><lucide-icon [img]="icons.Lock" [size]="16" /></span>
+                      }
+                    </span>
+                    <h3>{{ m.nombre }}</h3>
+                    <span class="status">{{ m.desbloqueada ? 'Desbloqueada' : 'Bloqueada' }}</span>
+                  </li>
+                }
+              </ul>
+            </section>
+
+            <!-- ===== Retos ===== -->
+            <section class="panel" aria-labelledby="retos-titulo">
+              <header class="panel-head">
+                <h2 id="retos-titulo">
+                  <lucide-icon class="ico-target" [img]="icons.Target" [size]="30" aria-hidden="true" />
+                  Siguientes retos
+                </h2>
+              </header>
+
+              <ul class="retos">
+                @for (r of retos(); track r.id) {
+                  <li class="reto">
+                    <img [src]="r.imagen" [class.gris]="r.gris" alt="" width="64" height="64" />
+                    <div class="reto-text">
+                      <h3>{{ r.nombre }}</h3>
+                      <p>{{ r.reto }}</p>
+                    </div>
+                    <div class="reto-progress">
+                      <div class="bar bar--sm" role="progressbar" [attr.aria-label]="'Progreso de ' + r.nombre" [attr.aria-valuenow]="r.progreso" aria-valuemin="0" [attr.aria-valuemax]="r.meta">
+                        <span [style.width.%]="(r.progreso / r.meta) * 100"></span>
+                      </div>
+                      <span class="reto-num">{{ r.progreso }}/{{ r.meta }}</span>
+                      @if (r.desbloqueada) {
+                        <span class="done"><lucide-icon [img]="icons.Check" [size]="16" aria-hidden="true" /><span class="sr-only">Completado</span></span>
+                      }
+                    </div>
+                  </li>
+                }
+              </ul>
+            </section>
+          </div>
+
+          <!-- ===== Colección ===== -->
+          <section class="panel collection" aria-labelledby="coleccion-titulo">
+            <header class="panel-head">
+              <h2 id="coleccion-titulo">
+                <lucide-icon [img]="icons.BookOpen" [size]="30" aria-hidden="true" />
+                Mi colección
+              </h2>
+              <a class="link-pill" routerLink="/almanaque">
+                Ver almanaque <lucide-icon [img]="icons.ArrowRight" [size]="18" aria-hidden="true" />
+              </a>
+            </header>
+            <p class="collection-intro">Explora las familias de VisionLab y completa todas las medallas.</p>
+
+            <ul class="families">
+              @for (f of coleccion(); track f.tipo.clave) {
+                <li class="family" [style.--fam-color]="f.tipo.color">
+                  @if (f.foto) {
+                    <img class="fam-thumb" [src]="f.foto" alt="" width="52" height="40" loading="lazy" />
+                  } @else {
+                    <span class="fam-thumb fam-thumb--icon"><lucide-icon [img]="f.tipo.icon" [size]="20" aria-hidden="true" /></span>
+                  }
+                  <span class="fam-name">{{ f.tipo.label }}</span>
+                  <div class="bar bar--sm" role="progressbar" [attr.aria-label]="'Especies de ' + f.tipo.label" [attr.aria-valuenow]="f.especies" aria-valuemin="0" [attr.aria-valuemax]="metaColeccion">
+                    <span [style.width.%]="(f.especies / metaColeccion) * 100"></span>
+                  </div>
+                  <span class="fam-num">{{ f.especies }}/{{ metaColeccion }}</span>
                 </li>
               }
             </ul>
-          }
-        </section>
+
+            <a class="explore" routerLink="/microscopio">
+              <lucide-icon [img]="icons.Compass" [size]="26" aria-hidden="true" />
+              Explorar más
+              <lucide-icon class="explore-arrow" [img]="icons.ArrowRight" [size]="26" aria-hidden="true" />
+            </a>
+          </section>
+        </div>
       }
     }
   }

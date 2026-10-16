@@ -64,6 +64,11 @@ import {
   Shovel,
   Maximize2,
   Move,
+  ArrowRight,
+  Crown,
+  Lock,
+  Target,
+  User,
 } from 'lucide-angular';
 
 /**
@@ -136,4 +141,9 @@ export const AppIcons = {
   Shovel,
   Maximize2,
   Move,
+  ArrowRight,
+  Crown,
+  Lock,
+  Target,
+  User,
 } as const;
