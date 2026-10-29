@@ -1,188 +1,28 @@
-<div class="dashboard-layout">
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
 
-  <!-- ============================================ -->
-  <!-- 🎯 OVERLAY PARA MOBILE (Fondo oscuro) -->
-  <!-- ============================================ -->
-  <div class="sidebar-overlay" [class.active]="isSidebarOpen() && isMobile()" (click)="closeSidebar()">
-  </div>
-
-  <!-- ============================================ -->
-  <!-- 📱 SIDEBAR (Menú Lateral) -->
-  <!-- ============================================ -->
-  <aside class="sidebar" [class.sidebar-open]="isSidebarOpen()"
-    [class.sidebar-collapsed]="isSidebarCollapsed() && !isMobile()">
-
-    <!-- Header del Sidebar -->
-    <div class="sidebar-header">
-      <a routerLink="/home" class="logo">
-        <i class="icon-leaf logo-icon"></i>
-        <span class="logo-text">Vision Lab</span>
-      </a>
-
-      <!-- Botón para colapsar (solo desktop) -->
-      <button class="sidebar-toggle" (click)="toggleSidebar()" *ngIf="!isMobile()" title="Colapsar menú">
-        ◀
-      </button>
-    </div>
-
-    <!-- Navegación -->
-    <nav class="sidebar-nav">
-
-      <!-- Sección: App Modules -->
-      <h3 class="nav-heading">App Modules</h3>
-      <ul class="nav-list">
-        <li>
-          <a routerLink="/camera" routerLinkActive="active" (click)="onNavLinkClick()">
-            <i class="icon-camera"></i>
-            <span>Camera (Capture)</span>
-          </a>
-        </li>
-
-        <!-- <li>
-          <a routerLink="/chat" routerLinkActive="active" (click)="onNavLinkClick()">
-            <i class="icon-chat"></i>
-            <span>Chat Assistant</span>
-            <span class="badge badge-info">3</span>
-          </a>
-        </li> -->
-
-        <li>
-          <a routerLink="/almanac" routerLinkActive="active" (click)="onNavLinkClick()">
-            <i class="icon-almanac"></i>
-            <span>Almanac (Species)</span>
-          </a>
-        </li>
-      </ul>
-
-      <!-- Línea divisoria -->
-      <div class="nav-divider"></div>
-
-      <!-- Sección: User & Utility -->
-      <h3 class="nav-heading">User & Utility</h3>
-      <ul class="nav-list">
-        <li>
-          <a class="has-submenu">
-            <i class="icon-trophy"></i>
-            <span>Gamification</span>
-            <i class="icon-chevron-right submenu-indicator"></i>
-          </a>
-        </li>
-
-        <li>
-          <a routerLink="/settings" routerLinkActive="active" (click)="onNavLinkClick()">
-            <i class="icon-settings"></i>
-            <span>Settings</span>
-          </a>
-        </li>
-
-        <li>
-          <a routerLink="/legal" routerLinkActive="active" (click)="onNavLinkClick()">
-            <i class="icon-legal"></i>
-            <span>Legal & Privacy</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-
-  <!-- ============================================ -->
-  <!-- 📄 CONTENEDOR PRINCIPAL -->
-  <!-- ============================================ -->
-  <div class="main-content-wrapper">
-
-    <!-- ============================================ -->
-    <!-- 📌 TOPBAR (Barra Superior) -->
-    <!-- ============================================ -->
-    <header class="topbar">
-
-      <!-- Lado Izquierdo -->
-      <div class="topbar-left">
-        <!-- Botón Hamburguesa (Mobile: abre sidebar / Desktop: colapsa) -->
-        <button class="menu-toggle" (click)="toggleSidebar()" [title]="isMobile() ? 'Abrir menú' : 'Colapsar menú'">
-          <i class="icon-bars"></i>
-        </button>
-
-        <!-- Links de Login/Register (solo si NO está logueado) -->
-        @if (!isLoggedIn()) {
-        <a routerLink="/login" class="topbar-icon">
-          <i class="icon-user"></i>
-          <span>Login</span>
-        </a>
-        <a routerLink="/register" class="topbar-icon">
-          <i class="icon-register"></i>
-          <span>Register</span>
-        </a>
-        }
-      </div>
-
-      <!-- Lado Derecho -->
-      <div class="topbar-right">
-
-        <!-- Menú de Perfil (solo si está logueado) -->
-        @if (isLoggedIn()) {
-        <div class="profile-menu-container" [class.active]="isProfileMenuOpen()">
-
-          <!-- Trigger del menú -->
-          <div class="profile-trigger" (click)="toggleProfileMenu()">
-            <i class="icon-user-circle profile-icon"></i>
-            <span class="profile-name">{{ currentUser().name }}</span>
-            <i class="icon-arrow-down dropdown-arrow"></i>
-          </div>
-
-          <!-- Menú Desplegable -->
-          <div class="profile-dropdown" [class.active]="isProfileMenuOpen()" (click)="$event.stopPropagation()">
-
-            <!-- Header del dropdown -->
-            <div class="dropdown-header">
-              <div class="user-name">{{ currentUser().name }}</div>
-              <div class="user-email">{{ currentUser().email }}</div>
-            </div>
-
-            <!-- Opciones del menú -->
-            <div class="dropdown-menu">
-              <a (click)="goToDashboard()">
-                <i class="icon-dashboard"></i>
-                <span>Dashboard</span>
-              </a>
-
-              <a (click)="goToProfile()">
-                <i class="icon-profile"></i>
-                <span>Mi Perfil</span>
-              </a>
-
-              <a routerLink="/settings" (click)="isProfileMenuOpen.set(false)">
-                <i class="icon-settings"></i>
-                <span>Configuración</span>
-              </a>
-
-              <div class="dropdown-divider"></div>
-
-              <a class="dropdown-logout" (click)="logout()">
-                <i class="icon-logout"></i>
-                <span>Cerrar Sesión</span>
-              </a>
-            </div>
-          </div>
-        </div>
-        }
-
-        <!-- Botones de Login/Register para Mobile (si NO está logueado) -->
-        @if (!isLoggedIn() && isMobile()) {
-        <a routerLink="/login" class="topbar-icon">
-          <i class="icon-user"></i>
-        </a>
-        <a routerLink="/register" class="topbar-icon">
-          <i class="icon-register"></i>
-        </a>
-        }
-      </div>
-    </header>
-
-    <!-- ============================================ -->
-    <!-- 📄 CONTENIDO PRINCIPAL -->
-    <!-- ============================================ -->
-    <main class="main-content">
-      <router-outlet></router-outlet>
-    </main>
-  </div>
+<!-- Hojas decorativas (solo tablet/escritorio, detrás del contenido) -->
+<div class="decor" aria-hidden="true">
+  <svg class="decor-leaves decor-leaves--tr" viewBox="0 0 220 220">
+    <path class="l1" d="M220 0 C150 10 90 60 70 140 C130 140 190 90 220 30Z" />
+    <path class="vein" d="M215 10 C170 50 120 95 80 135" />
+    <path class="l2" d="M220 60 C190 90 175 140 190 200 C215 170 225 120 220 60Z" />
+    <circle class="dot" cx="150" cy="170" r="7" />
+    <circle class="dot" cx="132" cy="196" r="5" />
+  </svg>
+  <svg class="decor-leaves decor-leaves--bl" viewBox="0 0 220 260">
+    <path class="l1" d="M0 260 C10 190 50 140 120 120 C120 180 80 235 0 260Z" />
+    <path class="vein" d="M8 252 C40 205 75 160 112 128" />
+    <path class="l2" d="M0 200 C-10 150 10 90 60 60 C75 110 50 170 0 200Z" />
+    <path class="l3" d="M30 260 C70 230 130 220 190 240 C150 270 80 275 30 260Z" />
+    <circle class="dot" cx="40" cy="40" r="7" />
+    <circle class="dot" cx="80" cy="20" r="5" />
+  </svg>
 </div>
+
+<app-nav />
+
+<main id="contenido" class="shell-main" tabindex="-1">
+  <router-outlet />
+</main>
+
+<app-accesibilidad />

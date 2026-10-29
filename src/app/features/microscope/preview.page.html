@@ -1,0 +1,44 @@
+<section class="page preview">
+  <header class="page-header">
+    <div>
+      <h1>{{ analizando() ? 'Observando…' : '¿Se ve bien?' }}</h1>
+      <p class="page-subtitle">
+        {{ analizando() ? 'La IA está estudiando tu muestra con lupa.' : 'Si está borrosa, toma otra foto.' }}
+      </p>
+    </div>
+  </header>
+
+  @if (foto) {
+    <div class="specimen clay">
+      <div class="lens" [class.lens--scanning]="analizando()">
+        <img [src]="foto" alt="Foto que tomaste" />
+        @if (analizando()) {
+          <div class="scan" aria-hidden="true"><span class="scan-line"></span></div>
+        }
+      </div>
+
+      @if (error(); as e) {
+        <div class="alert" role="alert">
+          <lucide-icon [img]="icons.CircleAlert" [size]="22" aria-hidden="true" />
+          <span>{{ e }}</span>
+        </div>
+      }
+
+      <div class="actions">
+        <button class="btn" type="button" (click)="repetir()" [disabled]="analizando()">
+          <lucide-icon [img]="icons.RotateCcw" [size]="20" aria-hidden="true" />
+          Tomar otra
+        </button>
+        <button class="btn btn--primary btn--lg" type="button" (click)="analizar()" [disabled]="analizando()" [attr.aria-busy]="analizando()">
+          @if (analizando()) {
+            <span class="spinner" aria-hidden="true"></span>
+            Analizando…
+          } @else {
+            <lucide-icon [img]="icons.Sparkles" [size]="22" aria-hidden="true" />
+            {{ error() ? 'Intentar de nuevo' : '¡Analizar!' }}
+          }
+        </button>
+      </div>
+    </div>
+  }
+</section>

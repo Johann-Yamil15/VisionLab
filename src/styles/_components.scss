@@ -1,0 +1,402 @@
+// Piezas reutilizables del sistema "Explorador". Se usan por clase en todas las pantallas.
+
+// ---------- Página ----------
+.page {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--s-5) var(--s-4) var(--s-7);
+  animation: page-in var(--dur-slow) var(--ease-out);
+
+  @media (min-width: 768px) {
+    padding: var(--s-6) var(--s-6) var(--s-7);
+  }
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-5);
+
+  h1 {
+    font-size: var(--fs-2xl);
+    @media (min-width: 768px) {
+      font-size: var(--fs-3xl);
+    }
+  }
+
+  .page-subtitle {
+    color: var(--c-text-muted);
+    font-size: var(--fs-md);
+    margin-top: var(--s-1);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+// ---------- Superficie clay ----------
+.clay {
+  background: var(--c-surface);
+  border: var(--border-clay);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-clay);
+}
+
+// ---------- Botones ----------
+.btn {
+  --btn-bg: var(--c-surface);
+  --btn-fg: var(--c-text);
+  --btn-depth: var(--c-ink);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: 48px;
+  padding: 0 var(--s-5);
+  border: var(--border-clay);
+  border-radius: var(--r-pill);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  box-shadow: 0 5px 0 var(--btn-depth);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    filter var(--dur-fast);
+  user-select: none;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 var(--btn-depth);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  lucide-icon,
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.btn--primary {
+  --btn-bg: var(--c-primary);
+  --btn-fg: var(--c-on-primary);
+  --btn-depth: var(--c-primary-strong);
+  border-color: var(--c-primary-strong);
+}
+
+.btn--secondary {
+  --btn-bg: var(--c-secondary);
+  --btn-fg: var(--c-on-secondary);
+  --btn-depth: var(--c-secondary-strong);
+  border-color: var(--c-secondary-strong);
+}
+
+.btn--sun {
+  --btn-bg: var(--c-sun);
+  --btn-fg: var(--c-on-sun);
+  --btn-depth: var(--c-sun-strong);
+  border-color: var(--c-sun-strong);
+}
+
+.btn--danger {
+  --btn-bg: var(--c-danger);
+  --btn-fg: #fff;
+  --btn-depth: var(--c-danger-strong);
+  border-color: var(--c-danger-strong);
+}
+
+.btn--lg {
+  min-height: 56px;
+  padding: 0 var(--s-6);
+  font-size: var(--fs-lg);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--icon {
+  width: 48px;
+  min-width: 48px;
+  padding: 0;
+}
+
+// ---------- Chips de filtro ----------
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 44px;
+  padding: 0 var(--s-4);
+  border: 2px solid var(--c-border);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  transition:
+    background var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &[aria-pressed='true'] {
+    background: var(--chip-color, var(--c-primary));
+    border-color: var(--c-ink);
+    color: #fff;
+  }
+
+  .chip-count {
+    min-width: 24px;
+    padding: 0 6px;
+    border-radius: var(--r-pill);
+    background: rgba(15, 42, 28, 0.08);
+    font-size: var(--fs-xs);
+    text-align: center;
+  }
+
+  &[aria-pressed='true'] .chip-count {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+// ---------- Etiqueta de tipo ----------
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px 4px 8px;
+  border-radius: var(--r-pill);
+  background: var(--type-color, var(--t-otro));
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  border: 2px solid rgba(0, 0, 0, 0.15);
+}
+
+// ---------- Medidor (confianza / progreso) ----------
+.meter {
+  display: grid;
+  gap: 6px;
+
+  .meter-label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: var(--fs-sm);
+    color: var(--c-text-muted);
+  }
+
+  .meter-value {
+    color: var(--c-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .meter-track {
+    height: 14px;
+    border-radius: var(--r-pill);
+    background: var(--c-bg-alt);
+    border: 2px solid var(--c-border);
+    overflow: hidden;
+  }
+
+  .meter-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--c-sun), var(--c-primary));
+    transform-origin: left;
+    animation: meter-grow 900ms var(--ease-out);
+  }
+}
+
+@keyframes meter-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+// ---------- Estados vacíos / error ----------
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-3);
+  padding: var(--s-7) var(--s-5);
+  text-align: center;
+
+  .empty-icon {
+    display: grid;
+    place-items: center;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: var(--c-bg-alt);
+    border: var(--border-clay);
+    color: var(--c-primary);
+  }
+
+  h2 {
+    font-size: var(--fs-xl);
+  }
+
+  p {
+    max-width: 42ch;
+    color: var(--c-text-muted);
+  }
+}
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-md);
+  border: 2px solid var(--c-sun-strong);
+  background: var(--c-warning-bg);
+  font-weight: 600;
+
+  &.alert--danger {
+    border-color: var(--c-danger);
+    background: #fee2e2;
+  }
+}
+
+// ---------- Carga ----------
+.spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.35);
+  border-top-color: currentColor;
+  animation: spin 800ms linear infinite;
+}
+
+.skeleton {
+  border-radius: var(--r-md);
+  background: linear-gradient(90deg, var(--c-bg-alt) 25%, #f4fbf6 50%, var(--c-bg-alt) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+// ---------- Toast ----------
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--nav-h) + var(--s-4) + env(safe-area-inset-bottom));
+  z-index: var(--z-toast);
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: calc(100vw - 32px);
+  padding: var(--s-3) var(--s-5);
+  border: var(--border-clay);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  box-shadow: var(--shadow-soft);
+  font-weight: 700;
+  transform: translateX(-50%);
+  animation: toast-in var(--dur-slow) var(--ease-spring);
+
+  @media (min-width: 1024px) {
+    bottom: var(--s-5);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.95);
+  }
+}
+
+// ---------- Diálogo ----------
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: var(--s-4);
+  background: rgba(15, 42, 28, 0.55);
+  backdrop-filter: blur(4px);
+  animation: fade-in var(--dur) var(--ease-out);
+}
+
+.dialog {
+  width: min(100%, 420px);
+  padding: var(--s-5);
+  display: grid;
+  gap: var(--s-4);
+  text-align: center;
+  animation: pop-in var(--dur-slow) var(--ease-spring);
+
+  h2 {
+    font-size: var(--fs-xl);
+  }
+
+  p {
+    color: var(--c-text-muted);
+  }
+
+  .dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s-3);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}

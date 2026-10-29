@@ -1,0 +1,108 @@
+<section class="page almanac">
+  <header class="page-header">
+    <div>
+      <h1>Mi almanaque</h1>
+      @if (estado() === 'listo') {
+        <p class="page-subtitle">
+          {{ grupos().length }} {{ grupos().length === 1 ? 'especie' : 'especies' }} en tu colección
+        </p>
+      }
+    </div>
+    <a class="btn btn--primary" routerLink="/microscopio">
+      <lucide-icon [img]="icons.Microscope" [size]="20" aria-hidden="true" />
+      Explorar
+    </a>
+  </header>
+
+  @switch (estado()) {
+    @case ('cargando') {
+      <div class="grid" aria-busy="true" aria-label="Cargando tu colección">
+        @for (s of esqueletos; track $index) {
+          <div class="skeleton card-skeleton"></div>
+        }
+      </div>
+    }
+
+    @case ('error') {
+      <div class="clay">
+        <div class="empty-state" role="alert">
+          <span class="empty-icon"><lucide-icon [img]="icons.CircleAlert" [size]="40" aria-hidden="true" /></span>
+          <h2>No pudimos abrir tu almanaque</h2>
+          <p>Parece que el servidor está descansando. Revisa tu conexión e inténtalo otra vez.</p>
+          <button class="btn btn--primary" type="button" (click)="cargar()">
+            <lucide-icon [img]="icons.RotateCcw" [size]="20" aria-hidden="true" />
+            Reintentar
+          </button>
+        </div>
+      </div>
+    }
+
+    @case ('listo') {
+      @if (grupos().length === 0) {
+        <div class="clay">
+          <div class="empty-state">
+            <span class="empty-icon"><lucide-icon [img]="icons.BookOpen" [size]="40" aria-hidden="true" /></span>
+            <h2>Tu almanaque está vacío</h2>
+            <p>Sal a explorar: cada cosa que descubras aparecerá aquí como una tarjeta coleccionable.</p>
+            <a class="btn btn--primary btn--lg" routerLink="/microscopio">
+              <lucide-icon [img]="icons.Microscope" [size]="22" aria-hidden="true" />
+              Empezar a explorar
+            </a>
+          </div>
+        </div>
+      } @else {
+        <div class="toolbar">
+          <div class="search">
+            <lucide-icon [img]="icons.Search" [size]="20" aria-hidden="true" />
+            <label class="sr-only" for="buscar">Buscar en el almanaque</label>
+            <input id="buscar" type="search" placeholder="Buscar por nombre…" [value]="busqueda()" (input)="buscar($event)" />
+          </div>
+
+          <div class="chips" role="group" aria-label="Filtrar por tipo">
+            <button class="chip" type="button" [attr.aria-pressed]="filtro() === 'todos'" (click)="filtro.set('todos')">
+              <lucide-icon [img]="icons.Rows3" [size]="18" aria-hidden="true" />
+              Todos
+              <span class="chip-count">{{ grupos().length }}</span>
+            </button>
+            @for (t of tipos(); track t.clave) {
+              <button
+                class="chip"
+                type="button"
+                [style.--chip-color]="t.color"
+                [attr.aria-pressed]="filtro() === t.clave"
+                (click)="filtro.set(t.clave)"
+              >
+                <lucide-icon [img]="t.icon" [size]="18" aria-hidden="true" />
+                {{ t.label }}
+                <span class="chip-count">{{ t.total }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (visibles().length === 0) {
+          <div class="empty-state">
+            <span class="empty-icon"><lucide-icon [img]="icons.Search" [size]="36" aria-hidden="true" /></span>
+            <h2>Nada por aquí</h2>
+            <p>No hay tarjetas que coincidan. Prueba con otro filtro o nombre.</p>
+          </div>
+        } @else {
+          <ul class="grid" aria-label="Tarjetas de tu colección">
+            @for (g of visibles(); track g.clave; let i = $index) {
+              <li [style.animation-delay.ms]="i * 40">
+                <a class="card-link" [routerLink]="['/almanaque', g.principal.id]">
+                  <app-species-card
+                    [especie]="g.principal"
+                    [imagen]="imagenSrc(g.principal.imagenBase64)"
+                    [veces]="g.veces"
+                    [fecha]="g.principal.fechaCaptura"
+                  />
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      }
+    }
+  }
+</section>

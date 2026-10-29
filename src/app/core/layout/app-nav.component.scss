@@ -1,0 +1,151 @@
+:host {
+  position: fixed;
+  z-index: var(--z-nav);
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  @media (min-width: 1024px) {
+    top: 0;
+    right: auto;
+    width: var(--rail-w);
+  }
+}
+
+.nav {
+  height: 100%;
+  background: var(--c-surface);
+  border-top: var(--border-clay);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-5);
+    padding: var(--s-4) 0;
+    border-top: 0;
+    border-right: var(--border-clay);
+    // Líneas topográficas decorativas al pie del riel.
+    background: url('/decor/topografico.webp') left bottom / 100% auto no-repeat, var(--c-surface);
+  }
+}
+
+// Logo: solo en el riel de escritorio (en móvil está en la cabecera de cada página).
+.brand {
+  display: none;
+  text-decoration: none;
+  color: var(--c-text);
+
+  @media (min-width: 1024px) {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+  }
+
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--r-sm);
+    background: var(--c-primary);
+    color: #fff;
+    border: var(--border-clay);
+    box-shadow: 0 4px 0 var(--c-ink);
+  }
+
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-sm);
+  }
+}
+
+.items {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: end;
+  height: var(--nav-h);
+  margin: 0;
+  padding: 0 var(--s-2);
+  list-style: none;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: var(--s-2);
+    height: auto;
+    width: 100%;
+    padding: 0 var(--s-2);
+  }
+
+  a {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    min-height: 60px;
+    padding: var(--s-2) var(--s-1);
+    border-radius: var(--r-sm);
+    color: var(--c-text-muted);
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    text-decoration: none;
+    transition:
+      color var(--dur) var(--ease-out),
+      background var(--dur) var(--ease-out);
+
+    lucide-icon {
+      transition: transform var(--dur) var(--ease-spring);
+    }
+
+    &:hover {
+      color: var(--c-text);
+    }
+
+    &.active {
+      color: var(--c-primary);
+
+      lucide-icon {
+        transform: translateY(-2px) scale(1.1);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      &.active {
+        background: var(--c-bg-alt);
+      }
+    }
+  }
+}
+
+// Botón central "Explorar" que sobresale de la barra.
+.item-main a {
+  color: var(--c-text);
+
+  .main-bubble {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    margin-top: -28px;
+    border-radius: 50%;
+    background: var(--c-primary);
+    color: #fff;
+    border: var(--border-clay);
+    box-shadow: 0 5px 0 var(--c-ink);
+    transition: transform var(--dur-fast) var(--ease-out);
+
+    @media (min-width: 1024px) {
+      margin-top: 0;
+    }
+  }
+
+  &:active .main-bubble {
+    transform: translateY(3px);
+  }
+
+  &.active {
+    color: var(--c-primary);
+  }
+}

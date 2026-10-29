@@ -1,0 +1,43 @@
+<div class="viewer" role="dialog" aria-modal="true" aria-labelledby="visor-titulo" aria-describedby="visor-ayuda">
+  <header class="bar">
+    <h2 id="visor-titulo">{{ titulo() }}</h2>
+    <button #closeBtn class="icon-btn" type="button" (click)="cerrar.emit()" aria-label="Cerrar foto">
+      <lucide-icon [img]="icons.X" [size]="26" aria-hidden="true" />
+    </button>
+  </header>
+
+  <div
+    #stage
+    class="stage"
+    [class.can-pan]="escala() > 1"
+    [class.dragging]="arrastrando()"
+    (wheel)="onWheel($event)"
+    (dblclick)="onDobleClick($event)"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp($event)"
+    (pointercancel)="onPointerUp($event)"
+  >
+    <img #img [src]="src()" [alt]="titulo()" [style.transform]="transform()" draggable="false" />
+  </div>
+
+  <footer class="tools">
+    <p id="visor-ayuda" class="hint">
+      <lucide-icon [img]="icons.Move" [size]="18" aria-hidden="true" />
+      Pellizca, usa la rueda o toca dos veces para acercar.
+    </p>
+
+    <div class="controls" role="group" aria-label="Zoom">
+      <button class="icon-btn" type="button" (click)="alejar()" [disabled]="escala() <= zoom.min" aria-label="Alejar">
+        <lucide-icon [img]="icons.ZoomOut" [size]="24" aria-hidden="true" />
+      </button>
+      <output class="level" aria-live="polite">{{ porcentaje() }}</output>
+      <button class="icon-btn" type="button" (click)="acercar()" [disabled]="escala() >= zoom.max" aria-label="Acercar">
+        <lucide-icon [img]="icons.ZoomIn" [size]="24" aria-hidden="true" />
+      </button>
+      <button class="icon-btn" type="button" (click)="restablecer()" [disabled]="escala() === 1" aria-label="Ver foto completa">
+        <lucide-icon [img]="icons.RotateCcw" [size]="22" aria-hidden="true" />
+      </button>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,23 @@
+#!/bin/sh
+# Bloquea commits que contengan secretos (API keys, llaves privadas, credenciales en
+# connection strings). Activar una vez por clon:  git config core.hooksPath .githooks
+# (en el frontend se activa solo con `npm install`).
+
+patterns='AIza[0-9A-Za-z_-]{35}|-----BEGIN [A-Z ]*PRIVATE KEY-----|mongodb(\+srv)?://[^:/@[:space:]]+:[^@[:space:]]+@|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{36}'
+
+matches=$(git diff --cached -U0 --no-color --diff-filter=ACM -- . ':(exclude).githooks/*' \
+  | grep '^+' | grep -v '^+++' | grep -En "$patterns")
+
+if [ -n "$matches" ]; then
+  echo "pre-commit: posible secreto detectado. Commit bloqueado." >&2
+  echo "$matches" | cut -c1-120 >&2
+  echo "Mueve el valor a user-secrets / variables de entorno. Ver CLAUDE.md > Reglas de seguridad." >&2
+  exit 1
+fi
+
+blocked=$(git diff --cached --name-only --diff-filter=A | grep -E '(^|/)(\.env|.*\.local\.json|secrets\.json)$' | grep -v '\.example$')
+if [ -n "$blocked" ]; then
+  echo "pre-commit: archivo de secretos agregado al commit:" >&2
+  echo "$blocked" >&2
+  exit 1
+fi

@@ -1,0 +1,74 @@
+<button
+  class="fab"
+  type="button"
+  aria-controls="panel-accesibilidad"
+  [attr.aria-expanded]="abierto()"
+  aria-label="Opciones de accesibilidad"
+  (click)="abierto.set(!abierto())"
+>
+  <lucide-icon [img]="abierto() ? icons.X : icons.Accessibility" [size]="26" aria-hidden="true" />
+</button>
+
+@if (abierto()) {
+  <section id="panel-accesibilidad" class="panel clay" aria-labelledby="a11y-titulo">
+    <h2 id="a11y-titulo">Accesibilidad</h2>
+
+    <div class="group">
+      <span class="group-label" id="lbl-texto">
+        <lucide-icon [img]="icons.ALargeSmall" [size]="18" aria-hidden="true" />
+        Tamaño del texto
+      </span>
+      <div class="font-controls" role="group" aria-labelledby="lbl-texto">
+        <button class="btn btn--icon" type="button" (click)="service.cambiarFuente(-1)" [disabled]="config().fontSize <= fuente.min" aria-label="Texto más pequeño">
+          <lucide-icon [img]="icons.Minus" [size]="20" aria-hidden="true" />
+        </button>
+        <button class="btn size" type="button" (click)="service.resetFuente()" aria-label="Tamaño normal">
+          {{ config().fontSize }} px
+        </button>
+        <button class="btn btn--icon" type="button" (click)="service.cambiarFuente(1)" [disabled]="config().fontSize >= fuente.max" aria-label="Texto más grande">
+          <lucide-icon [img]="icons.Plus" [size]="20" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+
+    <ul class="toggles">
+      <li>
+        <button class="toggle" type="button" [attr.aria-pressed]="config().lineaActiva" (click)="service.toggle('lineaActiva')">
+          <lucide-icon [img]="icons.Rows3" [size]="20" aria-hidden="true" />
+          <span>Línea de lectura</span>
+          <span class="switch" aria-hidden="true"></span>
+        </button>
+      </li>
+      <li>
+        <button class="toggle" type="button" [attr.aria-pressed]="config().grisesActivo" (click)="service.toggle('grisesActivo')">
+          <lucide-icon [img]="icons.Contrast" [size]="20" aria-hidden="true" />
+          <span>Escala de grises</span>
+          <span class="switch" aria-hidden="true"></span>
+        </button>
+      </li>
+      <li>
+        <button class="toggle" type="button" [attr.aria-pressed]="config().invertirActivo" (click)="service.toggle('invertirActivo')">
+          <lucide-icon [img]="icons.Contrast" [size]="20" aria-hidden="true" />
+          <span>Invertir colores</span>
+          <span class="switch" aria-hidden="true"></span>
+        </button>
+      </li>
+      <li>
+        <button class="toggle" type="button" [attr.aria-pressed]="config().vozActiva" (click)="service.toggleVoz()">
+          <lucide-icon [img]="icons.Volume2" [size]="20" aria-hidden="true" />
+          <span>Leer en voz alta</span>
+          <span class="switch" aria-hidden="true"></span>
+        </button>
+      </li>
+    </ul>
+
+    <button class="btn reset" type="button" (click)="service.restablecerTodo()">
+      <lucide-icon [img]="icons.RotateCcw" [size]="18" aria-hidden="true" />
+      Restablecer
+    </button>
+  </section>
+}
+
+@if (config().lineaActiva) {
+  <div id="lineaLectura" class="reading-line" [style.top.px]="lineaY()" aria-hidden="true"></div>
+}

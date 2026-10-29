@@ -1,0 +1,67 @@
+<article
+  class="carta"
+  [style]="estilo()"
+  [class.cab-clara]="tipo().cabeceraClara"
+  [attr.aria-label]="'Carta de ' + (especie().nombreComun || 'especie misteriosa') + ', ' + tipo().label"
+>
+  <!-- Cabecera -->
+  <div class="slot slot-cab">
+    <h2 class="nombre" [attr.title]="especie().nombreComun">{{ especie().nombreComun || 'Especie misteriosa' }}</h2>
+    @if (variant() === 'full') {
+      <span class="tipo-pill">
+        <span class="tipo-pill-icon"><lucide-icon [img]="tipo().icon" [size]="18" aria-hidden="true" /></span>
+        {{ tipo().label }}
+      </span>
+    } @else {
+      <span class="tipo-icon" [attr.title]="tipo().label">
+        <lucide-icon [img]="tipo().icon" [size]="16" aria-hidden="true" />
+      </span>
+    }
+  </div>
+
+  <!-- Ventana de la foto (si no hay foto, se ve la escena del fondo) -->
+  <div class="slot slot-win">
+    @if (imagen(); as src) {
+      @if (ampliable()) {
+        <button class="foto-btn" type="button" (click)="ampliar.emit()" [attr.aria-label]="'Ampliar la foto de ' + especie().nombreComun">
+          <img [src]="src" alt="" decoding="async" />
+          <span class="ampliar" aria-hidden="true">
+            <lucide-icon [img]="icons.Maximize2" [size]="18" />
+            Ampliar
+          </span>
+        </button>
+      } @else {
+        <img [src]="src" [alt]="'Foto de ' + especie().nombreComun" [attr.loading]="variant() === 'full' ? null : 'lazy'" decoding="async" />
+      }
+    }
+    @if (veces() > 1) {
+      <span class="count" [attr.aria-label]="'Encontrado ' + veces() + ' veces'">×{{ veces() }}</span>
+    }
+  </div>
+
+  <!-- Nombre científico -->
+  <p class="slot slot-pil" [attr.title]="especie().nombreCientifico">
+    {{ especie().nombreCientifico || 'Nombre científico desconocido' }}
+  </p>
+
+  <!-- Filas de datos -->
+  <dl class="slot slot-fil">
+    @for (f of filas(); track f.label) {
+      <div class="fila">
+        <dt>
+          <lucide-icon [img]="f.icon" [size]="20" aria-hidden="true" />
+          {{ f.label }}
+        </dt>
+        <dd>{{ f.valor }}</dd>
+      </div>
+    }
+  </dl>
+
+  <!-- Lema (solo carta completa) -->
+  @if (variant() === 'full') {
+    <div class="slot-lema">
+      <p class="lema">{{ lema() }}</p>
+      <span class="sello" aria-hidden="true"><lucide-icon [img]="icons.Microscope" [size]="28" /></span>
+    </div>
+  }
+</article>

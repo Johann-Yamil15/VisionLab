@@ -1,0 +1,123 @@
+<section class="page microscope">
+  <header class="page-header">
+    <div>
+      <h1>Microscopio</h1>
+      <p class="page-subtitle">Acerca la lente a una hoja, un insecto o una roca.</p>
+    </div>
+  </header>
+
+  <input #fileInput type="file" accept="image/*" class="sr-only" tabindex="-1" (change)="archivoElegido($event)" />
+
+  @if (estado() !== 'sin-camara') {
+    <div class="stage clay">
+      <div
+        class="lens"
+        [class.lens--ready]="estado() === 'lista'"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerUp($event)"
+        (pointercancel)="onPointerUp($event)"
+        (pointerleave)="onPointerUp($event)"
+      >
+        <video
+          #video
+          class="lens-video"
+          autoplay
+          playsinline
+          muted
+          [style.transform]="'scale(' + escalaVideo() + ')'"
+          aria-label="Vista de la cámara"
+        ></video>
+
+        <div class="lens-reticle" aria-hidden="true">
+          <span class="tick tick--t"></span>
+          <span class="tick tick--b"></span>
+          <span class="tick tick--l"></span>
+          <span class="tick tick--r"></span>
+          <span class="center"></span>
+        </div>
+
+        @if (estado() === 'encendiendo') {
+          <div class="lens-loading" role="status">
+            <span class="spinner"></span>
+            <span>Encendiendo la cámara…</span>
+          </div>
+        }
+
+        @if (flash()) {
+          <div class="lens-flash" aria-hidden="true"></div>
+        }
+
+        <span class="zoom-pill" aria-hidden="true">{{ zoomTexto() }}</span>
+      </div>
+
+      <div class="zoom-bar" role="group" aria-label="Zoom">
+        <button class="btn btn--icon" type="button" (click)="pasoZoom(-1)" [disabled]="zoom() <= zoomRango().min" aria-label="Alejar">
+          <lucide-icon [img]="icons.ZoomOut" [size]="22" aria-hidden="true" />
+        </button>
+        <label class="sr-only" for="zoom">Nivel de zoom</label>
+        <input
+          id="zoom"
+          type="range"
+          [min]="zoomRango().min"
+          [max]="zoomRango().max"
+          [step]="zoomRango().step"
+          [value]="zoom()"
+          [attr.aria-valuetext]="zoomTexto()"
+          (input)="cambiarZoom(+$any($event.target).value)"
+        />
+        <button class="btn btn--icon" type="button" (click)="pasoZoom(1)" [disabled]="zoom() >= zoomRango().max" aria-label="Acercar">
+          <lucide-icon [img]="icons.ZoomIn" [size]="22" aria-hidden="true" />
+        </button>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn--icon btn--round" type="button" (click)="abrirGaleria()" [disabled]="procesando()" aria-label="Subir una foto de la galería">
+          <lucide-icon [img]="icons.Images" [size]="24" aria-hidden="true" />
+        </button>
+
+        <button class="shutter" type="button" (click)="capturar()" [disabled]="estado() !== 'lista'" aria-label="Tomar foto">
+          <span class="shutter-inner">
+            <lucide-icon [img]="icons.Camera" [size]="32" aria-hidden="true" />
+          </span>
+        </button>
+
+        <button
+          class="btn btn--icon btn--round"
+          type="button"
+          (click)="alternarLinterna()"
+          [disabled]="!torchDisponible()"
+          [attr.aria-pressed]="torch()"
+          [attr.aria-label]="torchDisponible() ? (torch() ? 'Apagar linterna' : 'Encender linterna') : 'Linterna no disponible'"
+          [class.btn--sun]="torch()"
+        >
+          <lucide-icon [img]="torch() ? icons.Flashlight : icons.FlashlightOff" [size]="24" aria-hidden="true" />
+        </button>
+      </div>
+
+      <p class="hint">Pellizca la lente o usa la barra para hacer zoom.</p>
+    </div>
+  } @else {
+    <div class="clay">
+      <div class="empty-state">
+        <span class="empty-icon"><lucide-icon [img]="icons.Camera" [size]="40" aria-hidden="true" /></span>
+        <h2>La cámara está dormida</h2>
+        <p>{{ mensajeError() }}</p>
+        <div class="fallback-actions">
+          <button class="btn btn--primary btn--lg" type="button" (click)="abrirGaleria()" [disabled]="procesando()">
+            <lucide-icon [img]="icons.Images" [size]="22" aria-hidden="true" />
+            Subir una foto
+          </button>
+          <button class="btn" type="button" (click)="encender()">
+            <lucide-icon [img]="icons.RotateCcw" [size]="20" aria-hidden="true" />
+            Intentar de nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (procesando()) {
+    <div class="toast" role="status"><span class="spinner" style="color: var(--c-primary)"></span>Preparando tu foto…</div>
+  }
+</section>

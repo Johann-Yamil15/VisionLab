@@ -41,3 +41,17 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Secretos y configuración local (nunca a git)
+.env
+.env.*
+!.env.example
+*.local.json
+src/environments/environment.local.ts
+
+# Originales de diseño de las cartas (pesados). La app usa public/cards/*.webp
+/assets/images/cards/*.png
+
+# Configuración local de Claude Code
+.claude/settings.local.json
+/assets/images/profile/*.png

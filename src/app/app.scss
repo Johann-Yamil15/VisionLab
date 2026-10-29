@@ -1,680 +1,74 @@
-// ============================================
-// 🎨 VARIABLES DE DISEÑO
-// ============================================
-$sidebar-bg: #1a1d29;
-$sidebar-color: #a4a9b0;
-$sidebar-hover-bg: #252837;
-$sidebar-active-color: #ffffff;
-$topbar-bg: #ffffff;
-$topbar-border-color: #e5e7eb;
-$main-bg: #f4f6f9;
-$neon-green: #00c9a7;
-$neon-glow: rgba(0, 201, 167, 0.4);
+:host {
+  display: block;
+  min-height: 100dvh;
+}
 
-// Colores de badges
-$info-color: #3f79ff;
-$success-color: #00c9a7;
-$primary-color: #7966f0;
-$danger-color: #ff4757;
+// Deja espacio para la barra inferior (móvil) o el riel lateral (escritorio).
+.shell-main {
+  min-height: 100dvh;
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  outline: none;
 
-// Breakpoints
-$mobile: 768px;
-$desktop: 992px;
+  @media (min-width: 1024px) {
+    padding-bottom: 0;
+    padding-left: var(--rail-w);
+  }
+}
 
-// Transiciones
-$transition-fast: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-$transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-// ============================================
-// 📱 LAYOUT PRINCIPAL
-// ============================================
-.dashboard-layout {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow: hidden;
+.shell-main {
   position: relative;
+  z-index: 1;
 }
 
-// ============================================
-// 🎯 SIDEBAR (Menú Lateral Colapsable)
-// ============================================
-.sidebar {
-  width: 260px;
-  flex-shrink: 0;
-  background: linear-gradient(180deg, $sidebar-bg 0%, darken($sidebar-bg, 5%) 100%);
-  color: $sidebar-color;
-  overflow-y: auto;
-  overflow-x: hidden;
-  position: relative;
-  transition: transform $transition-smooth, width $transition-smooth;
-  z-index: 1000;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
-
-  // Scrollbar personalizado
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-  }
-
-  // Borde derecho con efecto neón
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 3px;
-    height: 100%;
-    background: linear-gradient(to bottom, 
-      transparent,
-      $neon-green 20%,
-      $neon-green 80%,
-      transparent
-    );
-    box-shadow: 
-      0 0 10px $neon-green,
-      0 0 20px $neon-glow,
-      0 0 30px rgba($neon-green, 0.2);
-    animation: neon-pulse 2s ease-in-out infinite;
-  }
-
-  // Mobile: Sidebar oculto por defecto
-  @media (max-width: $mobile) {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    transform: translateX(-100%);
-    
-    &.sidebar-open {
-      transform: translateX(0);
-    }
-  }
-}
-
-// Estado colapsado (Desktop)
-.sidebar.sidebar-collapsed {
-  @media (min-width: $desktop) {
-    width: 80px;
-
-    .sidebar-header .logo-text {
-      opacity: 0;
-      width: 0;
-    }
-
-    .nav-heading,
-    .nav-list li a span,
-    .badge {
-      opacity: 0;
-      width: 0;
-      overflow: hidden;
-    }
-
-    .nav-list li a {
-      justify-content: center;
-      padding: 10px;
-
-      [class^="icon-"] {
-        margin-right: 0;
-      }
-    }
-  }
-}
-
-// Animación del neón
-@keyframes neon-pulse {
-  0%, 100% {
-    opacity: 1;
-    box-shadow: 
-      0 0 10px $neon-green,
-      0 0 20px $neon-glow,
-      0 0 30px rgba($neon-green, 0.2);
-  }
-  50% {
-    opacity: 0.85;
-    box-shadow: 
-      0 0 15px $neon-green,
-      0 0 30px $neon-glow,
-      0 0 45px rgba($neon-green, 0.3);
-  }
-}
-
-// ============================================
-// 📌 HEADER DEL SIDEBAR
-// ============================================
-.sidebar-header {
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(0, 0, 0, 0.2);
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: $sidebar-active-color;
-    font-size: 1.3rem;
-    font-weight: 700;
-    text-decoration: none;
-    transition: transform $transition-fast;
-
-    &:hover {
-      transform: scale(1.05);
-    }
-
-    .logo-icon {
-      font-size: 1.8rem;
-      filter: drop-shadow(0 0 8px $neon-green);
-    }
-
-    .logo-text {
-      transition: opacity $transition-fast, width $transition-fast;
-      white-space: nowrap;
-    }
-  }
-
-  // Botón para colapsar (solo desktop)
-  .sidebar-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: $sidebar-color;
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 6px;
-    transition: all $transition-fast;
-
-    &:hover {
-      background: $sidebar-hover-bg;
-      color: $neon-green;
-      transform: rotate(180deg);
-    }
-
-    @media (min-width: $desktop) {
-      display: block;
-    }
-  }
-}
-
-// ============================================
-// 🧭 NAVEGACIÓN DEL SIDEBAR
-// ============================================
-.sidebar-nav {
-  padding: 20px 0;
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 70px);
-}
-
-.nav-heading {
-  color: rgba($sidebar-color, 0.7);
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 20px 20px 10px;
-  padding-left: 10px;
-  transition: opacity $transition-fast;
-}
-
-.nav-divider {
-  margin: 20px 20px;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba($neon-green, 0.5),
-    transparent
-  );
-  box-shadow: 0 0 10px rgba($neon-green, 0.3);
-}
-
-.nav-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-
-  &:last-of-type {
-    margin-top: auto;
-  }
-
-  li {
-    position: relative;
-
-    a {
-      display: flex;
-      align-items: center;
-      padding: 12px 25px;
-      color: $sidebar-color;
-      text-decoration: none;
-      transition: all $transition-fast;
-      position: relative;
-      cursor: pointer;
-
-      &:hover {
-        background: $sidebar-hover-bg;
-        color: $sidebar-active-color;
-        padding-left: 30px;
-      }
-
-      &.active {
-        background: $sidebar-hover-bg;
-        color: $neon-green;
-        font-weight: 600;
-
-        &::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          height: 100%;
-          width: 4px;
-          background: $neon-green;
-          box-shadow: 0 0 10px $neon-green;
-        }
-
-        [class^="icon-"] {
-          color: $neon-green;
-          filter: drop-shadow(0 0 6px $neon-green);
-        }
-      }
-
-      [class^="icon-"] {
-        margin-right: 12px;
-        font-size: 1.2rem;
-        transition: all $transition-fast;
-        flex-shrink: 0;
-      }
-
-      span {
-        transition: opacity $transition-fast;
-        white-space: nowrap;
-      }
-
-      .submenu-indicator {
-        margin-left: auto;
-        font-size: 0.8rem;
-        transition: transform $transition-fast;
-      }
-
-      &.has-submenu:hover .submenu-indicator {
-        transform: rotate(90deg);
-      }
-    }
-  }
-}
-
-// ============================================
-// 🏷️ BADGES (Contadores)
-// ============================================
-.badge {
-  margin-left: auto;
-  min-width: 22px;
-  padding: 3px 7px;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1;
-  color: #fff;
-  transition: opacity $transition-fast;
-
-  &.badge-info {
-    background: linear-gradient(135deg, $info-color 0%, darken($info-color, 10%) 100%);
-    box-shadow: 0 0 8px rgba($info-color, 0.4);
-  }
-
-  &.badge-success {
-    background: linear-gradient(135deg, $success-color 0%, darken($success-color, 10%) 100%);
-    box-shadow: 0 0 8px rgba($success-color, 0.4);
-  }
-
-  &.badge-primary {
-    background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 10%) 100%);
-    box-shadow: 0 0 8px rgba($primary-color, 0.4);
-  }
-
-  &.badge-sm {
-    padding: 2px 5px;
-    font-size: 0.65rem;
-  }
-}
-
-// ============================================
-// 📱 OVERLAY PARA MOBILE
-// ============================================
-.sidebar-overlay {
+// --- Hojas decorativas ---
+.decor {
   display: none;
-  
-  @media (max-width: $mobile) {
+
+  @media (min-width: 768px) {
     display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity $transition-smooth;
-
-    &.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
   }
 }
 
-// ============================================
-// 🎯 MAIN CONTENT WRAPPER
-// ============================================
-.main-content-wrapper {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: $main-bg;
-  transition: margin-left $transition-smooth;
+.decor-leaves {
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
 
-  @media (max-width: $mobile) {
-    width: 100%;
+  .l1 {
+    fill: #4caf50;
+    opacity: 0.85;
+  }
+  .l2 {
+    fill: #7cc576;
+    opacity: 0.8;
+  }
+  .l3 {
+    fill: #a5d6a7;
+    opacity: 0.8;
+  }
+  .vein {
+    fill: none;
+    stroke: #2e7d32;
+    stroke-width: 3;
+    opacity: 0.5;
+  }
+  .dot {
+    fill: #81c784;
   }
 }
 
-// ============================================
-// 📌 TOPBAR (Barra Superior)
-// ============================================
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 70px;
-  padding: 0 25px;
-  background-color: $topbar-bg;
-  border-bottom: 1px solid $topbar-border-color;
-  flex-shrink: 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  position: relative;
-  z-index: 100;
+.decor-leaves--tr {
+  top: 0;
+  right: 0;
+  width: 180px;
 }
 
-.topbar-left,
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+.decor-leaves--bl {
+  bottom: 0;
+  left: 0;
+  width: 170px;
 
-// Botón hamburguesa (mobile y toggle desktop)
-.menu-toggle {
-  background: none;
-  border: none;
-  color: #6c757d;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: all $transition-fast;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background: #f3f4f6;
-    color: $neon-green;
-    transform: scale(1.1);
-  }
-
-  &:active {
-    transform: scale(0.95);
+  @media (min-width: 1024px) {
+    left: var(--rail-w);
   }
 }
-
-.topbar-icon {
-  text-decoration: none;
-  color: #6c757d;
-  font-size: 0.95rem;
-  padding: 8px 15px;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all $transition-fast;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 500;
-
-  &:hover {
-    background: #f3f4f6;
-    color: $neon-green;
-  }
-
-  [class^="icon-"] {
-    font-size: 1.1rem;
-  }
-
-  // Ocultar en mobile
-  @media (max-width: $mobile) {
-    span {
-      display: none;
-    }
-  }
-}
-
-// ============================================
-// 👤 MENÚ DE PERFIL (Dropdown)
-// ============================================
-.profile-menu-container {
-  position: relative;
-  cursor: pointer;
-
-  .profile-trigger {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    transition: all $transition-fast;
-    background: #f3f4f6;
-
-    &:hover {
-      background: #e5e7eb;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .profile-icon {
-      font-size: 1.8rem;
-      color: #6c757d;
-      transition: color $transition-fast;
-    }
-
-    .profile-name {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #374151;
-      
-      @media (max-width: $mobile) {
-        display: none;
-      }
-    }
-
-    .dropdown-arrow {
-      font-size: 0.7rem;
-      color: #9ca3af;
-      transition: transform $transition-fast;
-    }
-  }
-
-  &.active .profile-trigger {
-    background: #e5e7eb;
-    
-    .dropdown-arrow {
-      transform: rotate(180deg);
-    }
-  }
-
-  // Menú desplegable
-  .profile-dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 0;
-    width: 220px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
-    transition: all $transition-fast;
-    overflow: hidden;
-    z-index: 1000;
-
-    &.active {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .dropdown-header {
-      padding: 15px;
-      background: linear-gradient(135deg, $neon-green 0%, darken($neon-green, 10%) 100%);
-      color: white;
-
-      .user-name {
-        font-size: 0.95rem;
-        font-weight: 600;
-        margin-bottom: 3px;
-      }
-
-      .user-email {
-        font-size: 0.75rem;
-        opacity: 0.9;
-      }
-    }
-
-    .dropdown-menu {
-      padding: 8px 0;
-
-      a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 15px;
-        color: #374151;
-        text-decoration: none;
-        transition: all $transition-fast;
-        font-size: 0.9rem;
-
-        [class^="icon-"] {
-          font-size: 1.1rem;
-          color: #9ca3af;
-        }
-
-        &:hover {
-          background: #f3f4f6;
-          color: $neon-green;
-
-          [class^="icon-"] {
-            color: $neon-green;
-          }
-        }
-      }
-    }
-
-    .dropdown-divider {
-      height: 1px;
-      background: #e5e7eb;
-      margin: 5px 0;
-    }
-
-    .dropdown-logout {
-      padding: 12px 15px;
-      color: $danger-color;
-      font-weight: 600;
-      transition: all $transition-fast;
-
-      &:hover {
-        background: rgba($danger-color, 0.1);
-      }
-    }
-  }
-}
-
-// ============================================
-// 📄 MAIN CONTENT
-// ============================================
-.main-content {
-  flex-grow: 1;
-  padding: 25px;
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  // Scrollbar personalizado
-  &::-webkit-scrollbar {
-    width: 10px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 5px;
-    
-    &:hover {
-      background: #94a3b8;
-    }
-  }
-}
-
-// ============================================
-// 🎨 ICONOS UNICODE
-// ============================================
-[class^="icon-"]::before {
-  font-style: normal;
-  font-weight: normal;
-  display: inline-block;
-}
-
-// App Modules Icons
-.icon-camera::before { content: "📷"; }
-.icon-chat::before { content: "💬"; }
-.icon-almanac::before { content: "📚"; }
-
-// User & Utility Icons
-.icon-trophy::before { content: "🏆"; }
-.icon-settings::before { content: "⚙️"; }
-.icon-legal::before { content: "⚖️"; }
-
-// Navigation Icons
-.icon-chevron-right::before { content: "›"; }
-.icon-bars::before { content: "☰"; }
-.icon-user::before { content: "👤"; }
-.icon-user-circle::before { content: "👤"; }
-.icon-register::before { content: "📝"; }
-.icon-logout::before { content: "🚪"; }
-.icon-profile::before { content: "👤"; }
-.icon-dashboard::before { content: "📊"; }
-.icon-arrow-down::before { content: "▼"; }
-
-// Logo icon
-.icon-leaf::before { content: "🌿"; }

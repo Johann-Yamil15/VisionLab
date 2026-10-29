@@ -1,0 +1,82 @@
+.toolbar {
+  display: grid;
+  gap: var(--s-4);
+  margin-bottom: var(--s-5);
+}
+
+.search {
+  position: relative;
+  max-width: 420px;
+
+  lucide-icon {
+    position: absolute;
+    left: var(--s-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--c-text-muted);
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 var(--s-4) 0 48px;
+    border: var(--border-clay);
+    border-radius: var(--r-pill);
+    background: var(--c-surface);
+    font-size: var(--fs-md);
+    box-shadow: 0 4px 0 rgba(15, 42, 28, 0.12);
+  }
+}
+
+// Cartas de mínimo 220px de ancho para que las filas de datos se lean bien
+// (1 columna en celular, 2–3 en tablet, 4 en escritorio).
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--s-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (max-width: 479px) {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  li {
+    animation: card-in var(--dur-slow) var(--ease-out) both;
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}
+
+.card-link {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  transition: transform var(--dur) var(--ease-spring);
+
+  &:hover {
+    transform: translateY(-4px) rotate(-0.6deg);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.card-skeleton {
+  aspect-ratio: 2 / 3;
+  border: 3px solid var(--c-border);
+}

@@ -1,0 +1,65 @@
+.specimen {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-5);
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--s-5) var(--s-4);
+}
+
+.lens {
+  position: relative;
+  width: min(100%, 380px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 10px solid var(--c-bg-alt);
+  box-shadow:
+    0 0 0 4px var(--c-ink),
+    0 10px 0 4px rgba(15, 42, 28, 0.2);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.lens--scanning img {
+  filter: saturate(1.2) contrast(1.05);
+}
+
+.scan {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 55%, rgba(21, 128, 61, 0.35));
+
+  .scan-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background: linear-gradient(180deg, transparent, rgba(245, 158, 11, 0.55), transparent);
+    animation: scan 1.6s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes scan {
+  from {
+    transform: translateY(-40%);
+  }
+  to {
+    transform: translateY(270%);
+  }
+}
+
+.alert {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-3);
+}

@@ -1,0 +1,276 @@
+:host {
+  display: block;
+}
+
+// La carta es la imagen de fondo de su categoría (720×1080, proporción 2:3).
+.carta {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  container-type: inline-size;
+  border-radius: 4.5cqw;
+  background: var(--fondo) center / 100% 100% no-repeat, var(--type-color);
+  box-shadow:
+    0 6px 0 rgba(15, 42, 28, 0.18),
+    0 16px 32px rgba(15, 42, 28, 0.16);
+  color: var(--c-text);
+}
+
+// Cada espacio se ubica según los % de tipos.ts (inicio y fin en el alto de la carta).
+.slot {
+  position: absolute;
+  margin: 0;
+}
+
+.slot-cab {
+  top: calc(var(--cab-t) * 1%);
+  height: calc((var(--cab-b) - var(--cab-t)) * 1%);
+  left: 6%;
+  right: 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2cqw;
+}
+
+.nombre {
+  min-width: 0;
+  font-size: clamp(14px, 5.6cqw, 30px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.35),
+    0 0 8px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Cabeceras claras (plantas, rocas, metales, luz…): texto oscuro.
+.cab-clara .nombre {
+  color: var(--c-text);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.tipo-icon,
+.tipo-pill-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: clamp(24px, 8cqw, 36px);
+  height: clamp(24px, 8cqw, 36px);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--type-color);
+}
+
+.tipo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5cqw;
+  flex-shrink: 0;
+  padding: 0.8cqw 3cqw 0.8cqw 0.8cqw;
+  border-radius: var(--r-pill);
+  background: rgba(0, 0, 0, 0.32);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(12px, 3.4cqw, 17px);
+  white-space: nowrap;
+}
+
+.cab-clara .tipo-pill {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--c-text);
+}
+
+.slot-win {
+  top: calc(var(--win-t) * 1%);
+  height: calc((var(--win-b) - var(--win-t)) * 1%);
+  left: 4.8%;
+  right: 4.8%;
+
+  img {
+    position: absolute;
+    inset: 1.2cqw;
+    width: calc(100% - 2.4cqw);
+    height: calc(100% - 2.4cqw);
+    object-fit: cover;
+    border-radius: 3.5cqw;
+  }
+}
+
+.foto-btn {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  border-radius: 3.5cqw;
+
+  img {
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  &:hover img {
+    transform: scale(1.02);
+  }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+.ampliar {
+  position: absolute;
+  right: 3cqw;
+  bottom: 3cqw;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5cqw;
+  padding: 1cqw 3cqw;
+  border-radius: var(--r-pill);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(12px, 3.4cqw, 16px);
+}
+
+.count {
+  position: absolute;
+  top: 3cqw;
+  right: 3cqw;
+  padding: 0.5cqw 2.5cqw;
+  border-radius: var(--r-pill);
+  background: var(--c-sun);
+  color: var(--c-on-sun);
+  border: 2px solid var(--c-ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(12px, 3.8cqw, 18px);
+  box-shadow: 0 3px 0 var(--c-ink);
+}
+
+.slot-pil {
+  top: calc(var(--pil-t) * 1%);
+  height: calc((var(--pil-b) - var(--pil-t)) * 1%);
+  left: 14%;
+  right: 14%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(12px, 4.2cqw, 21px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-fil {
+  top: calc(var(--fil-t) * 1%);
+  height: calc((var(--fil-b) - var(--fil-t)) * 1%);
+  left: 9%;
+  right: 9%;
+  display: grid;
+  grid-template-rows: repeat(var(--fil-n), 1fr);
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2cqw;
+  min-height: 0;
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 2.5cqw;
+    min-width: 0;
+    font-size: clamp(11px, 3.9cqw, 19px);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    lucide-icon {
+      display: inline-flex;
+      flex-shrink: 0;
+      padding-right: 2cqw;
+      border-right: 2px solid color-mix(in srgb, var(--type-color) 35%, transparent);
+      color: var(--type-color);
+    }
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(12px, 4.4cqw, 22px);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Lema sobre el paisaje (solo variante completa).
+.slot-lema {
+  position: absolute;
+  top: 79%;
+  bottom: 5.5%;
+  left: 6.5%;
+  right: 6.5%;
+  display: flex;
+  align-items: center;
+  gap: 3cqw;
+}
+
+.lema {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 4cqw;
+  border-radius: 3.5cqw;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-size: clamp(13px, 3.7cqw, 18px);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.sello {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 15cqw;
+  height: 15cqw;
+  border-radius: 50%;
+  background: var(--type-color);
+  border: 3px solid #fff;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+// Íconos de Lucide: escalan con el texto de la carta.
+:host ::ng-deep .carta lucide-icon svg {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+:host ::ng-deep .tipo-icon svg,
+:host ::ng-deep .tipo-pill-icon svg {
+  width: 60%;
+  height: 60%;
+}
+
+:host ::ng-deep .sello svg {
+  width: 55%;
+  height: 55%;
+}
