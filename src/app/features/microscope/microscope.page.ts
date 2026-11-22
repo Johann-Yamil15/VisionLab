@@ -9,6 +9,7 @@ import {
   viewChild,
   AfterViewInit,
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AppIcons } from '../../shared/ui/icons';
@@ -21,7 +22,7 @@ const ZOOM_DIGITAL = { min: 1, max: 4, step: 0.1 };
 
 @Component({
   selector: 'app-microscope-page',
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, DatePipe],
   templateUrl: './microscope.page.html',
   styleUrl: './microscope.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +49,8 @@ export class MicroscopePage implements AfterViewInit {
   /** Con zoom digital el video se amplía con CSS; con zoom de hardware lo hace la cámara. */
   protected readonly escalaVideo = computed(() => (this.zoomHardware() ? 1 : this.zoom()));
   protected readonly zoomTexto = computed(() => `${this.zoom().toFixed(1)}×`);
+  /** Reloj de la barra de estado del HUD. */
+  protected readonly hora = signal(new Date());
 
   // Gestos de pellizco (pinch) sobre la lente.
   private readonly punteros = new Map<number, PointerEvent>();
@@ -56,8 +59,10 @@ export class MicroscopePage implements AfterViewInit {
   private destruido = false;
 
   constructor() {
+    const reloj = setInterval(() => this.hora.set(new Date()), 1000);
     inject(DestroyRef).onDestroy(() => {
       this.destruido = true;
+      clearInterval(reloj);
       this.camera.stop();
     });
   }
@@ -127,13 +132,16 @@ export class MicroscopePage implements AfterViewInit {
 
   protected capturar(): void {
     const el = this.video()?.nativeElement;
-    if (!el || this.estado() !== 'lista') return;
-
-    this.flash.set(true);
-    setTimeout(() => this.flash.set(false), 250);
+    if (!el || this.estado() !== 'lista' || this.flash()) return;
 
     const foto = this.camera.capture(el, this.escalaVideo());
-    if (foto) this.irAVistaPrevia(foto);
+    if (!foto) return;
+    // Se muestra el destello "MUESTRA CAPTURADA" un instante antes de pasar a la vista previa.
+    this.flash.set(true);
+    setTimeout(() => {
+      this.flash.set(false);
+      if (!this.destruido) this.irAVistaPrevia(foto);
+    }, 600);
   }
 
   protected abrirGaleria(): void {
