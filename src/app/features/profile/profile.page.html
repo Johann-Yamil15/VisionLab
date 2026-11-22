@@ -7,8 +7,8 @@
 
     <form class="search" role="search" (submit)="buscar($event, q.value)">
       <lucide-icon [img]="icons.Search" [size]="20" aria-hidden="true" />
-      <label class="sr-only" for="buscar-perfil">Buscar en VisionLab</label>
-      <input #q id="buscar-perfil" type="search" placeholder="Buscar en VisionLab..." />
+      <label class="sr-only" for="buscar-perfil">Buscar en OmniScan</label>
+      <input #q id="buscar-perfil" type="search" placeholder="Buscar en OmniScan..." />
     </form>
 
     @if (perfil()) {
@@ -181,7 +181,7 @@
                 Ver almanaque <lucide-icon [img]="icons.ArrowRight" [size]="18" aria-hidden="true" />
               </a>
             </header>
-            <p class="collection-intro">Explora las familias de VisionLab y completa todas las medallas.</p>
+            <p class="collection-intro">Explora las bases de datos de OmniScan y completa todas las medallas.</p>
 
             <ul class="families">
               @for (f of coleccion(); track f.tipo.clave) {

@@ -12,6 +12,7 @@ import { buscarEnAtlas } from '../../shared/utils/atlas-match';
 // Excepción a "un feature no importa de otro" (como captura.store): el catálogo del Atlas se lee una sola vez.
 import { AtlasService } from '../atlas/data-access/atlas';
 import { CapturaStore } from '../microscope/data-access/captura.store';
+import { ToastService } from '../../shared/ui/toast/toast.service';
 
 type Guardado = 'guardando' | 'guardado' | 'error';
 
@@ -30,6 +31,7 @@ const sinAcentos = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
 export class DiscoveryPage {
   private readonly store = inject(CapturaStore);
   private readonly hallazgos = inject(HallazgosService);
+  private readonly toasts = inject(ToastService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly atlas = toSignal(inject(AtlasService).elementos$, { initialValue: [] });
@@ -112,6 +114,7 @@ export class DiscoveryPage {
         next: (h) => {
           this.store.marcarGuardado(h.id);
           this.guardado.set('guardado');
+          this.toasts.celebrar(h.progreso);
         },
         error: () => this.guardado.set('error'),
       });

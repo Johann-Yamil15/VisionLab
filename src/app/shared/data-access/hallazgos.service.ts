@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from '../../core/api/api';
 import { Hallazgo, NuevoHallazgo } from '../models/hallazgo.model';
+import { Progreso } from '../models/perfil.model';
 import { claveEspecie } from '../utils/imagen';
 
 /** Una tarjeta del almanaque: misma especie encontrada una o varias veces. */
@@ -27,8 +28,9 @@ export class HallazgosService {
     return this.http.get<Hallazgo>(`${this.url}/${id}`);
   }
 
-  crear(hallazgo: NuevoHallazgo): Observable<Hallazgo> {
-    return this.http.post<Hallazgo>(this.url, hallazgo);
+  /** Guarda el hallazgo; la respuesta trae los puntos, medallas y nivel ganados. */
+  crear(hallazgo: NuevoHallazgo): Observable<Hallazgo & { progreso?: Progreso | null }> {
+    return this.http.post<Hallazgo & { progreso?: Progreso | null }>(this.url, hallazgo);
   }
 
   eliminar(id: string): Observable<void> {

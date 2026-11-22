@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AppNavComponent } from './core/layout/app-nav.component';
 import { AccesibilidadComponent } from './shared/accesibilidad/accesibilidad.component';
+import { ToastsComponent } from './shared/ui/toast/toasts.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, AppNavComponent, AccesibilidadComponent],
+  imports: [RouterOutlet, AppNavComponent, AccesibilidadComponent, ToastsComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

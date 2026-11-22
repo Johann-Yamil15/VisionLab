@@ -8,14 +8,7 @@ import { HallazgosService } from '../../shared/data-access/hallazgos.service';
 import { Hallazgo } from '../../shared/models/hallazgo.model';
 import { Perfil } from '../../shared/models/perfil.model';
 import { AppIcons } from '../../shared/ui/icons';
-import {
-  coleccion,
-  estadisticas,
-  META_COLECCION,
-  medallas,
-  progresoNivel,
-  siguientesRetos,
-} from './data-access/gamificacion';
+import { coleccion, META_COLECCION, siguientesRetos } from './data-access/gamificacion';
 import { PerfilService } from './data-access/perfil.service';
 
 type Estado = 'cargando' | 'listo' | 'error';
@@ -39,10 +32,11 @@ export class ProfilePage {
   protected readonly perfil = signal<Perfil | null>(null);
   private readonly lista = signal<Hallazgo[]>([]);
 
-  protected readonly nivel = computed(() => progresoNivel(this.perfil()?.puntos ?? 0));
-  private readonly stats = computed(() => estadisticas(this.lista(), this.perfil()?.hallazgosContador ?? 0));
-  protected readonly descubrimientos = computed(() => this.stats().total);
-  protected readonly medallas = computed(() => medallas(this.stats()));
+  // Nivel, descubrimientos y medallas los calcula el backend con los hallazgos reales.
+  // La plantilla solo los lee con estado 'listo', cuando el perfil ya llegó.
+  protected readonly nivel = computed(() => this.perfil()!.nivel);
+  protected readonly descubrimientos = computed(() => this.perfil()?.descubrimientos ?? 0);
+  protected readonly medallas = computed(() => this.perfil()?.medallas ?? []);
   protected readonly desbloqueadas = computed(() => this.medallas().filter((m) => m.desbloqueada).length);
   protected readonly retos = computed(() => siguientesRetos(this.medallas()));
   protected readonly coleccion = computed(() => coleccion(this.lista()));
