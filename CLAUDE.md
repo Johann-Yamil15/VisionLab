@@ -72,7 +72,7 @@ src/
       info/                about.page
 ```
 Rutas: `/microscopio`, `/microscopio/vista-previa`, `/descubrimiento`, `/almanaque`,
-`/almanaque/:id`, `/perfil`, `/acerca` (todo lo demás redirige a `/microscopio`).
+`/almanaque/:id`, `/atlas`, `/atlas/:id`, `/perfil`, `/acerca` (todo lo demás redirige a `/microscopio`).
 Convenciones: un feature no importa de otro, salvo `discovery` → `microscope/data-access/captura.store`
 (flujo compartido). Lo que usan dos features va en `shared/`. Componentes `OnPush` + signals.
 Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar chico (límite 6kB).
@@ -84,10 +84,17 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
+- 2026-11-22: `app-nav` reestructurado (destinos en un arreglo + `@for`, columnas iguales con `minmax(0,1fr)`, altura
+  = `--nav-h` incluyendo el borde, tablet vertical centrada a 36rem, móvil horizontal compacto solo íconos con
+  `--nav-h: 56px`, riel con scroll en ventanas bajas, fondo de activo en barra y riel). `expert-chat` fija su propio
+  color de texto (`:host { color: var(--c-text) }`): heredaba blanco al alojarse en una página oscura.
 - 2026-11-22: Atlas 3D, datos completos: `atlas.json` con modelo/sonido/habitat/puntos/créditos para los 12
   elementos (`ElementoAtlas` con `sonido`, `habitat`, `creditoModelo|Sonido|Habitat`), assets comprimidos
   (111 MB → 11 MB: glb meshopt, mp3 mono, fondos webp), `globe.gl` con import dinámico, ícono "Sin sonido".
-  Falta el visor `/atlas/:id`: ver `docs/atlas3d-pendientes.md`.
+  Visor `/atlas/:id` (`atlas-detail.page`): `@google/model-viewer` en su propio chunk (import dinámico),
+  modelo sobre el hábitat (imagen CSS, no skybox), sonido manual, puntos 3D creados desde código, panel de historia
+  con `app-expert-chat`, AR. Los `.glb` van con meshopt: `model-viewer` NO trae decodificador, está en
+  `public/atlas3d/vendor/meshopt_decoder.js`. Estado y pendientes (AR/Quest en dispositivo real): `docs/atlas3d-pendientes.md`.
 - 2026-11-21: OMNI-12 escáner conectado al backend (`ia.service`, 3 opciones con confianza < 60, campos
   amenazas/impacto/peligro, "Ver en el Atlas 3D" por coincidencia con atlas.json; `discovery` importa
   `AtlasService`, excepción a la regla de features). OMNI-13 modo demo + `docs/pruebas-ia.md`.

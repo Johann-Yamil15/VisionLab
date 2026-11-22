@@ -1,0 +1,148 @@
+<section class="escena" [style.--fondo]="fondo()" aria-label="Exploración en 3D">
+  <a class="volver" routerLink="/atlas">
+    <lucide-icon [img]="icons.ArrowLeft" [size]="20" aria-hidden="true" />
+    Volver al globo
+  </a>
+
+  @switch (estado()) {
+    @case ('cargando') {
+      <p class="aviso aviso--centro" role="status">Cargando…</p>
+    }
+
+    @case ('no-encontrado') {
+      <p class="aviso aviso--centro" role="alert">No encontramos este elemento del Atlas.</p>
+    }
+
+    @case ('listo') {
+      @if (elemento(); as e) {
+        <!-- ===== Modelo ===== -->
+        @if (e.modelo) {
+          @if (visorListo()) {
+            <model-viewer
+              #visor
+              class="visor"
+              [class.visor--lateral]="panelAbierto()"
+              [src]="e.modelo"
+              [alt]="'Modelo 3D de ' + e.nombre"
+              camera-controls
+              touch-action="pan-y"
+              [attr.auto-rotate]="autoRotar() ? '' : null"
+              auto-rotate-delay="0"
+              environment-image="neutral"
+              shadow-intensity="1"
+              ar
+              ar-modes="webxr scene-viewer quick-look"
+              ar-placement="floor"
+              ar-scale="auto"
+              (progress)="alProgresar($event)"
+              (load)="alCargar()"
+              (error)="estadoModelo.set('error')"
+              (camera-change)="alMoverCamara($event)"
+            >
+              <div slot="progress-bar"></div>
+            </model-viewer>
+          }
+          @if (estadoModelo() === 'cargando') {
+            <div class="carga" role="status">
+              <span class="barra"><i [style.width.%]="progreso() * 100"></i></span>
+              Cargando modelo… {{ progreso() * 100 | number: '1.0-0' }}%
+            </div>
+          }
+          @if (estadoModelo() === 'error') {
+            <p class="aviso aviso--centro" role="alert">No se pudo cargar el modelo 3D. Revisa tu conexión e inténtalo otra vez.</p>
+          }
+        } @else {
+          <p class="aviso aviso--centro">Modelo 3D en preparación.</p>
+        }
+
+        <!-- ===== Acciones ===== -->
+        <div class="acciones">
+          @if (e.sonido && !sonidoError()) {
+            <audio #audio [src]="e.sonido" preload="none" (play)="sonando.set(true)" (pause)="sonando.set(false)" (ended)="sonando.set(false)" (error)="sonidoError.set(true)"></audio>
+            <button type="button" class="accion" [attr.aria-pressed]="sonando()" (click)="alternarSonido()">
+              <lucide-icon [img]="sonando() ? icons.Pause : icons.Play" [size]="18" aria-hidden="true" />
+              {{ sonando() ? 'Pausar sonido' : 'Escuchar sonido' }}
+            </button>
+          } @else {
+            <p class="sin-sonido">
+              <lucide-icon [img]="icons.VolumeX" [size]="16" aria-hidden="true" />
+              Sin sonido
+            </p>
+          }
+          @if (puedeAr()) {
+            <button type="button" class="accion accion--ar" (click)="proyectar()">
+              <lucide-icon [img]="icons.Box" [size]="18" aria-hidden="true" />
+              Proyectar holograma
+            </button>
+          }
+        </div>
+
+        @if (puntoActivo(); as p) {
+          <aside class="punto-info" aria-live="polite">
+            <button type="button" class="cerrar" aria-label="Cerrar descripción" (click)="puntoActivo.set(null)">
+              <lucide-icon [img]="icons.X" [size]="18" aria-hidden="true" />
+            </button>
+            <h2>{{ p.etiqueta }}</h2>
+            <p>{{ p.texto }}</p>
+          </aside>
+        }
+
+        <!-- ===== Historia y chat ===== -->
+        <aside class="panel" aria-label="Historia de la especie">
+          <header class="panel-cabecera">
+            <div>
+              <span class="cat" [style.background]="color[e.categoria]">{{ nombreCategoria[e.categoria] }}</span>
+              <h1>{{ e.nombre }}</h1>
+            </div>
+            <button
+              type="button"
+              class="plegar"
+              [attr.aria-expanded]="panelAbierto()"
+              aria-controls="historia"
+              [attr.aria-label]="panelAbierto() ? 'Ocultar historia' : 'Ver historia'"
+              (click)="panelAbierto.set(!panelAbierto())"
+            >
+              <lucide-icon [img]="panelAbierto() ? icons.ChevronDown : icons.ChevronUp" [size]="20" aria-hidden="true" />
+            </button>
+          </header>
+
+          <!-- Se oculta con [hidden] (no con @if) para no perder la conversación del chat al plegar. -->
+          <div id="historia" class="panel-cuerpo" [hidden]="!panelAbierto()">
+            <div class="ficha">
+              @if (e.miniatura) {
+                <img class="foto" [src]="e.miniatura" [alt]="'Fotografía de ' + e.nombre" decoding="async" (error)="$any($event.target).hidden = true" />
+              }
+              <div>
+                @if (e.nombreCientifico) {
+                  <p class="cientifico">{{ e.nombreCientifico }}</p>
+                }
+                <dl class="datos">
+                  <div>
+                    <dt>Región</dt>
+                    <dd>{{ e.region }}</dd>
+                  </div>
+                  @if (e.estatus) {
+                    <div>
+                      <dt>Estado de conservación</dt>
+                      <dd>{{ e.estatus }}</dd>
+                    </div>
+                  }
+                </dl>
+              </div>
+            </div>
+            <p class="descripcion">{{ e.descripcion }}</p>
+            @for (c of [e.credito, e.creditoModelo, e.creditoSonido, e.creditoHabitat]; track $index) {
+              @if (c) {
+                <p class="credito">{{ c }}</p>
+              }
+            }
+
+            @if (especie(); as sp) {
+              <app-expert-chat [especie]="sp" />
+            }
+          </div>
+        </aside>
+      }
+    }
+  }
+</section>

@@ -17,10 +17,7 @@ import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import type { GlobeInstance } from 'globe.gl';
 import { AppIcons } from '../../shared/ui/icons';
-import { AtlasService, CategoriaAtlas, ElementoAtlas } from './data-access/atlas';
-
-const COLOR: Record<CategoriaAtlas, string> = { fauna: '#f59e0b', flora: '#22c55e', mineral: '#a78bfa' };
-const NOMBRE_CATEGORIA: Record<CategoriaAtlas, string> = { fauna: 'Fauna', flora: 'Flora', mineral: 'Minerales' };
+import { AtlasService, CategoriaAtlas, COLOR_CATEGORIA as COLOR, ElementoAtlas, NOMBRE_CATEGORIA } from './data-access/atlas';
 
 interface Arco {
   inicio: { lat: number; lng: number };

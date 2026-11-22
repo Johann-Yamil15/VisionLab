@@ -1,5 +1,7 @@
 :host {
   display: block;
+  // Color propio: el chat es una tarjeta clara y no debe heredar el texto de la página que lo aloja.
+  color: var(--c-text);
 }
 
 .chat {
@@ -168,6 +170,7 @@
     border: 2px solid var(--c-border);
     border-radius: var(--r-pill);
     background: var(--c-surface);
+    color: var(--c-text);
     font-size: var(--fs-md);
 
     &:focus-visible {

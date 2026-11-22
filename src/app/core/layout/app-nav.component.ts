@@ -3,9 +3,27 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AppIcons } from '../../shared/ui/icons';
 
+interface Destino {
+  ruta: string;
+  etiqueta: string;
+  icono: (typeof AppIcons)[keyof typeof AppIcons];
+  /** La acción principal (el microscopio) va al centro y resaltada. */
+  principal?: true;
+}
+
+/** Orden de la barra: el microscopio queda en el centro. */
+const DESTINOS: readonly Destino[] = [
+  { ruta: '/almanaque', etiqueta: 'Almanaque', icono: AppIcons.BookOpen },
+  { ruta: '/atlas', etiqueta: 'Atlas', icono: AppIcons.Globe },
+  { ruta: '/microscopio', etiqueta: 'Explorar', icono: AppIcons.Microscope, principal: true },
+  { ruta: '/perfil', etiqueta: 'Mi perfil', icono: AppIcons.Trophy },
+  { ruta: '/acerca', etiqueta: 'Acerca', icono: AppIcons.Info },
+];
+
 /**
- * Navegación principal: barra inferior en móvil y riel lateral en escritorio (≥1024px).
- * El microscopio va al centro y resaltado porque es la acción principal.
+ * Navegación principal, responsiva:
+ * - barra inferior en móvil y tablet vertical (compacta, solo íconos, en móvil horizontal);
+ * - riel lateral desde 1024 px.
  */
 @Component({
   selector: 'app-nav',
@@ -19,41 +37,23 @@ import { AppIcons } from '../../shared/ui/icons';
       </a>
 
       <ul class="items">
-        <li>
-          <a routerLink="/almanaque" routerLinkActive="active" ariaCurrentWhenActive="page">
-            <lucide-icon [img]="icons.BookOpen" [size]="24" aria-hidden="true" />
-            <span>Almanaque</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/atlas" routerLinkActive="active" ariaCurrentWhenActive="page">
-            <lucide-icon [img]="icons.Globe" [size]="24" aria-hidden="true" />
-            <span>Atlas</span>
-          </a>
-        </li>
-        <li class="item-main">
-          <a routerLink="/microscopio" routerLinkActive="active" ariaCurrentWhenActive="page">
-            <span class="main-bubble"><lucide-icon [img]="icons.Microscope" [size]="28" aria-hidden="true" /></span>
-            <span>Explorar</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/perfil" routerLinkActive="active" ariaCurrentWhenActive="page">
-            <lucide-icon [img]="icons.Trophy" [size]="24" aria-hidden="true" />
-            <span>Mi perfil</span>
-          </a>
-        </li>
-        <li>
-          <a routerLink="/acerca" routerLinkActive="active" ariaCurrentWhenActive="page">
-            <lucide-icon [img]="icons.Info" [size]="24" aria-hidden="true" />
-            <span>Acerca</span>
-          </a>
-        </li>
+        @for (d of destinos; track d.ruta) {
+          <li [class.item-main]="d.principal">
+            <a [routerLink]="d.ruta" routerLinkActive="active" ariaCurrentWhenActive="page">
+              @if (d.principal) {
+                <span class="main-bubble"><lucide-icon [img]="d.icono" [size]="28" aria-hidden="true" /></span>
+              } @else {
+                <lucide-icon [img]="d.icono" [size]="24" aria-hidden="true" />
+              }
+              <span class="etiqueta">{{ d.etiqueta }}</span>
+            </a>
+          </li>
+        }
       </ul>
     </nav>
   `,
   styleUrl: './app-nav.component.scss',
 })
 export class AppNavComponent {
-  protected readonly icons = AppIcons;
+  protected readonly destinos = DESTINOS;
 }

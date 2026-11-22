@@ -99,8 +99,8 @@
       {
         "etiqueta": "Cabeza",
         "texto": "Sus muelas anchas y su mandíbula potente trituran el bambú, del que come hasta 14 horas al día.",
-        "posicion": "-0.1711m -0.6913m 3.385m",
-        "normal": "-1m 0m 0m"
+        "posicion": "0.1826m -0.6913m 3.385m",
+        "normal": "1m 0m 0m"
       },
       {
         "etiqueta": "Patas delanteras",
@@ -318,8 +318,8 @@
       {
         "etiqueta": "Ramas",
         "texto": "En la época seca pierde las hojas y sus ramas parecen raíces al aire. Por eso se le llama \"el árbol al revés\".",
-        "posicion": "-1.566m 20.45m -1.713m",
-        "normal": "0.18m 0.98m -0.1m"
+        "posicion": "-2.414m 21.15m -0.9194m",
+        "normal": "-0.97m 0.2m -0.15m"
       },
       {
         "etiqueta": "Flor y fruto",
@@ -351,20 +351,20 @@
       {
         "etiqueta": "Hojas",
         "texto": "Sus hojas miden hasta 3 metros. El borde levantado evita que se inunden y tienen pequeños orificios para drenar el agua.",
-        "posicion": "0.1325m 0.0663m 0.4819m",
+        "posicion": "0.1325m 0.0663m 0.4818m",
         "normal": "-0.04m 0.92m 0.39m"
       },
       {
         "etiqueta": "Nervaduras",
         "texto": "Por debajo, sus nervaduras gruesas y con espinas forman un entramado como vigas que reparte el peso y lo hace flotar.",
-        "posicion": "0.6604m -0.0413m -0.7185m",
-        "normal": "0.11m -0.9m 0.42m"
+        "posicion": "0.6713m -0.0413m -0.9302m",
+        "normal": "0.09m -0.95m -0.29m"
       },
       {
         "etiqueta": "Flor",
         "texto": "Su flor blanca se abre de noche y al segundo día cambia a rosa. Atrae escarabajos que la polinizan.",
-        "posicion": "-0.0264m 0.1921m 0.9985m",
-        "normal": "0.38m 0.48m -0.79m"
+        "posicion": "0.2357m 0.1921m 0.8881m",
+        "normal": "-0.86m 0.48m -0.19m"
       }
     ]
   },
@@ -468,19 +468,19 @@
       {
         "etiqueta": "Estructura",
         "texto": "Sus cristales son prismas de seis lados con punta, que crecen hacia el centro hueco de la geoda.",
-        "posicion": "-3.828m 10.98m 9.227m",
+        "posicion": "-3.829m 10.98m 9.227m",
         "normal": "-0.16m 0.97m 0.2m"
       },
       {
         "etiqueta": "Composición",
         "texto": "Es cuarzo (SiO₂) con trazas de hierro. La radiación natural es lo que le da su color morado.",
-        "posicion": "5.501m -0.4813m 9.639m",
+        "posicion": "5.501m -0.4802m 9.638m",
         "normal": "0.16m -0.97m -0.2m"
       },
       {
         "etiqueta": "Propiedades",
         "texto": "Tiene dureza 7 en la escala de Mohs. Si se calienta mucho, su color morado puede volverse amarillo.",
-        "posicion": "-12.56m -1.721m 23.26m",
+        "posicion": "-12.57m -1.722m 23.26m",
         "normal": "-0.16m 0.97m 0.2m"
       }
     ]

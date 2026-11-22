@@ -4,6 +4,10 @@ import { shareReplay } from 'rxjs';
 
 export type CategoriaAtlas = 'fauna' | 'flora' | 'mineral';
 
+/** Color y nombre de cada categoría: los comparten el globo y el detalle 3D. */
+export const COLOR_CATEGORIA: Record<CategoriaAtlas, string> = { fauna: '#f59e0b', flora: '#22c55e', mineral: '#a78bfa' };
+export const NOMBRE_CATEGORIA: Record<CategoriaAtlas, string> = { fauna: 'Fauna', flora: 'Flora', mineral: 'Minerales' };
+
 /** Punto interactivo sobre el modelo 3D (hotspot de model-viewer). */
 export interface PuntoAtlas {
   etiqueta: string;
