@@ -6,7 +6,7 @@
 > Repo: https://github.com/Johann-Yamil15/VisionLab
 
 ## Qué es
-Microscopio digital para niños: toma o sube una foto de un hallazgo, la IA (Gemini) lo
+Microscopio digital para niños: toma o sube una foto de un hallazgo, la IA (CLI de Claude, vía backend) lo
 identifica, se guarda como **tarjeta coleccionable** en el almanaque y se puede chatear con un
 experto sobre ella. Gamificación con puntos, niveles y medallas. Futuro: 3D / RA.
 Concurso: museo El Rehilete, Pachuca. Fecha límite aprox.: **2026-10-29**.
@@ -30,8 +30,8 @@ Hook antisecretos en `.githooks/pre-commit` (bloquea `AIza...`, llaves privadas 
 credenciales en connection strings).
 
 ## Reglas de seguridad (NO romper)
-- **Ninguna API key en el frontend.** Gemini va SOLO por el backend (pendiente: `/api/analisis`, `/api/chat`).
-  Hoy `core/ai/gemini.service.ts` tiene `apiKey = ''` y responde `IaNoDisponibleError`.
+- **Ninguna API key en el frontend.** La IA va SOLO por el backend (`/api/analisis`, `/api/chat`); `core/ai/ia.service.ts` es el cliente
+  (400 → `SolicitudInvalidaError`, 503/red/timeout → `IaNoDisponibleError`).
 - Las keys viejas (`AIzaSyB-cDig…`, `AIzaSyANor9…`) siguen en el historial: hay que revocarlas.
 - `src/environments/` solo lleva la URL del API, nunca secretos.
 - El `usuarioId` nunca lo manda el cliente (el backend lo ignora).
@@ -47,7 +47,7 @@ src/
     app.routes.ts          lazy loadComponent por página
     core/
       api/api.ts           API_URL
-      ai/gemini.service.ts TEMPORAL (sin key); analyze(), chat(especie, pregunta)
+      ai/ia.service.ts analyze(), chat()
       layout/app-nav       barra inferior (móvil) / riel lateral ≥1024px
     shared/
       models/              hallazgo (Hallazgo, AnalysisResult, NuevoHallazgo, Especie), perfil, chat-message
@@ -79,11 +79,14 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 
 ## Pendiente
 - Pantallas de login y registro + interceptor JWT (cuando el backend tenga JWT).
-- Pasar Gemini al backend y borrar `core/ai/gemini.service.ts`.
+- Probar la IA real con 50 fotos.
 - PWA (manifest + service worker), 3D/RA.
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
+- 2026-11-21: OMNI-12 escáner conectado al backend (`ia.service`, 3 opciones con confianza < 60, campos
+  amenazas/impacto/peligro, "Ver en el Atlas 3D" por coincidencia con atlas.json; `discovery` importa
+  `AtlasService`, excepción a la regla de features).
 - 2026-10-14: creado este archivo. `master` → `develop` + `main`. Hook antisecretos. Key fuera del código.
 - 2026-10-14: `feature/jj-arquitectura-base`: arquitectura por features + rediseño completo
   "Explorador" (claymorphism, Fredoka/Nunito, Lucide). Se quitaron SSR y Angular Material.
