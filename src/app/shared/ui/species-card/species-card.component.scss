@@ -8,7 +8,9 @@
   width: 100%;
   aspect-ratio: 2 / 3;
   container-type: inline-size;
-  border-radius: 4.5cqw;
+  // Radio fijo: en cqw se medía contra el contenedor padre (no la carta) y en pantallas anchas
+  // las esquinas quedaban tan redondas que recortaban el nombre.
+  border-radius: 10px;
   background: var(--fondo) center / 100% 100% no-repeat, var(--type-color);
   box-shadow:
     0 6px 0 rgba(15, 42, 28, 0.18),
