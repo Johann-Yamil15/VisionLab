@@ -104,3 +104,16 @@
     width: 50%;
   }
 }
+
+.demo-badge {
+  justify-self: center;
+  width: fit-content;
+  margin: 0 auto var(--s-4);
+  padding: 4px 14px;
+  border-radius: var(--r-pill);
+  border: 2px solid var(--c-ink);
+  background: var(--c-sun);
+  color: var(--c-on-sun);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+}
