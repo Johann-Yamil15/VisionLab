@@ -4,6 +4,12 @@ import { shareReplay } from 'rxjs';
 
 export type CategoriaAtlas = 'fauna' | 'flora' | 'mineral';
 
+/** Color y nombre de cada categoría: los comparten el globo y el detalle 3D. */
+export const COLOR_CATEGORIA: Record<CategoriaAtlas, string> = { fauna: '#f59e0b', flora: '#22c55e', mineral: '#a78bfa' };
+/** Color de chips y etiquetas: tokens del sistema (texto blanco encima con contraste AA). Los pines usan los brillantes. */
+export const TOKEN_CATEGORIA: Record<CategoriaAtlas, string> = { fauna: 'var(--t-luz)', flora: 'var(--t-planta)', mineral: 'var(--t-hongo)' };
+export const NOMBRE_CATEGORIA: Record<CategoriaAtlas, string> = { fauna: 'Fauna', flora: 'Flora', mineral: 'Minerales' };
+
 /** Punto interactivo sobre el modelo 3D (hotspot de model-viewer). */
 export interface PuntoAtlas {
   etiqueta: string;

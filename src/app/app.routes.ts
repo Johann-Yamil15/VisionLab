@@ -34,6 +34,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/atlas/atlas.page').then((m) => m.AtlasPage),
   },
   {
+    path: 'atlas/:id',
+    title: 'Explorar en 3D · OmniScan',
+    loadComponent: () => import('./features/atlas/atlas-detail.page').then((m) => m.AtlasDetailPage),
+  },
+  {
     path: 'perfil',
     title: 'Mi perfil · OmniScan',
     loadComponent: () => import('./features/profile/profile.page').then((m) => m.ProfilePage),

@@ -17,10 +17,7 @@ import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import type { GlobeInstance } from 'globe.gl';
 import { AppIcons } from '../../shared/ui/icons';
-import { AtlasService, CategoriaAtlas, ElementoAtlas } from './data-access/atlas';
-
-const COLOR: Record<CategoriaAtlas, string> = { fauna: '#f59e0b', flora: '#22c55e', mineral: '#a78bfa' };
-const NOMBRE_CATEGORIA: Record<CategoriaAtlas, string> = { fauna: 'Fauna', flora: 'Flora', mineral: 'Minerales' };
+import { AtlasService, CategoriaAtlas, COLOR_CATEGORIA as COLOR, ElementoAtlas, NOMBRE_CATEGORIA, TOKEN_CATEGORIA } from './data-access/atlas';
 
 interface Arco {
   inicio: { lat: number; lng: number };
@@ -55,29 +52,28 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
         <p class="sr-only" role="status">Cargando el atlas…</p>
       }
 
-      <header class="titulo">
+      <header class="titulo clay">
         <h1>Atlas Vivo 3D</h1>
         <p>Gira el planeta y toca un pin para explorar.</p>
       </header>
 
-      <div class="filtros" role="group" aria-label="Filtrar por categoría">
+      <div class="filtros chips" role="group" aria-label="Filtrar por categoría">
         @for (c of categorias; track c) {
           <button
             type="button"
-            class="filtro"
-            [class.activo]="activas().has(c)"
+            class="chip"
             [attr.aria-pressed]="activas().has(c)"
-            [style.--c]="color[c]"
+            [style.--chip-color]="chipColor[c]"
             (click)="alternar(c)"
           >
-            <span class="punto"></span>{{ nombreCategoria[c] }}
+            <span class="punto" aria-hidden="true"></span>{{ nombreCategoria[c] }}
           </button>
         }
       </div>
 
       <button
         type="button"
-        class="abrir-catalogo"
+        class="abrir-catalogo btn"
         [attr.aria-expanded]="catalogoAbierto()"
         aria-controls="atlas-catalogo"
         (click)="catalogoAbierto.set(!catalogoAbierto())"
@@ -86,7 +82,7 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
         {{ catalogoAbierto() ? 'Cerrar' : 'Catálogo' }}
       </button>
 
-      <aside id="atlas-catalogo" class="catalogo" [class.abierto]="catalogoAbierto()" aria-label="Catálogo del atlas">
+      <aside id="atlas-catalogo" class="catalogo clay" [class.abierto]="catalogoAbierto()" aria-label="Catálogo del atlas">
         <label class="buscar">
           <lucide-icon [img]="icons.Search" [size]="18" aria-hidden="true" />
           <span class="sr-only">Buscar en el atlas</span>
@@ -100,7 +96,7 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
 
         @for (c of categorias; track c) {
           @if (porCategoria()[c].length) {
-            <h2 class="grupo" [style.--c]="color[c]">{{ nombreCategoria[c] }}</h2>
+            <h2 class="grupo" [style.--c]="chipColor[c]">{{ nombreCategoria[c] }}</h2>
             <ul class="lista">
               @for (e of porCategoria()[c]; track e.id) {
                 <li>
@@ -124,20 +120,20 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
       </aside>
 
       @if (seleccionado(); as e) {
-        <article class="ficha" aria-live="polite">
-          <button type="button" class="cerrar" aria-label="Cerrar ficha" (click)="seleccionado.set(null)">
+        <article class="ficha clay" aria-live="polite">
+          <button type="button" class="cerrar btn btn--icon" aria-label="Cerrar ficha" (click)="seleccionado.set(null)">
             <lucide-icon [img]="icons.X" [size]="18" aria-hidden="true" />
           </button>
           <div class="cabecera">
             <div>
-              <span class="cat" [style.background]="color[e.categoria]">{{ nombreCategoria[e.categoria] }}</span>
+              <span class="type-badge" [style.--type-color]="chipColor[e.categoria]">{{ nombreCategoria[e.categoria] }}</span>
               <h2>{{ e.nombre }}</h2>
               @if (e.nombreCientifico) {
                 <p class="cientifico">{{ e.nombreCientifico }}</p>
               }
             </div>
             @if (e.miniatura) {
-              <img class="foto" [src]="e.miniatura" decoding="async"[alt]="'Fotografía de ' + e.nombre" />
+              <img class="foto" [src]="e.miniatura" decoding="async" [alt]="'Fotografía de ' + e.nombre" />
             }
           </div>
           <dl class="datos">
@@ -174,7 +170,7 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
             </p>
           }
           @if (e.modelo) {
-            <a class="explorar" [routerLink]="['/atlas', e.id]">
+            <a class="explorar btn btn--primary btn--block" [routerLink]="['/atlas', e.id]">
               <lucide-icon [img]="icons.Maximize2" [size]="18" aria-hidden="true" />
               Explorar en 3D
             </a>
@@ -199,7 +195,7 @@ export class AtlasPage implements OnDestroy {
 
   protected readonly icons = AppIcons;
   protected readonly categorias: CategoriaAtlas[] = ['fauna', 'flora', 'mineral'];
-  protected readonly color = COLOR;
+  protected readonly chipColor = TOKEN_CATEGORIA;
   protected readonly nombreCategoria = NOMBRE_CATEGORIA;
 
   private readonly elementos = toSignal(inject(AtlasService).elementos$, { initialValue: [] });

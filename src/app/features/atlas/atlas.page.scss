@@ -1,9 +1,7 @@
-// El Atlas es una vista inmersiva: fondo de espacio oscuro a pantalla completa.
+// El Atlas es una vista inmersiva: el globo va sobre espacio oscuro a pantalla completa; los controles y
+// paneles encima usan las piezas del sistema de diseño (.clay, .btn, .chip, .type-badge).
 :host {
   display: block;
-  --panel: rgb(15 23 42 / 82%);
-  --linea: rgb(148 163 184 / 28%);
-  --suave: #cbd5e1;
 }
 
 .atlas {
@@ -12,6 +10,13 @@
   overflow: hidden;
   background: #02040a;
   color: #f1f5f9;
+}
+
+// El shell reserva el alto de la barra inferior en celular; la escena ya lo cubre (sin scroll).
+@media (max-width: 1023px) {
+  .atlas {
+    margin-bottom: calc(-1 * (var(--nav-h) + env(safe-area-inset-bottom)));
+  }
 }
 
 .globo {
@@ -131,86 +136,53 @@
   top: 1rem;
   left: 1rem;
   right: 9rem; // deja libre el botón "Catálogo"
-  margin: 0;
+  width: fit-content;
+  max-width: calc(100% - 10rem);
+  padding: var(--s-3) var(--s-4);
+  color: var(--c-text);
   pointer-events: none;
 
   h1 {
-    margin: 0;
-    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-size: var(--fs-lg);
+    line-height: 1.2;
   }
 
   p {
-    margin: 0.25rem 0 0;
-    color: var(--suave);
+    display: none; // en celular solo el título; la ayuda aparece desde tablet
+    margin: var(--s-1) 0 0;
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
   }
 }
 
 .filtros {
-  top: 5.75rem;
+  top: 5.5rem;
   left: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  right: 1rem;
 }
 
-.filtro {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-height: 2.5rem;
-  padding: 0 0.9rem;
-  border: 1px solid var(--linea);
-  border-radius: 999px;
-  background: var(--panel);
-  color: var(--suave);
-  font: inherit;
-  font-size: 0.875rem;
-  cursor: pointer;
-  opacity: 0.6;
-
-  .punto {
-    width: 0.7rem;
-    height: 0.7rem;
-    border-radius: 50%;
-    background: var(--c);
-  }
-
-  &.activo {
-    border-color: var(--c);
-    color: #fff;
-    opacity: 1;
-  }
+.chip .punto {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid var(--c-ink);
+  border-radius: 50%;
+  background: var(--chip-color);
 }
 
 .abrir-catalogo {
   top: 1rem;
   right: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-height: 2.75rem;
-  padding: 0 1rem;
-  border: 1px solid var(--linea);
-  border-radius: 999px;
-  background: var(--panel);
-  color: #fff;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
 }
 
 .catalogo {
-  top: 4.25rem;
+  top: 9.5rem;
   right: 1rem;
   bottom: 6rem;
   display: none;
   width: min(20rem, calc(100% - 2rem));
-  padding: 0.75rem;
+  padding: var(--s-3);
   overflow-y: auto;
-  border: 1px solid var(--linea);
-  border-radius: 1rem;
-  background: var(--panel);
-  backdrop-filter: blur(8px);
+  color: var(--c-text);
 
   &.abierto {
     display: block;
@@ -220,32 +192,33 @@
 .buscar {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0 0.75rem;
-  border: 1px solid var(--linea);
-  border-radius: 0.75rem;
-  color: var(--suave);
+  gap: var(--s-2);
+  padding: 0 var(--s-3);
+  border: 2px solid var(--c-border);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  color: var(--c-text-muted);
 
   input {
     flex: 1;
-    min-height: 2.75rem;
+    min-width: 0;
+    min-height: 44px;
     border: 0;
     background: transparent;
-    color: #fff;
-    font: inherit;
+    color: var(--c-text);
     outline: none;
   }
 
   &:focus-within {
-    border-color: #fff;
+    border-color: var(--c-secondary);
   }
 }
 
 .grupo {
-  margin: 1rem 0 0.25rem;
+  margin: var(--s-4) 0 var(--s-1);
   color: var(--c);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -257,47 +230,50 @@
   button {
     display: grid;
     width: 100%;
-    padding: 0.5rem 0.6rem;
-    border: 0;
-    border-radius: 0.5rem;
+    min-height: 44px;
+    padding: var(--s-2) var(--s-3);
+    border: 2px solid transparent;
+    border-radius: var(--r-sm);
     background: none;
-    color: #f8fafc;
-    font: inherit;
+    color: var(--c-text);
+    font-weight: 700;
     text-align: left;
     cursor: pointer;
 
     small {
-      color: var(--suave);
-      font-size: 0.75rem;
+      color: var(--c-text-muted);
+      font-size: var(--fs-xs);
+      font-weight: 600;
     }
 
-    &:hover,
+    &:hover {
+      background: var(--c-bg-alt);
+    }
+
     &.actual {
-      background: rgb(255 255 255 / 10%);
+      border-color: var(--c-primary);
+      background: var(--c-bg-alt);
     }
   }
 }
 
 .vacio {
-  margin: 1rem 0 0;
-  color: var(--suave);
+  margin: var(--s-4) 0 0;
+  color: var(--c-text-muted);
 }
 
 .ficha {
   left: 1rem;
   bottom: 6rem;
   width: min(22rem, calc(100% - 2rem));
-  max-height: calc(100% - 13rem);
-  padding: 1rem 1.25rem;
+  max-height: calc(100% - 15rem);
+  padding: var(--s-4);
   overflow-y: auto;
-  border: 1px solid var(--linea);
-  border-radius: 1rem;
-  background: var(--panel);
-  backdrop-filter: blur(8px);
+  color: var(--c-text);
 
   h2 {
-    margin: 0.5rem 0 0;
-    font-size: 1.35rem;
+    margin: var(--s-2) 0 0;
+    font-size: var(--fs-xl);
   }
 }
 
@@ -305,103 +281,82 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
-  padding-right: 2.5rem; // espacio del botón cerrar
+  gap: var(--s-3);
+  padding-right: 3rem; // espacio del botón cerrar
 }
 
 // Foto real de la especie, junto al nombre.
 .foto {
   flex: none;
-  width: 7.5rem;
+  width: 6rem;
   aspect-ratio: 1;
-  border: 1px solid var(--linea);
-  border-radius: 0.75rem;
+  border: var(--border-clay);
+  border-radius: var(--r-sm);
   object-fit: cover;
 }
 
 .cerrar {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border: 0;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 10%);
-  color: #fff;
-  cursor: pointer;
-}
-
-.cat {
-  display: inline-block;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  color: #0f172a;
-  font-size: 0.75rem;
-  font-weight: 700;
+  top: var(--s-3);
+  right: var(--s-3);
+  width: 40px;
+  min-width: 40px;
+  min-height: 40px;
 }
 
 .cientifico {
-  margin: 0.15rem 0 0;
-  color: var(--suave);
+  margin: 2px 0 0;
+  color: var(--c-text-muted);
   font-style: italic;
 }
 
 .datos {
   display: grid;
-  gap: 0.5rem;
-  margin: 0.75rem 0 0;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 0;
 
   dt {
-    color: var(--suave);
-    font-size: 0.75rem;
+    color: var(--c-text-muted);
+    font-size: var(--fs-xs);
+    font-weight: 700;
   }
 
   dd {
     margin: 0;
+    font-weight: 600;
   }
 }
 
 .descripcion {
-  margin: 0.75rem 0 0;
-  line-height: 1.5;
+  margin: var(--s-3) 0 0;
+  line-height: 1.6;
 }
 
 .explorar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-  margin-top: 1rem;
-  border-radius: 0.75rem;
-  background: #2563eb;
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
+  margin-top: var(--s-4);
 }
 
 .credito {
-  margin: 0.5rem 0 0;
-  color: var(--suave);
-  font-size: 0.7rem;
+  margin: var(--s-2) 0 0;
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
 }
 
 .sin-sonido {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  margin: 0.75rem 0 0;
-  color: var(--suave);
-  font-size: 0.8125rem;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 0;
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 700;
 }
 
 .pronto {
-  margin: 1rem 0 0;
-  color: var(--suave);
-  font-size: 0.875rem;
+  margin: var(--s-4) 0 0;
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 700;
 }
 
 // En celular no caben juntos: con el catálogo abierto se oculta la ficha.
@@ -411,18 +366,28 @@
   }
 }
 
-@media (min-width: 1024px) {
-  .filtros {
-    top: 5rem;
+@media (min-width: 768px) {
+  .titulo p {
+    display: block;
   }
 
+  .filtros {
+    top: 7.5rem;
+  }
+
+  .catalogo {
+    top: 11.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
   .catalogo {
     bottom: 1.5rem;
   }
 
   .ficha {
     bottom: 1.5rem;
-    max-height: calc(100% - 9rem);
+    max-height: calc(100% - 13rem);
   }
 }
 
@@ -457,11 +422,13 @@
   left: 50%;
   bottom: 140%;
   transform: translateX(-50%);
-  padding: 0.15rem 0.5rem;
-  border-radius: 0.4rem;
-  background: rgb(15 23 42 / 90%);
-  color: #f8fafc;
-  font-size: 0.8rem;
+  padding: 2px var(--s-3);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-size: var(--fs-sm);
+  font-weight: 700;
   white-space: nowrap;
   opacity: 0;
   transition: opacity 0.15s;

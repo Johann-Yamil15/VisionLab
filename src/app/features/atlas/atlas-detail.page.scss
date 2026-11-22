@@ -1,0 +1,381 @@
+// Detalle inmersivo: el modelo va sobre la foto de su hábitat; los controles y paneles usan las piezas
+// del sistema de diseño (.clay, .btn, .type-badge, .meter).
+// Botones flotantes de abajo a la derecha: accesibilidad (global) y chat (este). Mismo tamaño y misma base.
+:host {
+  display: block;
+  --fab: 52px;
+  --fabs-base: calc(var(--nav-h) + var(--s-4) + env(safe-area-inset-bottom));
+  --fabs-top: calc(var(--fabs-base) + var(--fab) + var(--s-3));
+}
+
+.escena {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--c-ink) var(--fondo, none) center / cover no-repeat;
+  color: var(--c-text);
+
+  // Velo suave para que el hábitat no compita con el modelo.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      color-mix(in srgb, var(--c-ink) 15%, transparent),
+      color-mix(in srgb, var(--c-ink) 45%, transparent)
+    );
+    pointer-events: none;
+  }
+}
+
+// El shell reserva el alto de la barra inferior en celular; aquí la escena ya lo cubre.
+@media (max-width: 1023px) {
+  .escena {
+    margin-bottom: calc(-1 * (var(--nav-h) + env(safe-area-inset-bottom)));
+  }
+}
+
+.visor {
+  position: absolute;
+  inset: 0;
+  display: block;
+  // <model-viewer> trae 300x150 por defecto: con `auto` se estira entre los bordes de `inset`.
+  width: auto;
+  height: auto;
+  --poster-color: transparent;
+  background: transparent;
+}
+
+// Controles, paneles y avisos flotan sobre el modelo.
+.volver,
+.acciones,
+.punto-info,
+.columna,
+.aviso,
+.carga {
+  position: absolute;
+  z-index: 1;
+}
+
+.volver {
+  top: var(--s-4);
+  left: var(--s-4);
+}
+
+.acciones {
+  top: 5rem;
+  left: var(--s-4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: calc(100% - 2rem);
+}
+
+@media (max-width: 639px) {
+  .acciones .btn {
+    min-height: 44px;
+    padding: 0 var(--s-3);
+    font-size: var(--fs-sm);
+  }
+}
+
+// Chat: círculo junto al botón de accesibilidad (a su izquierda).
+.fab-chat {
+  position: fixed;
+  z-index: 2;
+  right: calc(var(--s-4) + var(--fab) + var(--s-3));
+  bottom: var(--fabs-base);
+  display: grid;
+  place-items: center;
+  width: var(--fab);
+  height: var(--fab);
+  border: var(--border-clay);
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  box-shadow: 0 5px 0 var(--c-ink);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+
+  // Etiqueta "IA" con estrellitas (el círculo es chico: ícono arriba, texto abajo).
+  .fab-ia {
+    display: grid;
+    justify-items: center;
+    gap: 1px;
+    font-family: var(--font-display);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &[aria-expanded='true'] {
+    background: var(--c-sun);
+    color: var(--c-on-sun);
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 var(--c-ink);
+  }
+}
+
+.sin-sonido {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 40px;
+  margin: 0;
+  padding: 0 var(--s-3);
+  border: 2px solid var(--c-border);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.aviso {
+  margin: 0;
+  padding: var(--s-3) var(--s-4);
+  color: var(--c-text-muted);
+  font-weight: 700;
+
+  &--centro {
+    top: 50%;
+    left: 50%;
+    max-width: min(24rem, calc(100% - 2rem));
+    text-align: center;
+    translate: -50% -50%;
+  }
+}
+
+.carga {
+  top: 50%;
+  left: 50%;
+  display: grid;
+  gap: var(--s-2);
+  width: min(18rem, calc(100% - 2rem));
+  padding: var(--s-3) var(--s-4);
+  font-weight: 700;
+  text-align: center;
+  translate: -50% -50%;
+}
+
+// --- Puntos sobre el modelo (los crea el código, por eso ::ng-deep) ---
+:host ::ng-deep .punto-3d {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 2px solid var(--c-ink);
+  border-radius: 50%;
+  background: var(--c-primary);
+  box-shadow: 0 3px 0 var(--c-ink);
+  color: var(--c-on-primary);
+  font: inherit;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:not([data-visible]) {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--c-ink);
+  }
+}
+
+.punto-info {
+  bottom: calc(var(--fabs-top) + 5rem); // encima de la cabecera de la tarjeta
+  left: var(--s-4);
+  width: min(22rem, calc(100% - 2rem));
+  padding: var(--s-4) 3.5rem var(--s-4) var(--s-4);
+
+  h2 {
+    font-size: var(--fs-lg);
+  }
+
+  p {
+    margin: var(--s-1) 0 0;
+    line-height: 1.6;
+  }
+}
+
+.cerrar {
+  position: absolute;
+  top: var(--s-3);
+  right: var(--s-3);
+  width: 40px;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+// --- Historia (tarjeta) y chat (panel aparte) ---
+// Comparten una columna: en celular va anclada abajo y el chat crece hacia arriba; en escritorio es lateral.
+.columna {
+  right: var(--s-4);
+  bottom: var(--fabs-top); // deja libres los botones flotantes (accesibilidad y chat)
+  left: var(--s-4);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--s-2);
+  // Nunca más alto que el espacio libre sobre los botones flotantes (celular horizontal).
+  max-height: min(70dvh, calc(100dvh - var(--fabs-top) - var(--s-4)));
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.panel {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chat-caja {
+  position: relative;
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  border-radius: var(--r-md);
+  --chat-msgs-max: 26dvh;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.panel-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+
+  h1 {
+    margin: var(--s-1) 0 0;
+    font-size: var(--fs-xl);
+  }
+}
+
+.plegar {
+  flex: none;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.panel-cuerpo {
+  padding: 0 var(--s-4) var(--s-4);
+  overflow-y: auto;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.ficha {
+  display: flex;
+  gap: var(--s-4);
+}
+
+.foto {
+  flex: none;
+  width: 6rem;
+  aspect-ratio: 1;
+  border: var(--border-clay);
+  border-radius: var(--r-sm);
+  object-fit: cover;
+}
+
+.cientifico {
+  margin: 0;
+  color: var(--c-text-muted);
+  font-style: italic;
+}
+
+.datos {
+  display: grid;
+  gap: var(--s-2);
+  margin: var(--s-2) 0 0;
+
+  dt {
+    color: var(--c-text-muted);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.descripcion {
+  margin: var(--s-3) 0 0;
+  line-height: 1.6;
+}
+
+.credito {
+  margin: var(--s-2) 0 0;
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
+  overflow-wrap: anywhere;
+}
+
+app-expert-chat {
+  display: block;
+  margin-top: var(--s-4);
+}
+
+@media (min-width: 1024px) {
+  // Con la historia abierta, el modelo se centra en el espacio que deja libre el panel.
+  .visor--lateral {
+    right: calc(min(26rem, 40vw) + 2rem);
+  }
+
+  // En escritorio los botones flotantes bajan a la esquina (sin barra inferior).
+  :host {
+    --fabs-base: var(--s-5);
+  }
+
+  .fab-chat {
+    right: calc(var(--s-5) + var(--fab) + var(--s-3));
+  }
+
+  .columna {
+    top: var(--s-4);
+    right: var(--s-4);
+    bottom: var(--fabs-top);
+    left: auto;
+    flex-direction: column;
+    width: min(26rem, 40vw);
+    max-height: none;
+  }
+
+  .chat-caja {
+    flex: 1 1 auto;
+    --chat-msgs-max: min(340px, 38dvh);
+  }
+
+  .punto-info {
+    bottom: var(--fabs-top);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab-chat,
+  :host ::ng-deep .punto-3d {
+    transition: none;
+  }
+}

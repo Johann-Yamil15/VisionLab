@@ -1,3 +1,8 @@
+// Móvil/tablet: barra inferior · ≥1024px: riel lateral. Alturas y anchos salen de los tokens
+// (--nav-h, --rail-w): el shell reserva exactamente ese espacio.
+$rail: 1024px;
+$compacto: '(max-width: 1023px) and (max-height: 500px)'; // móvil horizontal
+
 :host {
   position: fixed;
   z-index: var(--z-nav);
@@ -5,7 +10,7 @@
   right: 0;
   bottom: 0;
 
-  @media (min-width: 1024px) {
+  @media (min-width: $rail) {
     top: 0;
     right: auto;
     width: var(--rail-w);
@@ -13,34 +18,50 @@
 }
 
 .nav {
-  height: 100%;
+  box-sizing: border-box;
+  // La altura incluye el borde: coincide con el espacio que reserva el shell (sin tapar contenido).
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
   background: var(--c-surface);
   border-top: var(--border-clay);
   padding-bottom: env(safe-area-inset-bottom);
 
-  @media (min-width: 1024px) {
+  @media (min-width: $rail) {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--s-5);
+    height: 100%;
     padding: var(--s-4) 0;
+    overflow-y: auto; // ventanas bajas: el riel se desplaza en vez de cortarse
+    overscroll-behavior: contain;
     border-top: 0;
     border-right: var(--border-clay);
     // Líneas topográficas decorativas al pie del riel.
     background: url('/decor/topografico.webp') left bottom / 100% auto no-repeat, var(--c-surface);
   }
+
+  @media (min-width: $rail) and (max-height: 640px) {
+    gap: var(--s-3);
+    padding-block: var(--s-3);
+  }
 }
 
-// Logo: solo en el riel de escritorio (en móvil está en la cabecera de cada página).
+// Logo: solo en el riel (en móvil está en la cabecera de cada página).
 .brand {
   display: none;
   text-decoration: none;
   color: var(--c-text);
 
-  @media (min-width: 1024px) {
+  @media (min-width: $rail) {
     display: grid;
     justify-items: center;
     gap: 4px;
+  }
+
+  @media (min-width: $rail) and (max-height: 640px) {
+    .brand-name {
+      display: none;
+    }
   }
 
   .brand-mark {
@@ -63,20 +84,30 @@
 }
 
 .items {
+  // minmax(0, 1fr): columnas iguales aunque una etiqueta sea más larga que las otras.
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: end;
-  height: var(--nav-h);
-  margin: 0;
-  padding: 0 var(--s-2);
+  // En tablet vertical la barra no se estira de lado a lado: se centra con un ancho cómodo.
+  max-width: 36rem;
+  height: calc(var(--nav-h) - 3px); // menos el borde superior de la barra
+  margin: 0 auto;
+  padding: 0 max(var(--s-2), env(safe-area-inset-left)) 0 max(var(--s-2), env(safe-area-inset-right));
   list-style: none;
 
-  @media (min-width: 1024px) {
-    grid-template-columns: 1fr;
+  // Pantallas muy angostas (320px): menos margen para que quepa "Almanaque" completo.
+  @media (max-width: 359px) {
+    padding-inline: max(2px, env(safe-area-inset-left)) max(2px, env(safe-area-inset-right));
+  }
+
+  @media (min-width: $rail) {
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     gap: var(--s-2);
     height: auto;
+    max-width: none;
     width: 100%;
+    margin: 0;
     padding: 0 var(--s-2);
   }
 
@@ -85,15 +116,28 @@
     justify-items: center;
     gap: 2px;
     min-height: 60px;
-    padding: var(--s-2) var(--s-1);
+    padding: var(--s-2) 2px;
     border-radius: var(--r-sm);
     color: var(--c-text-muted);
-    font-size: var(--fs-xs);
+    font-size: 0.6875rem; // 11px: cabe "Almanaque" en 320px
     font-weight: 800;
     text-decoration: none;
     transition:
       color var(--dur) var(--ease-out),
       background var(--dur) var(--ease-out);
+
+    @media (max-width: 359px) {
+      padding-inline: 0;
+      letter-spacing: -0.02em;
+    }
+
+    @media (min-width: 360px) {
+      font-size: 0.75rem;
+    }
+
+    @media (min-width: 768px) {
+      font-size: var(--fs-xs);
+    }
 
     lucide-icon {
       transition: transform var(--dur) var(--ease-spring);
@@ -103,20 +147,28 @@
       color: var(--c-text);
     }
 
+    &:focus-visible {
+      outline: 3px solid var(--c-secondary);
+      outline-offset: -3px;
+    }
+
+    // Activo: mismo fondo suave en barra y riel.
     &.active {
       color: var(--c-primary);
+      background: var(--c-bg-alt);
 
       lucide-icon {
         transform: translateY(-2px) scale(1.1);
       }
     }
-
-    @media (min-width: 1024px) {
-      &.active {
-        background: var(--c-bg-alt);
-      }
-    }
   }
+}
+
+.etiqueta {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 // Botón central "Explorar" que sobresale de la barra.
@@ -126,8 +178,8 @@
   .main-bubble {
     display: grid;
     place-items: center;
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     margin-top: -28px;
     border-radius: 50%;
     background: var(--c-primary);
@@ -136,7 +188,12 @@
     box-shadow: 0 5px 0 var(--c-ink);
     transition: transform var(--dur-fast) var(--ease-out);
 
-    @media (min-width: 1024px) {
+    @media (min-width: 360px) {
+      width: 60px;
+      height: 60px;
+    }
+
+    @media (min-width: $rail) {
       margin-top: 0;
     }
   }
@@ -147,5 +204,37 @@
 
   &.active {
     color: var(--c-primary);
+    background: none;
+  }
+}
+
+// Móvil horizontal: poca altura → barra compacta, solo íconos (la etiqueta sigue para lectores de pantalla).
+@media #{$compacto} {
+  .items a {
+    min-height: 44px;
+    padding-block: var(--s-1);
+  }
+
+  .etiqueta {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .item-main a .main-bubble {
+    width: 48px;
+    height: 48px;
+    margin-top: -14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .items a,
+  .items a lucide-icon,
+  .main-bubble {
+    transition: none;
   }
 }

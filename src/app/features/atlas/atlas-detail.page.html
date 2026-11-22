@@ -1,0 +1,177 @@
+<section class="escena" [style.--fondo]="fondo()" aria-label="Exploración en 3D">
+  <a class="volver btn" routerLink="/atlas">
+    <lucide-icon [img]="icons.ArrowLeft" [size]="20" aria-hidden="true" />
+    Volver al globo
+  </a>
+
+  @switch (estado()) {
+    @case ('cargando') {
+      <p class="aviso aviso--centro clay" role="status">Cargando…</p>
+    }
+
+    @case ('no-encontrado') {
+      <p class="aviso aviso--centro clay" role="alert">No encontramos este elemento del Atlas.</p>
+    }
+
+    @case ('listo') {
+      @if (elemento(); as e) {
+        <!-- ===== Modelo ===== -->
+        @if (e.modelo) {
+          @if (visorListo()) {
+            <model-viewer
+              #visor
+              class="visor"
+              [class.visor--lateral]="panelAbierto() || chatAbierto()"
+              [src]="e.modelo"
+              [alt]="'Modelo 3D de ' + e.nombre"
+              camera-controls
+              touch-action="pan-y"
+              [attr.auto-rotate]="autoRotar() ? '' : null"
+              auto-rotate-delay="0"
+              environment-image="neutral"
+              shadow-intensity="1"
+              ar
+              ar-modes="webxr scene-viewer quick-look"
+              ar-placement="floor"
+              ar-scale="auto"
+              (progress)="alProgresar($event)"
+              (load)="alCargar()"
+              (error)="estadoModelo.set('error')"
+              (camera-change)="alMoverCamara($event)"
+            >
+              <div slot="progress-bar"></div>
+            </model-viewer>
+          }
+          @if (estadoModelo() === 'cargando') {
+            <div class="carga clay" role="status">
+              Cargando modelo… {{ progreso() * 100 | number: '1.0-0' }}%
+              <div class="meter"><div class="meter-track"><div class="meter-fill" [style.width.%]="progreso() * 100"></div></div></div>
+            </div>
+          }
+          @if (estadoModelo() === 'error') {
+            <p class="aviso aviso--centro clay" role="alert">No se pudo cargar el modelo 3D. Revisa tu conexión e inténtalo otra vez.</p>
+          }
+        } @else {
+          <p class="aviso aviso--centro clay">Modelo 3D en preparación.</p>
+        }
+
+        <!-- ===== Acciones ===== -->
+        <div class="acciones">
+          @if (e.sonido && !sonidoError()) {
+            <audio #audio [src]="e.sonido" preload="none" (play)="sonando.set(true)" (pause)="sonando.set(false)" (ended)="sonando.set(false)" (error)="sonidoError.set(true)"></audio>
+            <button type="button" class="accion btn" [class.btn--secondary]="sonando()" [attr.aria-pressed]="sonando()" (click)="alternarSonido()">
+              <lucide-icon [img]="sonando() ? icons.Pause : icons.Play" [size]="18" aria-hidden="true" />
+              {{ sonando() ? 'Pausar sonido' : 'Escuchar sonido' }}
+            </button>
+          } @else {
+            <p class="sin-sonido">
+              <lucide-icon [img]="icons.VolumeX" [size]="16" aria-hidden="true" />
+              Sin sonido
+            </p>
+          }
+          @if (puedeAr()) {
+            <button type="button" class="accion btn btn--primary" (click)="proyectar()">
+              <lucide-icon [img]="icons.Box" [size]="18" aria-hidden="true" />
+              Proyectar holograma
+            </button>
+          }
+        </div>
+
+        <!-- Botón flotante del chat: junto al de accesibilidad, mismo tamaño. -->
+        @if (especie()) {
+          <button
+            type="button"
+            class="fab-chat"
+            [attr.aria-expanded]="chatAbierto()"
+            aria-controls="chat-experto"
+            [attr.aria-label]="chatAbierto() ? 'Cerrar el chat con el experto' : 'Preguntar al experto'"
+            [title]="chatAbierto() ? 'Cerrar el chat' : 'Preguntar al experto'"
+            (click)="alternarChat()"
+          >
+            @if (chatAbierto()) {
+              <lucide-icon [img]="icons.X" [size]="24" aria-hidden="true" />
+            } @else {
+              <span class="fab-ia" aria-hidden="true">
+                <lucide-icon [img]="icons.Sparkles" [size]="15" />
+                IA
+              </span>
+            }
+          </button>
+        }
+
+        @if (puntoActivo(); as p) {
+          <aside class="punto-info clay" aria-live="polite">
+            <button type="button" class="cerrar btn btn--icon" aria-label="Cerrar descripción" (click)="puntoActivo.set(null)">
+              <lucide-icon [img]="icons.X" [size]="18" aria-hidden="true" />
+            </button>
+            <h2>{{ p.etiqueta }}</h2>
+            <p>{{ p.texto }}</p>
+          </aside>
+        }
+
+        <!-- ===== Historia (tarjeta) y chat (panel aparte, desde el botón "Preguntar al experto") ===== -->
+        <div class="columna">
+        <aside class="panel clay" aria-label="Historia de la especie">
+          <header class="panel-cabecera">
+            <div>
+              <span class="type-badge" [style.--type-color]="chipColor[e.categoria]">{{ nombreCategoria[e.categoria] }}</span>
+              <h1>{{ e.nombre }}</h1>
+            </div>
+            <button
+              type="button"
+              class="plegar btn btn--icon"
+              [attr.aria-expanded]="panelAbierto()"
+              aria-controls="historia"
+              [attr.aria-label]="panelAbierto() ? 'Ocultar historia' : 'Ver historia'"
+              (click)="alternarPanel()"
+            >
+              <lucide-icon [img]="panelAbierto() ? icons.ChevronDown : icons.ChevronUp" [size]="20" aria-hidden="true" />
+            </button>
+          </header>
+
+          <div id="historia" class="panel-cuerpo" [hidden]="!panelAbierto()">
+            <div class="ficha">
+              @if (e.miniatura) {
+                <img class="foto" [src]="e.miniatura" [alt]="'Fotografía de ' + e.nombre" decoding="async" (error)="$any($event.target).hidden = true" />
+              }
+              <div>
+                @if (e.nombreCientifico) {
+                  <p class="cientifico">{{ e.nombreCientifico }}</p>
+                }
+                <dl class="datos">
+                  <div>
+                    <dt>Región</dt>
+                    <dd>{{ e.region }}</dd>
+                  </div>
+                  @if (e.estatus) {
+                    <div>
+                      <dt>Estado de conservación</dt>
+                      <dd>{{ e.estatus }}</dd>
+                    </div>
+                  }
+                </dl>
+              </div>
+            </div>
+            <p class="descripcion">{{ e.descripcion }}</p>
+            @for (c of [e.credito, e.creditoModelo, e.creditoSonido, e.creditoHabitat]; track $index) {
+              @if (c) {
+                <p class="credito">{{ c }}</p>
+              }
+            }
+          </div>
+        </aside>
+
+        @if (especie(); as sp) {
+          <!-- Se oculta con [hidden] (no con @if) para no perder la conversación al cerrarlo. -->
+          <section id="chat-experto" class="chat-caja" [hidden]="!chatAbierto()" aria-label="Chat con el experto" (keydown.escape)="cerrarChat()">
+            <button type="button" class="cerrar btn btn--icon" aria-label="Cerrar chat" (click)="cerrarChat()">
+              <lucide-icon [img]="icons.X" [size]="18" aria-hidden="true" />
+            </button>
+            <app-expert-chat [especie]="sp" />
+          </section>
+        }
+        </div>
+      }
+    }
+  }
+</section>

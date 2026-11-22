@@ -100,4 +100,9 @@
   --rail-w: 104px;     // riel lateral (escritorio)
   --header-h: 64px;
   --content-max: 1120px;
+
+  // Móvil horizontal: barra compacta (la altura útil es poca).
+  @media (max-width: 1023px) and (max-height: 500px) {
+    --nav-h: 56px;
+  }
 }

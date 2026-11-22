@@ -62,6 +62,12 @@ Para agregar una categoría: exportar el fondo 2:3, convertir a WebP y medir sus
 `.meter`, `.empty-state`, `.alert`, `.spinner`, `.skeleton`, `.toast`, `.dialog`.
 Componentes Angular: `app-species-card` (tarjeta coleccionable) y `app-expert-chat`.
 
+## Pantallas inmersivas (Atlas, detalle 3D, cámara)
+El lienzo (globo, modelo 3D con la foto del hábitat, cámara) ocupa toda la pantalla y puede ser oscuro;
+**los controles y paneles encima usan siempre los componentes base** (`.clay`, `.btn`, `.chip`, `.type-badge`).
+Un panel claro dentro de un lienzo oscuro hereda su color de texto: ponle `color: var(--c-text)`.
+Excepción vigente: el HUD turquesa de la cámara (`microscope.page`).
+
 ## Íconos
 Lucide (`lucide-angular`), un solo set con trazo uniforme. Todos se registran en
 `shared/ui/icons.ts` (`AppIcons`). Los decorativos llevan `aria-hidden`; los botones que solo
