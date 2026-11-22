@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
-import { GeminiService, IaNoDisponibleError } from '../../core/ai/gemini.service';
+import { IaNoDisponibleError, IaService, SolicitudInvalidaError } from '../../core/ai/ia.service';
 import { AppIcons } from '../../shared/ui/icons';
 import { CapturaStore } from './data-access/captura.store';
 
@@ -15,7 +15,7 @@ import { CapturaStore } from './data-access/captura.store';
 })
 export class PreviewPage {
   private readonly store = inject(CapturaStore);
-  private readonly gemini = inject(GeminiService);
+  private readonly ia = inject(IaService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -34,7 +34,7 @@ export class PreviewPage {
     this.analizando.set(true);
     this.error.set(null);
 
-    this.gemini
+    this.ia
       .analyze(this.foto)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -45,7 +45,7 @@ export class PreviewPage {
         error: (err) => {
           this.analizando.set(false);
           this.error.set(
-            err instanceof IaNoDisponibleError
+            err instanceof IaNoDisponibleError || err instanceof SolicitudInvalidaError
               ? err.message
               : 'La IA no pudo ver bien tu foto. Revisa tu conexión e inténtalo otra vez.',
           );

@@ -21,17 +21,35 @@ export interface Hallazgo extends DatosRapidos {
   fechaCaptura: string;
 }
 
-/** Resultado del análisis de la IA. */
+/** Identificación alternativa que ofrece la IA cuando no está segura. */
+export interface OpcionAnalisis {
+  tipo: string;
+  nombreComun: string;
+  nombreCientifico: string;
+}
+
+/** Resultado del análisis de la IA (POST /api/analisis). */
 export interface AnalysisResult extends DatosRapidos {
   tipo: string;
   nombreComun: string;
   nombreCientifico: string;
   descripcion: string;
   nivelConfianza: number;
+  amenazas?: string | null;
+  impactoEcologico?: string | null;
+  /** "Bajo", "Medio" o "Alto". */
+  peligro?: string | null;
+  /** 3 identificaciones posibles; solo vienen con nivelConfianza < 60. */
+  opciones?: OpcionAnalisis[];
 }
 
 /** Cuerpo de POST /api/hallazgos (el usuario lo pone el servidor). */
-export interface NuevoHallazgo extends AnalysisResult {
+export interface NuevoHallazgo extends DatosRapidos {
+  tipo: string;
+  nombreComun: string;
+  nombreCientifico: string;
+  descripcion: string;
+  nivelConfianza: number;
   imagenBase64?: string;
 }
 

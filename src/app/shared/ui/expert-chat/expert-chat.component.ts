@@ -14,7 +14,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
-import { GeminiService, IaNoDisponibleError } from '../../../core/ai/gemini.service';
+import { IaNoDisponibleError, IaService, SolicitudInvalidaError } from '../../../core/ai/ia.service';
 import { ChatMessage } from '../../models/chat-message.model';
 import { Especie } from '../../models/hallazgo.model';
 import { textoIaAHtml } from '../../utils/texto-ia';
@@ -37,7 +37,7 @@ const SUGERENCIAS = [
 export class ExpertChatComponent implements OnInit {
   readonly especie = input.required<Especie>();
 
-  private readonly gemini = inject(GeminiService);
+  private readonly ia = inject(IaService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
   private readonly lista = viewChild<ElementRef<HTMLElement>>('lista');
@@ -80,7 +80,7 @@ export class ExpertChatComponent implements OnInit {
     this.agregar({ sender: 'user', text: pregunta, timestamp: new Date() });
     this.pensando.set(true);
 
-    this.gemini
+    this.ia
       .chat(this.especie(), pregunta)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -95,7 +95,7 @@ export class ExpertChatComponent implements OnInit {
             error: true,
             timestamp: new Date(),
             text:
-              err instanceof IaNoDisponibleError
+              err instanceof IaNoDisponibleError || err instanceof SolicitudInvalidaError
                 ? err.message
                 : 'No pude contestar ahora. Revisa tu conexión e inténtalo otra vez.',
           });

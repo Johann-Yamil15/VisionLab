@@ -1,71 +1,132 @@
-@if (resultado) {
+@if (resultado(); as r) {
   <section class="page discovery">
     <header class="hero">
       <span class="hero-burst" aria-hidden="true"><lucide-icon [img]="icons.Sparkles" [size]="30" /></span>
       <div>
-        <p class="hero-kicker">¡Nuevo descubrimiento!</p>
-        <h1>{{ resultado.nombreComun || 'Especie misteriosa' }}</h1>
+        <p class="hero-kicker">{{ eligiendo() ? '¡Casi lo tenemos!' : '¡Nuevo descubrimiento!' }}</p>
+        <h1>{{ eligiendo() ? '¿Cuál se parece más?' : r.nombreComun || 'Especie misteriosa' }}</h1>
       </div>
     </header>
 
-    <div class="layout">
-      <div class="col">
-        <app-species-card class="card-pop" [especie]="resultado" [imagen]="foto" variant="full" [ampliable]="true" (ampliar)="fotoAbierta.set(true)" />
-
-        <div class="save" role="status" aria-live="polite">
-          @switch (guardado()) {
-            @case ('guardando') {
-              <span class="spinner" style="color: var(--c-primary)" aria-hidden="true"></span>
-              <span>Guardando en tu almanaque…</span>
-            }
-            @case ('guardado') {
-              <span class="save-ok"><lucide-icon [img]="icons.Check" [size]="18" aria-hidden="true" /></span>
-              <span>¡Guardado en tu almanaque!</span>
-              <span class="points"><lucide-icon [img]="icons.Star" [size]="16" aria-hidden="true" /> +{{ puntos() }}</span>
-            }
-            @case ('error') {
-              <lucide-icon [img]="icons.CircleAlert" [size]="20" aria-hidden="true" />
-              <span>No se pudo guardar.</span>
-              <button class="btn btn--sun save-retry" type="button" (click)="guardar()">Reintentar</button>
-            }
-          }
-        </div>
-
+    @if (eligiendo()) {
+      <div class="choose">
+        @if (foto) {
+          <img class="choose-photo" [src]="foto" alt="Tu foto" />
+        }
         <article class="info clay">
-          <h2><lucide-icon [img]="icons.BookOpen" [size]="22" aria-hidden="true" /> ¿Qué es?</h2>
-          <p>{{ resultado.descripcion }}</p>
-
-          <div class="meter">
-            <span class="meter-label">
-              <span>Seguridad de la IA</span>
-              <span class="meter-value">{{ resultado.nivelConfianza }}%</span>
-            </span>
-            <div class="meter-track" role="progressbar" aria-label="Seguridad de la IA" [attr.aria-valuenow]="resultado.nivelConfianza" aria-valuemin="0" aria-valuemax="100">
-              <div class="meter-fill" [style.width.%]="resultado.nivelConfianza"></div>
-            </div>
-          </div>
-          <p class="note">La IA puede equivocarse. ¡Compara con un libro o pregúntale a un adulto!</p>
-        </article>
-
-        <div class="actions">
-          <a class="btn btn--secondary" routerLink="/almanaque">
-            <lucide-icon [img]="icons.BookOpen" [size]="20" aria-hidden="true" />
-            Ver mi almanaque
-          </a>
-          <button class="btn btn--primary" type="button" (click)="explorarOtraVez()">
-            <lucide-icon [img]="icons.Microscope" [size]="20" aria-hidden="true" />
-            Explorar otra vez
+          <h2><lucide-icon [img]="icons.CircleAlert" [size]="22" aria-hidden="true" /> La IA no está muy segura</h2>
+          <p>Solo está {{ r.nivelConfianza }}% segura. Mira tu foto y elige la opción que más se parezca; esa será la que se guarde.</p>
+          <ul class="options">
+            @for (o of r.opciones; track o.nombreComun) {
+              <li>
+                <button class="option" type="button" (click)="elegir(o)">
+                  <span class="option-name">{{ o.nombreComun }}</span>
+                  @if (o.nombreCientifico) {
+                    <span class="option-sci">{{ o.nombreCientifico }}</span>
+                  }
+                  <span class="option-type">{{ o.tipo }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+          <button class="btn" type="button" (click)="explorarOtraVez()">
+            <lucide-icon [img]="icons.RotateCcw" [size]="20" aria-hidden="true" />
+            Ninguna, tomar otra foto
           </button>
+        </article>
+      </div>
+    } @else {
+      <div class="layout">
+        <div class="col">
+          <app-species-card class="card-pop" [especie]="r" [imagen]="foto" variant="full" [ampliable]="true" (ampliar)="fotoAbierta.set(true)" />
+
+          <div class="save" role="status" aria-live="polite">
+            @switch (guardado()) {
+              @case ('guardando') {
+                <span class="spinner" style="color: var(--c-primary)" aria-hidden="true"></span>
+                <span>Guardando en tu almanaque…</span>
+              }
+              @case ('guardado') {
+                <span class="save-ok"><lucide-icon [img]="icons.Check" [size]="18" aria-hidden="true" /></span>
+                <span>¡Guardado en tu almanaque!</span>
+                <span class="points"><lucide-icon [img]="icons.Star" [size]="16" aria-hidden="true" /> +{{ puntos() }}</span>
+              }
+              @case ('error') {
+                <lucide-icon [img]="icons.CircleAlert" [size]="20" aria-hidden="true" />
+                <span>No se pudo guardar.</span>
+                <button class="btn btn--sun save-retry" type="button" (click)="guardar()">Reintentar</button>
+              }
+            }
+          </div>
+
+          <article class="info clay">
+            <h2><lucide-icon [img]="icons.BookOpen" [size]="22" aria-hidden="true" /> ¿Qué es?</h2>
+            <p>{{ r.descripcion }}</p>
+
+            <div class="meter">
+              <span class="meter-label">
+                <span>Seguridad de la IA</span>
+                <span class="meter-value">{{ r.nivelConfianza }}%</span>
+              </span>
+              <div class="meter-track" role="progressbar" aria-label="Seguridad de la IA" [attr.aria-valuenow]="r.nivelConfianza" aria-valuemin="0" aria-valuemax="100">
+                <div class="meter-fill" [style.width.%]="r.nivelConfianza"></div>
+              </div>
+            </div>
+            <p class="note">La IA puede equivocarse. ¡Compara con un libro o pregúntale a un adulto!</p>
+          </article>
+
+          @if (r.amenazas || r.impactoEcologico || r.peligro) {
+            <article class="info clay">
+              <h2><lucide-icon [img]="icons.Leaf" [size]="22" aria-hidden="true" /> Naturaleza y cuidado</h2>
+              <dl class="facts">
+                @if (r.peligro) {
+                  <div>
+                    <dt>Peligro</dt>
+                    <dd><span class="danger" [attr.data-nivel]="r.peligro">{{ r.peligro }}</span></dd>
+                  </div>
+                }
+                @if (r.amenazas) {
+                  <div>
+                    <dt>Amenazas</dt>
+                    <dd>{{ r.amenazas }}</dd>
+                  </div>
+                }
+                @if (r.impactoEcologico) {
+                  <div>
+                    <dt>Impacto ecológico</dt>
+                    <dd>{{ r.impactoEcologico }}</dd>
+                  </div>
+                }
+              </dl>
+            </article>
+          }
+
+          <div class="actions">
+            @if (enAtlas(); as e) {
+              <a class="btn btn--sun" [routerLink]="['/atlas', e.id]">
+                <lucide-icon [img]="icons.Globe" [size]="20" aria-hidden="true" />
+                Ver en el Atlas 3D
+              </a>
+            }
+            <a class="btn btn--secondary" routerLink="/almanaque">
+              <lucide-icon [img]="icons.BookOpen" [size]="20" aria-hidden="true" />
+              Ver mi almanaque
+            </a>
+            <button class="btn btn--primary" type="button" (click)="explorarOtraVez()">
+              <lucide-icon [img]="icons.Microscope" [size]="20" aria-hidden="true" />
+              Explorar otra vez
+            </button>
+          </div>
+        </div>
+
+        <div class="col">
+          <app-expert-chat [especie]="r" />
         </div>
       </div>
-
-      <div class="col">
-        <app-expert-chat [especie]="resultado" />
-      </div>
-    </div>
+    }
 
     @if (fotoAbierta() && foto) {
-      <app-photo-viewer [src]="foto" [titulo]="resultado.nombreComun" (cerrar)="fotoAbierta.set(false)" />
+      <app-photo-viewer [src]="foto" [titulo]="r.nombreComun" (cerrar)="fotoAbierta.set(false)" />
     }
   </section>
 }

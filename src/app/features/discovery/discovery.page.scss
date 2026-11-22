@@ -139,3 +139,102 @@
     flex: 1 1 200px;
   }
 }
+
+/* Confianza baja: elegir entre 3 opciones */
+.choose {
+  display: grid;
+  gap: var(--s-4);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.choose-photo {
+  width: min(100%, 260px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  justify-self: center;
+  border-radius: 50%;
+  border: 8px solid var(--c-bg-alt);
+  box-shadow: 0 0 0 4px var(--c-ink);
+}
+
+.options {
+  display: grid;
+  gap: var(--s-3);
+  list-style: none;
+  padding: 0;
+}
+
+.option {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  min-height: 64px;
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  border-radius: var(--r-lg);
+  border: var(--border-clay);
+  background: var(--c-surface);
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--c-ink);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--c-bg-alt);
+  }
+}
+
+.option-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-lg);
+}
+
+.option-sci {
+  font-style: italic;
+  color: var(--c-text-muted);
+}
+
+.option-type {
+  font-size: var(--fs-sm);
+  color: var(--c-primary);
+  font-weight: 700;
+}
+
+/* Amenazas, impacto y peligro */
+.facts {
+  display: grid;
+  gap: var(--s-3);
+
+  dt {
+    font-weight: 700;
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--fs-md);
+    line-height: 1.6;
+  }
+}
+
+.danger {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: var(--r-pill);
+  border: 2px solid var(--c-ink);
+  font-weight: 700;
+  background: var(--c-bg-alt);
+
+  &[data-nivel='Alto'] {
+    background: #fecaca;
+  }
+  &[data-nivel='Medio'] {
+    background: var(--c-sun);
+    color: var(--c-on-sun);
+  }
+  &[data-nivel='Bajo'] {
+    background: #bbf7d0;
+  }
+}

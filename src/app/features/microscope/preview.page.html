@@ -3,7 +3,7 @@
     <div>
       <h1>{{ analizando() ? 'Observando…' : '¿Se ve bien?' }}</h1>
       <p class="page-subtitle">
-        {{ analizando() ? 'La IA está estudiando tu muestra con lupa.' : 'Si está borrosa, toma otra foto.' }}
+        {{ analizando() ? 'Análisis espectral en curso: puede tardar hasta 20 segundos.' : 'Si está borrosa, toma otra foto.' }}
       </p>
     </div>
   </header>
@@ -16,6 +16,13 @@
           <div class="scan" aria-hidden="true"><span class="scan-line"></span></div>
         }
       </div>
+
+      @if (analizando()) {
+        <div class="spectral" role="status" aria-live="polite">
+          <span class="spectral-label">Análisis espectral…</span>
+          <span class="spectral-bar" aria-hidden="true"><span class="spectral-fill"></span></span>
+        </div>
+      }
 
       @if (error(); as e) {
         <div class="alert" role="alert">
