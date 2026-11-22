@@ -25,19 +25,33 @@ la **observación detallada** y el **aprendizaje activo**, sin saturar con texto
 
 | Módulo | Qué puede hacer el niño |
 |---|---|
-| **Microscopio** | Abrir la cámara (trasera en celular), acercar con zoom, encender la linterna si el equipo la tiene, capturar una foto o subirla desde la galería. |
-| **Vista previa** | Revisar la foto, repetirla o mandarla a analizar. |
-| **Descubrimiento** | Ver qué es (tipo, nombre común, nombre científico, descripción y nivel de confianza de la IA). El hallazgo se guarda solo en su almanaque. |
-| **Asistente experto** | Hacer preguntas sobre ese hallazgo. Solo responde sobre esa especie (no se desvía a otros temas). |
-| **Almanaque** | Ver su colección de tarjetas, filtrarlas por tipo (insecto, hoja, roca...), abrir el detalle y borrar una tarjeta. |
-| **Perfil** | Ver sus puntos, su nivel y sus medallas. |
+| **Microscopio** | Lente circular con retícula. Zoom con los dedos, con botones o con barra (usa el zoom real del teléfono si lo tiene). Linterna, captura de lo que se ve en el zoom o subir una foto desde la galería. |
+| **Vista previa** | Revisar la foto, repetirla o mandarla a analizar (animación de escaneo mientras la IA observa). |
+| **Descubrimiento** | La IA dice qué es y lo clasifica en una de **12 categorías**. Aparece su **carta coleccionable** con nombre común y científico, descripción, confianza de la IA, datos rápidos y una frase divertida. Se guarda sola en el almanaque y muestra los puntos ganados. |
+| **Asistente experto** | Chat con preguntas sugeridas ("¿Qué come?", "¿Dónde vive?", "Dato curioso"). Solo responde sobre esa especie. |
+| **Almanaque** | Colección de cartas con filtros por categoría y buscador. Las especies repetidas se agrupan en una sola carta con "×2". |
+| **Detalle de la carta** | Carta completa, resumen, **datos rápidos** (hábitat, alimentación, colores, tamaño), seguridad de la IA, otras veces que se encontró, chat y opción de quitar la carta. La foto se **amplía a pantalla completa con zoom** (pellizco, rueda, doble toque). |
+| **Perfil** | Portada con su nivel y XP, puntos, descubrimientos, **medallas** (bloqueadas y desbloqueadas), **siguientes retos** con su progreso y **colección por categoría**. |
 | **Accesibilidad** | Cambiar el tamaño del texto, usar escala de grises, invertir colores, activar una línea guía de lectura y lectura en voz alta. |
 | **Acerca de** | Información del proyecto y del equipo. |
 
+### Cartas coleccionables: 12 categorías
+Cada categoría tiene su propio diseño de carta: **Insectos, Plantas, Vida acuática, Tierra y suelos,
+Rocas y minerales, Metales y materiales, Aves y cielo, Luz y fenómenos, Hongos, Microscópico,
+Objetos y Química**. La IA está obligada a elegir una de ellas, así cada hallazgo recibe su carta.
+
 ### Gamificación (reglas actuales)
 - Cada hallazgo da **10 puntos + 1 por cada 10 % de confianza** de la IA.
-- Las **medallas** se desbloquean por requisitos (ej.: 5 hallazgos totales) y dan puntos extra.
-- El **nivel** depende de los puntos acumulados (ej.: Novato → Explorador → Científico).
+- **Niveles:** Novato (0) → Explorador (500) → Investigador (1200) → Científico (2500) → Gran científico (5000).
+- **Medallas:**
+
+| Medalla | Cómo se gana |
+|---|---|
+| ¡Hola, explorador! | Primer descubrimiento |
+| Ojos curiosos | 5 descubrimientos |
+| Pequeño investigador | 10 especies diferentes |
+| Amigo de la fauna | 5 animales (insectos, aves o vida acuática) |
+| Científico en acción | 5 categorías distintas |
 
 ## Alcance
 
@@ -72,16 +86,19 @@ Navegador (Angular 20)  ──HTTPS──►  VisionLab API (.NET 9)  ──► 
 - **Base de datos:** MongoDB (usuarios, hallazgos, logros, niveles).
 - **IA:** Google Gemini 2.5 Flash.
 
-## Estado actual de la funcionalidad (2026-10-14)
+## Estado actual de la funcionalidad (2026-11-11)
 
 | Función | Estado |
 |---|---|
 | Cámara, captura, zoom, linterna y galería | ✅ Funciona (zoom de hardware si el teléfono lo soporta; si no, digital) |
-| Análisis con IA | ⚠️ Pausado: la llave se quitó del navegador; se reactiva al pasar Gemini al backend |
+| Análisis con IA | ⚠️ Prompt y esquema listos (12 categorías + datos rápidos); pausado hasta pasar Gemini al backend con la llave nueva |
 | Chat experto | ⚠️ Igual que el análisis |
 | Guardado automático en el almanaque | ✅ Funciona |
 | Almanaque: listar, filtrar, buscar, detalle, borrar | ✅ Funciona; el detalle tiene URL propia (sirve con F5) |
-| Perfil (puntos, nivel, medallas) | ✅ Pantalla nueva; faltan cargar medallas y niveles en la base |
+| Cartas con diseño por categoría | ✅ 12 diseños |
+| Visor de foto con zoom | ✅ Funciona |
+| Perfil (nivel, medallas, retos, colección) | ✅ Funciona; por ahora el progreso se calcula en la app (falta guardarlo en el servidor) |
+| Calidad de fotos | 🟡 Se guardan a 1280 px dentro de la base; plan: original + miniatura en GridFS |
 | Registro e inicio de sesión | ⚠️ El endpoint existe pero sin cifrado ni token; pantallas pendientes |
 | Varios usuarios | ❌ Hoy todos los hallazgos quedan a nombre de un usuario demo |
 | Tarjetas sin duplicados | 🟡 Se agrupan al mostrar (×N); falta hacerlo en el servidor |
@@ -90,8 +107,9 @@ Navegador (Angular 20)  ──HTTPS──►  VisionLab API (.NET 9)  ──► 
 ### Flujo principal
 1. **Microscopio** → el niño captura o sube una foto.
 2. **Vista previa** → "Analizar".
-3. La IA responde en JSON: `tipo`, `nombreComun`, `nombreCientifico`, `descripcion`,
-   `nivelConfianza` (0–100).
+3. La IA responde en JSON con esquema fijo: `tipo` (una de las 12 categorías), `nombreComun`,
+   `nombreCientifico`, `descripcion`, `nivelConfianza` (0–100), `habitat`, `alimentacion`,
+   `colores`, `tamano` y `lema`.
 4. **Descubrimiento** → se muestra la tarjeta y se guarda sola (`POST /api/hallazgos`); el
    servidor suma puntos y revisa medallas y nivel.
 5. El niño puede chatear con el experto o ir a su **almanaque**.
@@ -107,4 +125,4 @@ Navegador (Angular 20)  ──HTTPS──►  VisionLab API (.NET 9)  ──► 
 | POST | /api/auth/register, /api/auth/login | Registro e inicio de sesión (pantallas pendientes) |
 
 ## Equipo
-Johann, Guillermo, Joel y Miguel.
+Johann, Guillermo, Jesus.

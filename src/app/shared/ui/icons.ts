@@ -69,6 +69,7 @@ import {
   Lock,
   Target,
   User,
+  Globe,
 } from 'lucide-angular';
 
 /**
@@ -146,4 +147,5 @@ export const AppIcons = {
   Lock,
   Target,
   User,
+  Globe,
 } as const;

@@ -1,0 +1,356 @@
+// El Atlas es una vista inmersiva: fondo de espacio oscuro a pantalla completa.
+:host {
+  display: block;
+  --panel: rgb(15 23 42 / 82%);
+  --linea: rgb(148 163 184 / 28%);
+  --suave: #cbd5e1;
+}
+
+.atlas {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  background: #02040a;
+  color: #f1f5f9;
+}
+
+.globo {
+  position: absolute;
+  inset: 0;
+}
+
+.titulo,
+.filtros,
+.abrir-catalogo,
+.catalogo,
+.ficha {
+  position: absolute;
+  z-index: 1;
+}
+
+.titulo {
+  top: 1rem;
+  left: 1rem;
+  right: 9rem; // deja libre el botón "Catálogo"
+  margin: 0;
+  pointer-events: none;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    color: var(--suave);
+  }
+}
+
+.filtros {
+  top: 5.75rem;
+  left: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filtro {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.5rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--suave);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  opacity: 0.6;
+
+  .punto {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    background: var(--c);
+  }
+
+  &.activo {
+    border-color: var(--c);
+    color: #fff;
+    opacity: 1;
+  }
+}
+
+.abrir-catalogo {
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  background: var(--panel);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.catalogo {
+  top: 4.25rem;
+  right: 1rem;
+  bottom: 6rem;
+  display: none;
+  width: min(20rem, calc(100% - 2rem));
+  padding: 0.75rem;
+  overflow-y: auto;
+  border: 1px solid var(--linea);
+  border-radius: 1rem;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+
+  &.abierto {
+    display: block;
+  }
+}
+
+.buscar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--linea);
+  border-radius: 0.75rem;
+  color: var(--suave);
+
+  input {
+    flex: 1;
+    min-height: 2.75rem;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    outline: none;
+  }
+
+  &:focus-within {
+    border-color: #fff;
+  }
+}
+
+.grupo {
+  margin: 1rem 0 0.25rem;
+  color: var(--c);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  button {
+    display: grid;
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: none;
+    color: #f8fafc;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    small {
+      color: var(--suave);
+      font-size: 0.75rem;
+    }
+
+    &:hover,
+    &.actual {
+      background: rgb(255 255 255 / 10%);
+    }
+  }
+}
+
+.vacio {
+  margin: 1rem 0 0;
+  color: var(--suave);
+}
+
+.ficha {
+  left: 1rem;
+  bottom: 6rem;
+  width: min(22rem, calc(100% - 2rem));
+  max-height: calc(100% - 13rem);
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+  border: 1px solid var(--linea);
+  border-radius: 1rem;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+
+  h2 {
+    margin: 0.5rem 0 0;
+    font-size: 1.35rem;
+  }
+}
+
+.cerrar {
+  float: right;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+  cursor: pointer;
+}
+
+.miniatura {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 0.75rem;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.cat {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  color: #0f172a;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.cientifico {
+  margin: 0.15rem 0 0;
+  color: var(--suave);
+  font-style: italic;
+}
+
+.datos {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+
+  dt {
+    color: var(--suave);
+    font-size: 0.75rem;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.descripcion {
+  margin: 0.75rem 0 0;
+  line-height: 1.5;
+}
+
+.explorar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  margin-top: 1rem;
+  border-radius: 0.75rem;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pronto {
+  margin: 1rem 0 0;
+  color: var(--suave);
+  font-size: 0.875rem;
+}
+
+// En celular no caben juntos: con el catálogo abierto se oculta la ficha.
+@media (max-width: 1023px) {
+  .catalogo.abierto ~ .ficha {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .filtros {
+    top: 5rem;
+  }
+
+  .catalogo {
+    bottom: 1.5rem;
+  }
+
+  .ficha {
+    bottom: 1.5rem;
+    max-height: calc(100% - 9rem);
+  }
+}
+
+// Los pines los crea Globe.gl fuera de la plantilla, por eso van con ::ng-deep.
+:host ::ng-deep .atlas-pin {
+  position: relative;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--pin);
+  box-shadow: 0 0 0.75rem var(--pin);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  animation: atlas-pulso 2s ease-in-out infinite;
+
+  &:hover,
+  &:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+
+    .atlas-pin__nombre {
+      opacity: 1;
+    }
+  }
+}
+
+:host ::ng-deep .atlas-pin__nombre {
+  position: absolute;
+  left: 50%;
+  bottom: 140%;
+  transform: translateX(-50%);
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.4rem;
+  background: rgb(15 23 42 / 90%);
+  color: #f8fafc;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+@keyframes atlas-pulso {
+  50% {
+    box-shadow: 0 0 1.5rem var(--pin);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host ::ng-deep .atlas-pin {
+    animation: none;
+  }
+}
