@@ -25,6 +25,12 @@ import { AppIcons } from '../../shared/ui/icons';
             <span>Almanaque</span>
           </a>
         </li>
+        <li>
+          <a routerLink="/atlas" routerLinkActive="active" ariaCurrentWhenActive="page">
+            <lucide-icon [img]="icons.Globe" [size]="24" aria-hidden="true" />
+            <span>Atlas</span>
+          </a>
+        </li>
         <li class="item-main">
           <a routerLink="/microscopio" routerLinkActive="active" ariaCurrentWhenActive="page">
             <span class="main-bubble"><lucide-icon [img]="icons.Microscope" [size]="28" aria-hidden="true" /></span>

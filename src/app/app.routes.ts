@@ -29,6 +29,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/almanac/almanac-detail.page').then((m) => m.AlmanacDetailPage),
   },
   {
+    path: 'atlas',
+    title: 'Atlas Vivo 3D · OmniScan',
+    loadComponent: () => import('./features/atlas/atlas.page').then((m) => m.AtlasPage),
+  },
+  {
     path: 'perfil',
     title: 'Mi perfil · VisionLab',
     loadComponent: () => import('./features/profile/profile.page').then((m) => m.ProfilePage),
