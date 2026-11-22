@@ -13,9 +13,9 @@ import { AppIcons } from '../../shared/ui/icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <nav class="nav" aria-label="Principal">
-      <a class="brand" routerLink="/microscopio" aria-label="VisionLab, inicio">
-        <span class="brand-mark"><lucide-icon [img]="icons.Microscope" [size]="26" aria-hidden="true" /></span>
-        <span class="brand-name">VisionLab</span>
+      <a class="brand" routerLink="/microscopio" aria-label="OmniScan, inicio">
+        <img class="brand-mark" src="omniscan-icon-192.png" alt="" width="52" height="52" />
+        <span class="brand-name">OmniScan</span>
       </a>
 
       <ul class="items">

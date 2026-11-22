@@ -28,6 +28,105 @@
   z-index: 1;
 }
 
+// --- Entrada: secuencia de arranque y aparición escalonada de los paneles ---
+.arranque {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.25rem;
+  background: radial-gradient(circle, #071526, #02040a 70%);
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  color: #5eead4;
+  transition: opacity 0.8s ease 0.2s, visibility 0s linear 1s;
+
+  .atlas--listo & {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.arranque-nucleo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: conic-gradient(#5eead4, #38bdf8, transparent 45%, #5eead4);
+  mask: radial-gradient(circle, transparent 30px, #000 31px);
+  animation: girar 1.2s linear infinite;
+}
+
+.arranque-lineas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-align: center;
+
+  li {
+    opacity: 0;
+    animation: aparecer 0.4s ease forwards;
+
+    &:nth-child(1) { font-weight: 700; color: #fff; }
+    &:nth-child(2) { animation-delay: 0.3s; }
+    &:nth-child(3) { animation-delay: 0.6s; }
+    &:nth-child(4) { animation-delay: 0.9s; }
+  }
+}
+
+.arranque-barra {
+  width: min(16rem, 70vw);
+  height: 2px;
+  overflow: hidden;
+  background: rgb(94 234 212 / 20%);
+
+  span {
+    display: block;
+    width: 40%;
+    height: 100%;
+    background: #5eead4;
+    box-shadow: 0 0 8px #5eead4;
+    animation: barrido 1.1s ease-in-out infinite;
+  }
+}
+
+// Paneles: entran después de que el planeta empieza a acercarse.
+.titulo,
+.filtros,
+.abrir-catalogo,
+.catalogo,
+.ficha {
+  opacity: 0;
+  translate: 0 12px;
+  transition: opacity 0.6s ease, translate 0.6s ease;
+
+  .atlas--listo & {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.atlas--listo .titulo { transition-delay: 1.2s; }
+.atlas--listo .filtros { transition-delay: 1.5s; }
+.atlas--listo .abrir-catalogo,
+.atlas--listo .catalogo { transition-delay: 1.8s; }
+
+@keyframes girar {
+  to { transform: rotate(1turn); }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; translate: 0 6px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes barrido {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+
 .titulo {
   top: 1rem;
   left: 1rem;
@@ -350,7 +449,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :host ::ng-deep .atlas-pin {
+  :host ::ng-deep .atlas-pin,
+  .arranque-nucleo,
+  .arranque-barra span {
     animation: none;
   }
 }

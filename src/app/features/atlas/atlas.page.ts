@@ -30,8 +30,23 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
   imports: [RouterLink, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="atlas" aria-label="Atlas Vivo 3D">
+    <section class="atlas" [class.atlas--listo]="listo()" aria-label="Atlas Vivo 3D" [attr.aria-busy]="!listo()">
       <div #globo class="globo"></div>
+
+      <!-- Secuencia de arranque: cubre el tiempo en que se descargan las texturas del planeta. -->
+      <div class="arranque" aria-hidden="true">
+        <div class="arranque-nucleo"></div>
+        <ul class="arranque-lineas">
+          <li>OMNISCAN · ATLAS VIVO 3D</li>
+          <li>Enlazando satélites…</li>
+          <li>Cargando cartografía nocturna…</li>
+          <li>Sincronizando {{ total() }} registros de campo…</li>
+        </ul>
+        <div class="arranque-barra"><span></span></div>
+      </div>
+      @if (!listo()) {
+        <p class="sr-only" role="status">Cargando el atlas…</p>
+      }
 
       <header class="titulo">
         <h1>Atlas Vivo 3D</h1>
@@ -156,8 +171,11 @@ export class AtlasPage implements OnDestroy {
   protected readonly activas = signal(new Set<CategoriaAtlas>(this.categorias));
   protected readonly busqueda = signal('');
   protected readonly seleccionado = signal<ElementoAtlas | null>(null);
-  // En escritorio el catálogo empieza abierto; en celular empieza cerrado para no tapar el globo.
-  protected readonly catalogoAbierto = signal(matchMedia('(min-width: 1024px)').matches);
+  /** true cuando el planeta ya tiene sus texturas y empieza la animación de entrada. */
+  protected readonly listo = signal(false);
+  protected readonly total = computed(() => this.elementos().length || '…');
+  // El catálogo empieza cerrado para que la entrada del planeta luzca completa.
+  protected readonly catalogoAbierto = signal(false);
 
   /** Elementos que pasan los filtros: alimentan tanto los pines como la lista. */
   protected readonly visibles = computed(() => {
@@ -234,11 +252,33 @@ export class AtlasPage implements OnDestroy {
       .htmlElementsData(this.visibles());
 
     const controles = this.globo.controls();
-    controles.autoRotate = true;
     controles.autoRotateSpeed = 0.4;
     controles.addEventListener('start', () => (controles.autoRotate = false));
-    // En pantallas angostas (celular vertical) se aleja la cámara para que el planeta quepa completo.
-    this.globo.pointOfView({ lat: 15, lng: -40, altitude: el.clientWidth < 600 ? 3.6 : 2.4 });
+
+    // Entrada: la cámara arranca muy lejos (el planeta es un punto al centro) y se acerca girando
+    // hasta su lugar. En pantallas angostas (celular vertical) queda más lejos para que quepa completo.
+    const destino = { lat: 15, lng: -40, altitude: el.clientWidth < 600 ? 3.6 : 2.4 };
+    this.globo.pointOfView({ lat: 5, lng: -160, altitude: 18 });
+
+    const inicio = performance.now();
+    let entro = false;
+    const entrar = () => {
+      if (entro || !this.globo) return;
+      entro = true;
+      // La secuencia de arranque se ve al menos 1.4 s aunque las texturas ya estén en caché.
+      const espera = Math.max(0, 1400 - (performance.now() - inicio));
+      setTimeout(() => {
+        if (!this.globo) return;
+        const sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const duracion = sinMovimiento ? 0 : 2600;
+        this.globo.pointOfView(destino, duracion);
+        setTimeout(() => (controles.autoRotate = true), duracion);
+        this.zone.run(() => this.listo.set(true));
+      }, espera);
+    };
+    this.globo.onGlobeReady(entrar);
+    // Si alguna textura falla, no se queda atorado en la pantalla de carga.
+    setTimeout(entrar, 8000);
   }
 
   private crearPin(e: ElementoAtlas): HTMLElement {
@@ -259,6 +299,7 @@ export class AtlasPage implements OnDestroy {
   ngOnDestroy(): void {
     this.resize?.disconnect();
     this.globo?._destructor();
+    this.globo = undefined; // los temporizadores de la entrada revisan esto antes de mover la cámara
     this.contenedor().nativeElement.replaceChildren();
   }
 }
