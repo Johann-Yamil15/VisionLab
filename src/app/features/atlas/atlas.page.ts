@@ -174,8 +174,8 @@ export class AtlasPage implements OnDestroy {
   /** true cuando el planeta ya tiene sus texturas y empieza la animación de entrada. */
   protected readonly listo = signal(false);
   protected readonly total = computed(() => this.elementos().length || '…');
-  // En escritorio el catálogo empieza abierto; en celular empieza cerrado para no tapar el globo.
-  protected readonly catalogoAbierto = signal(matchMedia('(min-width: 1024px)').matches);
+  // El catálogo empieza cerrado para que la entrada del planeta luzca completa.
+  protected readonly catalogoAbierto = signal(false);
 
   /** Elementos que pasan los filtros: alimentan tanto los pines como la lista. */
   protected readonly visibles = computed(() => {
