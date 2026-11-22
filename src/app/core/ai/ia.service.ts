@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, throwError, timeout } from 'rxjs';
+import { catchError, delay, map, Observable, of, throwError, timeout } from 'rxjs';
 import { API_URL } from '../api/api';
 import { AnalysisResult, Especie } from '../../shared/models/hallazgo.model';
+import { DemoService } from './demo.service';
 
 /** La IA del servidor no respondió (503, sin conexión o se agotó el tiempo). */
 export class IaNoDisponibleError extends Error {
@@ -26,8 +27,12 @@ const ESPERA_MAX_MS = 75_000;
 @Injectable({ providedIn: 'root' })
 export class IaService {
   private readonly http = inject(HttpClient);
+  private readonly demo = inject(DemoService);
 
   analyze(imagenDataUrl: string): Observable<AnalysisResult> {
+    // Modo demo: ficha precargada, sin llamar a la IA (con una pausa para que se vea la animación).
+    if (this.demo.activo()) return of(this.demo.siguienteAnalisis()).pipe(delay(2500));
+
     return this.http.post<AnalysisResult>(`${API_URL}/analisis`, { imagen: imagenDataUrl }).pipe(
       timeout(ESPERA_MAX_MS),
       map((r) => ({ ...r, nivelConfianza: Number(r.nivelConfianza) || 0, opciones: r.opciones ?? [] })),
@@ -36,6 +41,8 @@ export class IaService {
   }
 
   chat(especie: Especie, pregunta: string): Observable<string> {
+    if (this.demo.activo()) return of(this.demo.responder(especie, pregunta)).pipe(delay(600));
+
     const cuerpo = {
       especie: {
         nombreComun: especie.nombreComun,

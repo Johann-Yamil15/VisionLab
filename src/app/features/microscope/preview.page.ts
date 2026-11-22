@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { IaNoDisponibleError, IaService, SolicitudInvalidaError } from '../../core/ai/ia.service';
+import { DemoService } from '../../core/ai/demo.service';
 import { AppIcons } from '../../shared/ui/icons';
 import { CapturaStore } from './data-access/captura.store';
 
@@ -16,6 +17,7 @@ import { CapturaStore } from './data-access/captura.store';
 export class PreviewPage {
   private readonly store = inject(CapturaStore);
   private readonly ia = inject(IaService);
+  protected readonly demo = inject(DemoService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 

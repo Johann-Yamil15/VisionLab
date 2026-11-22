@@ -8,6 +8,10 @@
     </div>
   </header>
 
+  @if (demo.activo()) {
+    <p class="demo-badge" role="note">Modo demo: resultados de ejemplo, sin IA</p>
+  }
+
   @if (foto) {
     <div class="specimen clay">
       <div class="lens" [class.lens--scanning]="analizando()">
