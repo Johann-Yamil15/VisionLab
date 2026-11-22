@@ -23,9 +23,19 @@ export interface ElementoAtlas {
   region: string;
   estatus: string;
   descripcion: string;
+  /** Ruta al .glb. Si está vacía, la ficha muestra "Modelo 3D en preparación". */
   modelo: string;
+  /** Ruta al .mp3 (sonido del animal o ambiente). */
+  sonido: string;
+  /** Ruta a la imagen de fondo del hábitat. */
+  habitat: string;
   miniatura: string;
+  /** Crédito de la foto (miniatura). */
   credito: string;
+  /** Autor · licencia · fuente del modelo 3D, del sonido y del fondo. */
+  creditoModelo: string;
+  creditoSonido: string;
+  creditoHabitat: string;
   puntos: PuntoAtlas[];
   /** Ruta migratoria opcional: se dibuja como arcos animados entre puntos consecutivos. */
   migracion?: { lat: number; lng: number }[];
