@@ -9,6 +9,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -20,6 +21,12 @@ import { AtlasService, CategoriaAtlas, ElementoAtlas } from './data-access/atlas
 
 const COLOR: Record<CategoriaAtlas, string> = { fauna: '#f59e0b', flora: '#22c55e', mineral: '#a78bfa' };
 const NOMBRE_CATEGORIA: Record<CategoriaAtlas, string> = { fauna: 'Fauna', flora: 'Flora', mineral: 'Minerales' };
+
+interface Arco {
+  inicio: { lat: number; lng: number };
+  fin: { lat: number; lng: number };
+  color: string;
+}
 
 /** Quita acentos y mayúsculas para que "nenufar" encuentre "Nenúfar". */
 const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -121,14 +128,18 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
           <button type="button" class="cerrar" aria-label="Cerrar ficha" (click)="seleccionado.set(null)">
             <lucide-icon [img]="icons.X" [size]="18" aria-hidden="true" />
           </button>
-          @if (e.miniatura) {
-            <img class="miniatura" [src]="e.miniatura" [alt]="e.nombre" />
-          }
-          <span class="cat" [style.background]="color[e.categoria]">{{ nombreCategoria[e.categoria] }}</span>
-          <h2>{{ e.nombre }}</h2>
-          @if (e.nombreCientifico) {
-            <p class="cientifico">{{ e.nombreCientifico }}</p>
-          }
+          <div class="cabecera">
+            <div>
+              <span class="cat" [style.background]="color[e.categoria]">{{ nombreCategoria[e.categoria] }}</span>
+              <h2>{{ e.nombre }}</h2>
+              @if (e.nombreCientifico) {
+                <p class="cientifico">{{ e.nombreCientifico }}</p>
+              }
+            </div>
+            @if (e.miniatura) {
+              <img class="foto" [src]="e.miniatura" [alt]="'Fotografía de ' + e.nombre" />
+            }
+          </div>
           <dl class="datos">
             <div>
               <dt>Región</dt>
@@ -140,8 +151,17 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
                 <dd>{{ e.estatus }}</dd>
               </div>
             }
+            @if (e.migracion?.length) {
+              <div>
+                <dt>Ruta migratoria</dt>
+                <dd>Trazada en el globo</dd>
+              </div>
+            }
           </dl>
           <p class="descripcion">{{ e.descripcion }}</p>
+          @if (e.credito) {
+            <p class="credito">{{ e.credito }}</p>
+          }
           @if (e.modelo) {
             <a class="explorar" [routerLink]="['/atlas', e.id]">
               <lucide-icon [img]="icons.Maximize2" [size]="18" aria-hidden="true" />
@@ -187,6 +207,13 @@ export class AtlasPage implements OnDestroy {
     );
   });
 
+  /** Tramos de la ruta migratoria: solo se trazan para la especie seleccionada. */
+  private readonly arcos = computed(() => {
+    const e = this.seleccionado();
+    const ruta = e?.migracion ?? [];
+    return ruta.slice(1).map((fin, i) => ({ inicio: ruta[i], fin, color: COLOR[e!.categoria] }));
+  });
+
   protected readonly porCategoria = computed(() => {
     const grupos: Record<CategoriaAtlas, ElementoAtlas[]> = { fauna: [], flora: [], mineral: [] };
     for (const e of this.visibles()) grupos[e.categoria].push(e);
@@ -213,8 +240,16 @@ export class AtlasPage implements OnDestroy {
     effect(() => {
       const visibles = this.visibles();
       this.globo?.htmlElementsData(visibles);
-      const actual = this.seleccionado();
+      const actual = untracked(this.seleccionado);
       if (actual && !visibles.includes(actual)) this.seleccionado.set(null);
+    });
+
+    // La ruta migratoria se dibuja al seleccionar la especie y se borra al cerrar su ficha.
+    // Se lee arcos() antes de tocar el globo: con `globo?.` primero, la primera vez (sin globo)
+    // la señal no se leía y el efecto nunca volvía a correr.
+    effect(() => {
+      const arcos = this.arcos();
+      this.globo?.arcsData(arcos);
     });
   }
 
@@ -249,7 +284,19 @@ export class AtlasPage implements OnDestroy {
       .htmlElementVisibilityModifier((pin, visible) => {
         pin.style.visibility = visible ? 'visible' : 'hidden';
       })
-      .htmlElementsData(this.visibles());
+      .htmlElementsData(this.visibles())
+      // Rutas migratorias: arcos con trazos que avanzan, como si el animal viajara.
+      .arcStartLat((a) => (a as Arco).inicio.lat)
+      .arcStartLng((a) => (a as Arco).inicio.lng)
+      .arcEndLat((a) => (a as Arco).fin.lat)
+      .arcEndLng((a) => (a as Arco).fin.lng)
+      .arcColor((a: object) => ['rgba(255,255,255,0.15)', (a as Arco).color])
+      .arcStroke(0.7)
+      .arcAltitudeAutoScale(0.35)
+      .arcDashLength(0.35)
+      .arcDashGap(0.15)
+      .arcDashAnimateTime(matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 3000)
+      .arcsData(this.arcos());
 
     const controles = this.globo.controls();
     controles.autoRotateSpeed = 0.4;

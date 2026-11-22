@@ -301,8 +301,28 @@
   }
 }
 
+.cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-right: 2.5rem; // espacio del botón cerrar
+}
+
+// Foto real de la especie, junto al nombre.
+.foto {
+  flex: none;
+  width: 7.5rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--linea);
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
 .cerrar {
-  float: right;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
   display: grid;
   place-items: center;
   width: 2.25rem;
@@ -312,15 +332,6 @@
   background: rgb(255 255 255 / 10%);
   color: #fff;
   cursor: pointer;
-}
-
-.miniatura {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  margin-bottom: 0.75rem;
-  border-radius: 0.75rem;
-  object-fit: cover;
 }
 
 .cat {
@@ -370,6 +381,12 @@
   color: #fff;
   font-weight: 700;
   text-decoration: none;
+}
+
+.credito {
+  margin: 0.5rem 0 0;
+  color: var(--suave);
+  font-size: 0.7rem;
 }
 
 .pronto {

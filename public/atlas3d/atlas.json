@@ -10,8 +10,8 @@
     "estatus": "Casi amenazado (UICN)",
     "descripcion": "El felino más grande de América. Su mordida es tan fuerte que puede romper el caparazón de una tortuga.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/jaguar.jpg",
+    "credito": "Foto: USFWS · Public domain · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -25,8 +25,8 @@
     "estatus": "En peligro (UICN)",
     "descripcion": "El animal terrestre más grande del planeta. Usa su trompa para respirar, beber, oler y saludar.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/elefante-africano.jpg",
+    "credito": "Foto: Giles Laurent · CC BY-SA 4.0 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -40,8 +40,8 @@
     "estatus": "Vulnerable (UICN)",
     "descripcion": "Pasa hasta 14 horas al día comiendo bambú. Tiene un hueso de la muñeca que funciona como un sexto dedo.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/panda-gigante.jpg",
+    "credito": "Foto: J. Patrick Fischer · CC BY-SA 3.0 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -55,8 +55,8 @@
     "estatus": "Preocupación menor (UICN)",
     "descripcion": "El marsupial más grande del mundo. Puede saltar más de 8 metros de un solo brinco usando su cola como apoyo.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/canguro-rojo.jpg",
+    "credito": "Foto: fir0002 (flagstaffotos) · GFDL 1.2 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -70,8 +70,8 @@
     "estatus": "Vulnerable (UICN)",
     "descripcion": "Su piel es negra y su pelo transparente. Depende del hielo marino para cazar focas, que se reduce con el cambio climático.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/oso-polar.jpg",
+    "credito": "Foto: Alan Wilson · CC BY-SA 3.0 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -85,9 +85,27 @@
     "estatus": "En peligro (UICN)",
     "descripcion": "El animal más grande que ha existido. Su corazón pesa como un auto pequeño y migra miles de kilómetros cada año.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
-    "puntos": []
+    "miniatura": "atlas3d/fotos/ballena-azul.jpg",
+    "credito": "Foto: NOAA Photo Library · Public domain · Wikimedia Commons",
+    "puntos": [],
+    "migracion": [
+      {
+        "lat": 24.5,
+        "lng": -111.0
+      },
+      {
+        "lat": 36.5,
+        "lng": -122.5
+      },
+      {
+        "lat": 9.0,
+        "lng": -89.5
+      },
+      {
+        "lat": 24.5,
+        "lng": -111.0
+      }
+    ]
   },
   {
     "id": "secuoya-gigante",
@@ -100,8 +118,8 @@
     "estatus": "En peligro (UICN)",
     "descripcion": "El árbol más voluminoso del mundo. Algunos ejemplares tienen más de 3,000 años y su corteza resiste el fuego.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/secuoya-gigante.jpg",
+    "credito": "Foto: Mike Murphy · CC BY-SA 3.0 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -115,8 +133,8 @@
     "estatus": "En peligro (UICN)",
     "descripcion": "Guarda miles de litros de agua en su tronco para sobrevivir a la temporada seca.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/baobab.jpg",
+    "credito": "Foto: Bernard Gagnon · CC BY-SA 3.0 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -130,8 +148,8 @@
     "estatus": "No evaluado (UICN)",
     "descripcion": "Sus hojas flotantes miden hasta 3 metros y aguantan el peso de un niño gracias a sus nervaduras.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/nenufar-gigante.jpg",
+    "credito": "Foto: Bilby · CC BY 3.0 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -145,8 +163,8 @@
     "estatus": "",
     "descripcion": "Vidrio volcánico que se forma cuando la lava se enfría muy rápido. Los pueblos prehispánicos la usaban para hacer navajas.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/obsidiana.jpg",
+    "credito": "Foto: Ji-Elle · CC BY-SA 3.0 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -160,8 +178,8 @@
     "estatus": "",
     "descripcion": "Carbono puro ordenado en una red muy firme. Es el material natural más duro que se conoce.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/diamante.jpg",
+    "credito": "Foto: DGPC/ADF Luísa Oliveira · CC0 · Wikimedia Commons",
     "puntos": []
   },
   {
@@ -175,8 +193,8 @@
     "estatus": "",
     "descripcion": "Cuarzo morado por pequeñas cantidades de hierro. Crece dentro de geodas, rocas huecas tapizadas de cristales.",
     "modelo": "",
-    "miniatura": "",
-    "credito": "",
+    "miniatura": "atlas3d/fotos/amatista.jpg",
+    "credito": "Foto: Gonzalo Devia · CC BY-SA 4.0 · Wikimedia Commons",
     "puntos": []
   }
 ]

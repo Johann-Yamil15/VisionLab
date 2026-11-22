@@ -27,6 +27,8 @@ export interface ElementoAtlas {
   miniatura: string;
   credito: string;
   puntos: PuntoAtlas[];
+  /** Ruta migratoria opcional: se dibuja como arcos animados entre puntos consecutivos. */
+  migracion?: { lat: number; lng: number }[];
 }
 
 /** Catálogo fijo del Atlas: se lee una vez de public/ y funciona sin internet. */
