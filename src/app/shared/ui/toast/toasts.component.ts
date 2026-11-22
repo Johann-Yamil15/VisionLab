@@ -47,28 +47,31 @@ import { ToastService } from './toast.service';
     }
 
     .aviso {
+      --acento: var(--c-primary);
+      --acento-borde: var(--c-primary-strong);
+
       display: flex;
       align-items: center;
       gap: var(--s-3);
       width: min(100%, 360px);
       padding: var(--s-3);
-      border: 1px solid rgb(94 234 212 / 35%);
-      border-radius: 14px;
-      background: rgb(6 14 24 / 88%);
-      backdrop-filter: blur(10px);
-      color: #e6fffb;
-      box-shadow: 0 10px 30px rgb(0 0 0 / 35%), 0 0 18px rgb(94 234 212 / 15%);
+      border: var(--border-clay);
+      border-radius: var(--r-md);
+      background: var(--c-surface);
+      color: var(--c-text);
+      box-shadow: 0 4px 0 var(--c-ink);
       pointer-events: auto;
-      animation: entrar 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      animation: entrar 0.35s var(--ease-spring);
     }
 
     .aviso--medalla {
-      border-color: rgb(251 191 36 / 60%);
-      box-shadow: 0 10px 30px rgb(0 0 0 / 35%), 0 0 22px rgb(251 191 36 / 30%);
+      --acento: var(--c-sun);
+      --acento-borde: var(--c-sun-strong);
     }
 
     .aviso--nivel {
-      border-color: rgb(167 139 250 / 60%);
+      --acento: var(--c-secondary);
+      --acento-borde: var(--c-secondary-strong);
     }
 
     .aviso-img {
@@ -79,20 +82,22 @@ import { ToastService } from './toast.service';
       animation: brillo 1.2s ease-out;
     }
 
+    // Insignia del ícono: cuadrado redondeado con el color de acento y sombra sólida.
     .aviso-icono {
       display: grid;
       flex: none;
       place-items: center;
       width: 44px;
       height: 44px;
-      border-radius: 50%;
-      background: rgb(94 234 212 / 15%);
-      color: #5eead4;
+      border: 2px solid var(--c-ink);
+      border-bottom-width: 4px;
+      border-radius: var(--r-sm);
+      background: var(--acento);
+      color: var(--c-on-primary);
     }
 
-    .aviso--nivel .aviso-icono {
-      background: rgb(167 139 250 / 18%);
-      color: #c4b5fd;
+    .aviso--medalla .aviso-icono {
+      color: var(--c-on-sun);
     }
 
     .aviso-texto {
@@ -102,31 +107,33 @@ import { ToastService } from './toast.service';
       min-width: 0;
 
       strong {
-        font-size: 0.95rem;
+        font-family: var(--font-display);
+        font-size: var(--fs-md);
       }
 
       span {
-        font-size: 0.85rem;
-        color: #b6d6d1;
+        font-size: var(--fs-sm);
+        color: var(--c-text-muted);
       }
-    }
-
-    .aviso--medalla strong {
-      color: #fbbf24;
     }
 
     .aviso-cerrar {
       display: grid;
       flex: none;
       place-items: center;
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       padding: 0;
-      border: 0;
+      border: 2px solid var(--c-border);
       border-radius: 50%;
-      background: rgb(255 255 255 / 8%);
-      color: inherit;
+      background: var(--c-surface);
+      color: var(--c-text);
       cursor: pointer;
+
+      &:hover {
+        border-color: var(--c-ink);
+        background: var(--c-bg-alt);
+      }
     }
 
     @keyframes entrar {
@@ -139,7 +146,7 @@ import { ToastService } from './toast.service';
     @keyframes brillo {
       from {
         transform: scale(0.4) rotate(-20deg);
-        filter: drop-shadow(0 0 16px #fbbf24);
+        filter: drop-shadow(0 0 12px var(--c-sun));
       }
     }
 

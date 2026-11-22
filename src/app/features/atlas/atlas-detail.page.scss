@@ -1,25 +1,29 @@
-// Detalle inmersivo: mismo HUD (vidrio oscuro + turquesa) que el globo del Atlas.
+// Detalle inmersivo: el modelo va sobre la foto de su hábitat; los controles y paneles usan las piezas
+// del sistema de diseño (.clay, .btn, .type-badge, .meter).
+// Botones flotantes de abajo a la derecha: accesibilidad (global) y chat (este). Mismo tamaño y misma base.
 :host {
   display: block;
-  --panel: rgb(15 23 42 / 82%);
-  --linea: rgb(148 163 184 / 28%);
-  --suave: #cbd5e1;
-  --turquesa: #5eead4;
+  --fab: 52px;
+  --fabs-base: calc(var(--nav-h) + var(--s-4) + env(safe-area-inset-bottom));
+  --fabs-top: calc(var(--fabs-base) + var(--fab) + var(--s-3));
 }
 
 .escena {
   position: relative;
   height: 100dvh;
   overflow: hidden;
-  background: #02040a var(--fondo, none) center / cover no-repeat;
-  color: #f1f5f9;
+  background: var(--c-ink) var(--fondo, none) center / cover no-repeat;
+  color: var(--c-text);
 
-  // Velo para que el hábitat no compita con el modelo ni con los textos.
+  // Velo suave para que el hábitat no compita con el modelo.
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(rgb(2 4 10 / 30%), rgb(2 4 10 / 62%));
+    background: linear-gradient(
+      color-mix(in srgb, var(--c-ink) 15%, transparent),
+      color-mix(in srgb, var(--c-ink) 45%, transparent)
+    );
     pointer-events: none;
   }
 }
@@ -46,85 +50,96 @@
 .volver,
 .acciones,
 .punto-info,
-.panel,
+.columna,
 .aviso,
 .carga {
   position: absolute;
   z-index: 1;
 }
 
-.volver,
-.accion,
-.plegar,
-.cerrar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  min-height: 2.75rem;
-  border: 1px solid var(--linea);
-  border-radius: 999px;
-  background: var(--panel);
-  color: #fff;
-  font: inherit;
-  font-weight: 700;
-  text-decoration: none;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-
-  &:hover {
-    border-color: var(--turquesa);
-  }
-
-  &:focus-visible {
-    outline: 3px solid #fff;
-    outline-offset: 2px;
-  }
-}
-
 .volver {
-  top: 1rem;
-  left: 1rem;
-  padding: 0 1rem;
+  top: var(--s-4);
+  left: var(--s-4);
 }
 
 .acciones {
-  top: 4.25rem;
-  left: 1rem;
+  top: 5rem;
+  left: var(--s-4);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--s-2);
   max-width: calc(100% - 2rem);
 }
 
-.accion {
-  padding: 0 1rem;
+@media (max-width: 639px) {
+  .acciones .btn {
+    min-height: 44px;
+    padding: 0 var(--s-3);
+    font-size: var(--fs-sm);
+  }
+}
 
-  &[aria-pressed='true'],
-  &--ar {
-    border-color: var(--turquesa);
-    color: var(--turquesa);
+// Chat: círculo junto al botón de accesibilidad (a su izquierda).
+.fab-chat {
+  position: fixed;
+  z-index: 2;
+  right: calc(var(--s-4) + var(--fab) + var(--s-3));
+  bottom: var(--fabs-base);
+  display: grid;
+  place-items: center;
+  width: var(--fab);
+  height: var(--fab);
+  border: var(--border-clay);
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  box-shadow: 0 5px 0 var(--c-ink);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+
+  // Etiqueta "IA" con estrellitas (el círculo es chico: ícono arriba, texto abajo).
+  .fab-ia {
+    display: grid;
+    justify-items: center;
+    gap: 1px;
+    font-family: var(--font-display);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &[aria-expanded='true'] {
+    background: var(--c-sun);
+    color: var(--c-on-sun);
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 var(--c-ink);
   }
 }
 
 .sin-sonido {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: var(--s-2);
+  min-height: 40px;
   margin: 0;
-  padding: 0 0.5rem;
-  color: var(--suave);
-  font-size: 0.8125rem;
+  padding: 0 var(--s-3);
+  border: 2px solid var(--c-border);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 700;
 }
 
 .aviso {
   margin: 0;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--linea);
-  border-radius: 1rem;
-  background: var(--panel);
-  color: var(--suave);
+  padding: var(--s-3) var(--s-4);
+  color: var(--c-text-muted);
+  font-weight: 700;
 
   &--centro {
     top: 50%;
@@ -139,122 +154,129 @@
   top: 50%;
   left: 50%;
   display: grid;
-  gap: 0.5rem;
-  justify-items: center;
-  color: var(--turquesa);
-  font-size: 0.875rem;
+  gap: var(--s-2);
+  width: min(18rem, calc(100% - 2rem));
+  padding: var(--s-3) var(--s-4);
+  font-weight: 700;
+  text-align: center;
   translate: -50% -50%;
-}
-
-.barra {
-  width: min(14rem, 60vw);
-  height: 3px;
-  overflow: hidden;
-  background: rgb(94 234 212 / 20%);
-
-  i {
-    display: block;
-    height: 100%;
-    background: var(--turquesa);
-    box-shadow: 0 0 8px var(--turquesa);
-    transition: width 0.2s;
-  }
 }
 
 // --- Puntos sobre el modelo (los crea el código, por eso ::ng-deep) ---
 :host ::ng-deep .punto-3d {
   display: grid;
   place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border: 2px solid #fff;
+  border: 2px solid var(--c-ink);
   border-radius: 50%;
-  background: #0d9488;
-  color: #fff;
+  background: var(--c-primary);
+  box-shadow: 0 3px 0 var(--c-ink);
+  color: var(--c-on-primary);
   font: inherit;
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: var(--fs-xs);
+  font-weight: 800;
   cursor: pointer;
   transition: opacity 0.2s;
 
   &:not([data-visible]) {
-    opacity: 0.25;
+    opacity: 0.3;
     pointer-events: none;
   }
 
-  &:focus-visible {
-    outline: 3px solid #fff;
-    outline-offset: 2px;
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--c-ink);
   }
 }
 
 .punto-info {
-  bottom: 14rem;
-  left: 1rem;
+  bottom: calc(var(--fabs-top) + 5rem); // encima de la cabecera de la tarjeta
+  left: var(--s-4);
   width: min(22rem, calc(100% - 2rem));
-  padding: 0.9rem 3rem 0.9rem 1.1rem;
-  border: 1px solid var(--turquesa);
-  border-radius: 1rem;
-  background: var(--panel);
-  backdrop-filter: blur(8px);
+  padding: var(--s-4) 3.5rem var(--s-4) var(--s-4);
 
   h2 {
-    margin: 0;
-    color: var(--turquesa);
-    font-size: 1rem;
+    font-size: var(--fs-lg);
   }
 
   p {
-    margin: 0.3rem 0 0;
-    line-height: 1.5;
+    margin: var(--s-1) 0 0;
+    line-height: 1.6;
   }
 }
 
 .cerrar {
   position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 2.25rem;
-  min-height: 2.25rem;
-  padding: 0;
+  top: var(--s-3);
+  right: var(--s-3);
+  width: 40px;
+  min-width: 40px;
+  min-height: 40px;
 }
 
-// --- Historia y chat ---
-.panel {
-  right: 1rem;
-  bottom: 9rem; // deja libre el botón flotante de accesibilidad
-  left: 1rem;
+// --- Historia (tarjeta) y chat (panel aparte) ---
+// Comparten una columna: en celular va anclada abajo y el chat crece hacia arriba; en escritorio es lateral.
+.columna {
+  right: var(--s-4);
+  bottom: var(--fabs-top); // deja libres los botones flotantes (accesibilidad y chat)
+  left: var(--s-4);
   display: flex;
+  flex-direction: column-reverse;
+  gap: var(--s-2);
+  // Nunca más alto que el espacio libre sobre los botones flotantes (celular horizontal).
+  max-height: min(70dvh, calc(100dvh - var(--fabs-top) - var(--s-4)));
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.panel {
+  display: flex;
+  flex: 0 1 auto;
   flex-direction: column;
-  max-height: 62dvh;
-  border: 1px solid var(--linea);
-  border-radius: 1rem;
-  background: var(--panel);
-  backdrop-filter: blur(8px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chat-caja {
+  position: relative;
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  border-radius: var(--r-md);
+  --chat-msgs-max: 26dvh;
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 .panel-cabecera {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-4);
 
   h1 {
-    margin: 0.25rem 0 0;
-    font-size: 1.35rem;
+    margin: var(--s-1) 0 0;
+    font-size: var(--fs-xl);
   }
 }
 
 .plegar {
   flex: none;
-  width: 2.75rem;
-  padding: 0;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .panel-cuerpo {
-  padding: 0 1rem 1rem;
+  padding: 0 var(--s-4) var(--s-4);
   overflow-y: auto;
 
   &[hidden] {
@@ -262,65 +284,58 @@
   }
 }
 
-.cat {
-  display: inline-block;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  color: #0f172a;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
 .ficha {
   display: flex;
-  gap: 1rem;
+  gap: var(--s-4);
 }
 
 .foto {
   flex: none;
   width: 6rem;
   aspect-ratio: 1;
-  border: 1px solid var(--linea);
-  border-radius: 0.75rem;
+  border: var(--border-clay);
+  border-radius: var(--r-sm);
   object-fit: cover;
 }
 
 .cientifico {
   margin: 0;
-  color: var(--suave);
+  color: var(--c-text-muted);
   font-style: italic;
 }
 
 .datos {
   display: grid;
-  gap: 0.5rem;
-  margin: 0.5rem 0 0;
+  gap: var(--s-2);
+  margin: var(--s-2) 0 0;
 
   dt {
-    color: var(--suave);
-    font-size: 0.75rem;
+    color: var(--c-text-muted);
+    font-size: var(--fs-xs);
+    font-weight: 700;
   }
 
   dd {
     margin: 0;
+    font-weight: 600;
   }
 }
 
 .descripcion {
-  margin: 0.75rem 0 0;
-  line-height: 1.5;
+  margin: var(--s-3) 0 0;
+  line-height: 1.6;
 }
 
 .credito {
-  margin: 0.4rem 0 0;
-  color: var(--suave);
-  font-size: 0.7rem;
+  margin: var(--s-2) 0 0;
+  color: var(--c-text-muted);
+  font-size: var(--fs-xs);
   overflow-wrap: anywhere;
 }
 
 app-expert-chat {
   display: block;
-  margin-top: 1rem;
+  margin-top: var(--s-4);
 }
 
 @media (min-width: 1024px) {
@@ -329,22 +344,37 @@ app-expert-chat {
     right: calc(min(26rem, 40vw) + 2rem);
   }
 
-  .panel {
-    top: 1rem;
-    right: 1rem;
-    bottom: 1.5rem;
+  // En escritorio los botones flotantes bajan a la esquina (sin barra inferior).
+  :host {
+    --fabs-base: var(--s-5);
+  }
+
+  .fab-chat {
+    right: calc(var(--s-5) + var(--fab) + var(--s-3));
+  }
+
+  .columna {
+    top: var(--s-4);
+    right: var(--s-4);
+    bottom: var(--fabs-top);
     left: auto;
+    flex-direction: column;
     width: min(26rem, 40vw);
     max-height: none;
   }
 
+  .chat-caja {
+    flex: 1 1 auto;
+    --chat-msgs-max: min(340px, 38dvh);
+  }
+
   .punto-info {
-    bottom: 1.5rem;
+    bottom: var(--fabs-top);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .barra i,
+  .fab-chat,
   :host ::ng-deep .punto-3d {
     transition: none;
   }

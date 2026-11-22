@@ -131,27 +131,27 @@
     "sonido": "",
     "habitat": "atlas3d/habitats/desierto-australia.webp",
     "credito": "Foto: fir0002 (flagstaffotos) · GFDL 1.2 · Wikimedia Commons",
-    "creditoModelo": "Modelo: \"Kangaroo\" por Stephengury · Sketchfab (https://skfb.ly/oI6xZ) · CC BY 4.0",
+    "creditoModelo": "Modelo: \"Kangaroo\" por rinaskylark · Sketchfab (https://sketchfab.com/3d-models/kangaroo-31236db25afe445e8444b0ce8e22d53d) · CC BY 4.0",
     "creditoSonido": "",
     "creditoHabitat": "Fondo: Mark Direen · Pexels (licencia Pexels)",
     "puntos": [
       {
         "etiqueta": "Cabeza",
         "texto": "Sus grandes orejas giran como antenas para captar sonidos en todas direcciones y avisarle del peligro.",
-        "posicion": "-0.1287m 0.4767m 0.0071m",
-        "normal": "-0.12m -0.14m -0.98m"
+        "posicion": "0.1118m 0.1036m 0.6407m",
+        "normal": "-0.09m 0.94m 0.32m"
       },
       {
         "etiqueta": "Patas traseras",
         "texto": "Sus patas largas y sus tendones elásticos guardan energía en cada salto. Puede alcanzar unos 60 km/h.",
-        "posicion": "0.1261m 0.1792m 0.082m",
-        "normal": "0.62m -0.16m 0.77m"
+        "posicion": "0.3599m -0.2644m 0.3999m",
+        "normal": "0.29m 0.72m -0.62m"
       },
       {
         "etiqueta": "Cola",
         "texto": "Su cola gruesa y musculosa funciona como una quinta pata: lo equilibra al saltar y lo apoya cuando camina.",
-        "posicion": "0.4224m 0.0373m 0.0212m",
-        "normal": "-0.08m -0.73m -0.68m"
+        "posicion": "0.5943m -0.2771m 0.1844m",
+        "normal": "-0.1m -1m 0.01m"
       }
     ]
   },

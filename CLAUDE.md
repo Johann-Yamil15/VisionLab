@@ -84,6 +84,14 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
+- 2026-11-22: detalle 3D: el chat del experto sale de la tarjeta de historia y se abre con un botón flotante (`.fab-chat`, círculo de 52px a la
+  izquierda del de accesibilidad, mismas medidas y base; ícono X y color sol al abrirse) (panel propio en la misma columna; abrir uno pliega el otro; `--chat-msgs-max` acota la altura de `app-expert-chat`).
+  Canguro: modelo nuevo `kangaroo_new` (rinaskylark, CC BY 4.0), con spec-gloss convertido a metal-rough.
+- 2026-11-22: Atlas (controles y ficha), detalle 3D (`/atlas/:id`) y `app-toasts` pasan del HUD oscuro turquesa al sistema
+  base (`.clay`, `.btn`, `.chip`, `.type-badge`, `.meter`, tokens; 0 colores sueltos en detalle 3D y toasts). El globo y su
+  arranque (fondo oscuro, pines) se conservan. `TOKEN_CATEGORIA` (chips/etiquetas, AA con texto blanco) vs
+  `COLOR_CATEGORIA` (pines brillantes) en `atlas.ts`. Pendiente a propósito: `microscope.page` sigue con HUD turquesa
+  (cámara; la tarea original lo pedía así).
 - 2026-11-22: `app-nav` reestructurado (destinos en un arreglo + `@for`, columnas iguales con `minmax(0,1fr)`, altura
   = `--nav-h` incluyendo el borde, tablet vertical centrada a 36rem, móvil horizontal compacto solo íconos con
   `--nav-h: 56px`, riel con scroll en ventanas bajas, fondo de activo en barra y riel). `expert-chat` fija su propio

@@ -1,16 +1,16 @@
 <section class="escena" [style.--fondo]="fondo()" aria-label="Exploración en 3D">
-  <a class="volver" routerLink="/atlas">
+  <a class="volver btn" routerLink="/atlas">
     <lucide-icon [img]="icons.ArrowLeft" [size]="20" aria-hidden="true" />
     Volver al globo
   </a>
 
   @switch (estado()) {
     @case ('cargando') {
-      <p class="aviso aviso--centro" role="status">Cargando…</p>
+      <p class="aviso aviso--centro clay" role="status">Cargando…</p>
     }
 
     @case ('no-encontrado') {
-      <p class="aviso aviso--centro" role="alert">No encontramos este elemento del Atlas.</p>
+      <p class="aviso aviso--centro clay" role="alert">No encontramos este elemento del Atlas.</p>
     }
 
     @case ('listo') {
@@ -21,7 +21,7 @@
             <model-viewer
               #visor
               class="visor"
-              [class.visor--lateral]="panelAbierto()"
+              [class.visor--lateral]="panelAbierto() || chatAbierto()"
               [src]="e.modelo"
               [alt]="'Modelo 3D de ' + e.nombre"
               camera-controls
@@ -43,23 +43,23 @@
             </model-viewer>
           }
           @if (estadoModelo() === 'cargando') {
-            <div class="carga" role="status">
-              <span class="barra"><i [style.width.%]="progreso() * 100"></i></span>
+            <div class="carga clay" role="status">
               Cargando modelo… {{ progreso() * 100 | number: '1.0-0' }}%
+              <div class="meter"><div class="meter-track"><div class="meter-fill" [style.width.%]="progreso() * 100"></div></div></div>
             </div>
           }
           @if (estadoModelo() === 'error') {
-            <p class="aviso aviso--centro" role="alert">No se pudo cargar el modelo 3D. Revisa tu conexión e inténtalo otra vez.</p>
+            <p class="aviso aviso--centro clay" role="alert">No se pudo cargar el modelo 3D. Revisa tu conexión e inténtalo otra vez.</p>
           }
         } @else {
-          <p class="aviso aviso--centro">Modelo 3D en preparación.</p>
+          <p class="aviso aviso--centro clay">Modelo 3D en preparación.</p>
         }
 
         <!-- ===== Acciones ===== -->
         <div class="acciones">
           @if (e.sonido && !sonidoError()) {
             <audio #audio [src]="e.sonido" preload="none" (play)="sonando.set(true)" (pause)="sonando.set(false)" (ended)="sonando.set(false)" (error)="sonidoError.set(true)"></audio>
-            <button type="button" class="accion" [attr.aria-pressed]="sonando()" (click)="alternarSonido()">
+            <button type="button" class="accion btn" [class.btn--secondary]="sonando()" [attr.aria-pressed]="sonando()" (click)="alternarSonido()">
               <lucide-icon [img]="sonando() ? icons.Pause : icons.Play" [size]="18" aria-hidden="true" />
               {{ sonando() ? 'Pausar sonido' : 'Escuchar sonido' }}
             </button>
@@ -70,16 +70,38 @@
             </p>
           }
           @if (puedeAr()) {
-            <button type="button" class="accion accion--ar" (click)="proyectar()">
+            <button type="button" class="accion btn btn--primary" (click)="proyectar()">
               <lucide-icon [img]="icons.Box" [size]="18" aria-hidden="true" />
               Proyectar holograma
             </button>
           }
         </div>
 
+        <!-- Botón flotante del chat: junto al de accesibilidad, mismo tamaño. -->
+        @if (especie()) {
+          <button
+            type="button"
+            class="fab-chat"
+            [attr.aria-expanded]="chatAbierto()"
+            aria-controls="chat-experto"
+            [attr.aria-label]="chatAbierto() ? 'Cerrar el chat con el experto' : 'Preguntar al experto'"
+            [title]="chatAbierto() ? 'Cerrar el chat' : 'Preguntar al experto'"
+            (click)="alternarChat()"
+          >
+            @if (chatAbierto()) {
+              <lucide-icon [img]="icons.X" [size]="24" aria-hidden="true" />
+            } @else {
+              <span class="fab-ia" aria-hidden="true">
+                <lucide-icon [img]="icons.Sparkles" [size]="15" />
+                IA
+              </span>
+            }
+          </button>
+        }
+
         @if (puntoActivo(); as p) {
-          <aside class="punto-info" aria-live="polite">
-            <button type="button" class="cerrar" aria-label="Cerrar descripción" (click)="puntoActivo.set(null)">
+          <aside class="punto-info clay" aria-live="polite">
+            <button type="button" class="cerrar btn btn--icon" aria-label="Cerrar descripción" (click)="puntoActivo.set(null)">
               <lucide-icon [img]="icons.X" [size]="18" aria-hidden="true" />
             </button>
             <h2>{{ p.etiqueta }}</h2>
@@ -87,26 +109,26 @@
           </aside>
         }
 
-        <!-- ===== Historia y chat ===== -->
-        <aside class="panel" aria-label="Historia de la especie">
+        <!-- ===== Historia (tarjeta) y chat (panel aparte, desde el botón "Preguntar al experto") ===== -->
+        <div class="columna">
+        <aside class="panel clay" aria-label="Historia de la especie">
           <header class="panel-cabecera">
             <div>
-              <span class="cat" [style.background]="color[e.categoria]">{{ nombreCategoria[e.categoria] }}</span>
+              <span class="type-badge" [style.--type-color]="chipColor[e.categoria]">{{ nombreCategoria[e.categoria] }}</span>
               <h1>{{ e.nombre }}</h1>
             </div>
             <button
               type="button"
-              class="plegar"
+              class="plegar btn btn--icon"
               [attr.aria-expanded]="panelAbierto()"
               aria-controls="historia"
               [attr.aria-label]="panelAbierto() ? 'Ocultar historia' : 'Ver historia'"
-              (click)="panelAbierto.set(!panelAbierto())"
+              (click)="alternarPanel()"
             >
               <lucide-icon [img]="panelAbierto() ? icons.ChevronDown : icons.ChevronUp" [size]="20" aria-hidden="true" />
             </button>
           </header>
 
-          <!-- Se oculta con [hidden] (no con @if) para no perder la conversación del chat al plegar. -->
           <div id="historia" class="panel-cuerpo" [hidden]="!panelAbierto()">
             <div class="ficha">
               @if (e.miniatura) {
@@ -136,12 +158,19 @@
                 <p class="credito">{{ c }}</p>
               }
             }
-
-            @if (especie(); as sp) {
-              <app-expert-chat [especie]="sp" />
-            }
           </div>
         </aside>
+
+        @if (especie(); as sp) {
+          <!-- Se oculta con [hidden] (no con @if) para no perder la conversación al cerrarlo. -->
+          <section id="chat-experto" class="chat-caja" [hidden]="!chatAbierto()" aria-label="Chat con el experto" (keydown.escape)="cerrarChat()">
+            <button type="button" class="cerrar btn btn--icon" aria-label="Cerrar chat" (click)="cerrarChat()">
+              <lucide-icon [img]="icons.X" [size]="18" aria-hidden="true" />
+            </button>
+            <app-expert-chat [especie]="sp" />
+          </section>
+        }
+        </div>
       }
     }
   }

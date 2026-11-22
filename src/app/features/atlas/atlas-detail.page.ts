@@ -1,4 +1,5 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -7,6 +8,7 @@ import {
   computed,
   effect,
   inject,
+  Injector,
   input,
   signal,
   untracked,
@@ -20,7 +22,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { Especie } from '../../shared/models/hallazgo.model';
 import { AppIcons } from '../../shared/ui/icons';
 import { ExpertChatComponent } from '../../shared/ui/expert-chat/expert-chat.component';
-import { AtlasService, COLOR_CATEGORIA, ElementoAtlas, NOMBRE_CATEGORIA, PuntoAtlas } from './data-access/atlas';
+import { AtlasService, ElementoAtlas, NOMBRE_CATEGORIA, PuntoAtlas, TOKEN_CATEGORIA } from './data-access/atlas';
 
 type EstadoModelo = 'cargando' | 'listo' | 'error';
 
@@ -47,11 +49,13 @@ export class AtlasDetailPage {
   readonly id = input.required<string>();
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
+  private readonly chat = viewChild(ExpertChatComponent);
   private readonly visor = viewChild<ElementRef<Visor>>('visor');
   private readonly audio = viewChild<ElementRef<HTMLAudioElement>>('audio');
 
   protected readonly icons = AppIcons;
-  protected readonly color = COLOR_CATEGORIA;
+  protected readonly chipColor = TOKEN_CATEGORIA;
   protected readonly nombreCategoria = NOMBRE_CATEGORIA;
 
   // undefined = cargando, null = falló la lectura del catálogo.
@@ -91,6 +95,7 @@ export class AtlasDetailPage {
   protected readonly sonando = signal(false);
   protected readonly sonidoError = signal(false);
   protected readonly panelAbierto = signal(matchMedia('(min-width: 1024px)').matches);
+  protected readonly chatAbierto = signal(false);
 
   private visorSolicitado = false;
 
@@ -110,6 +115,7 @@ export class AtlasDetailPage {
         this.puntoActivo.set(null);
         this.sonando.set(false);
         this.sonidoError.set(false);
+        this.chatAbierto.set(false);
       });
     });
 
@@ -149,6 +155,26 @@ export class AtlasDetailPage {
 
   protected proyectar(): void {
     void this.visor()?.nativeElement.activateAR().catch(() => this.puedeAr.set(false));
+  }
+
+  // Historia y chat comparten la columna: abrir uno pliega el otro.
+  protected alternarPanel(): void {
+    const abrir = !this.panelAbierto();
+    this.panelAbierto.set(abrir);
+    if (abrir) this.chatAbierto.set(false);
+  }
+
+  protected alternarChat(): void {
+    const abrir = !this.chatAbierto();
+    this.chatAbierto.set(abrir);
+    if (!abrir) return;
+    this.panelAbierto.set(false);
+    // En pantallas táctiles no se enfoca el campo: el teclado taparía la mitad del chat.
+    if (!matchMedia('(pointer: coarse)').matches) afterNextRender(() => this.chat()?.enfocar(), { injector: this.injector });
+  }
+
+  protected cerrarChat(): void {
+    this.chatAbierto.set(false);
   }
 
   protected alternarSonido(): void {

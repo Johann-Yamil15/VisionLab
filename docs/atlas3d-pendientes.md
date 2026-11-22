@@ -9,10 +9,12 @@ Estado al 2026-11-22. Datos en `public/atlas3d/atlas.json`; visor en `/atlas/:id
   - modelo a pantalla completa, `camera-controls`, giro automático que se detiene al tocar/arrastrar,
     barra de carga y mensaje si el archivo falla;
   - fondo del hábitat detrás del modelo, sonido con ▶/⏸ (nunca se reproduce solo), puntos 3D tocables;
-  - panel de historia colapsable (foto, científico, región, conservación, descripción, créditos) con el chat del experto;
+  - tarjeta de historia colapsable (foto, científico, región, conservación, descripción, créditos) y, aparte, el chat
+    del experto: botón flotante junto al de accesibilidad ("Preguntar al experto") que lo despliega en su propio panel (pliega la historia; Escape o X lo cierran;
+    conserva la conversación);
   - "Proyectar holograma" (AR) y "Volver al globo".
 - Si falta modelo, sonido o fondo la página no se rompe (probado bloqueando cada archivo).
-- Peso: `public/atlas3d` ≈ 11 MB (antes 111 MB). Modelos 6.8 MB.
+- Peso: `public/atlas3d` ≈ 11 MB (antes 111 MB). Modelos 6.4 MB.
 
 ## Decisiones que se apartan de la tarea (revisar con el equipo)
 1. **Fondo como imagen CSS, no `skybox-image`.** Las fotos de hábitat son fotos normales (Pexels), no
@@ -39,8 +41,9 @@ Estado al 2026-11-22. Datos en `public/atlas3d/atlas.json`; visor en `/atlas/:id
       jaguar, oso polar, panda, baobab, canguro y nenúfar. **Los otros 6 cargan, pero no se revisaron a ojo**
       (elefante, ballena, secuoya, obsidiana, diamante, amatista). Para corregir uno: clic sobre el modelo →
       `positionAndNormalFromPoint` → pegar en `atlas.json`.
+- [x] Canguro: modelo nuevo (`kangaroo_new.glb`, autor rinaskylark, CC BY 4.0) con color; usa la extensión obsoleta
+      `KHR_materials_pbrSpecularGlossiness`, se convirtió a metal-rough (`gltf-transform metalrough`) antes de optimizar.
 - [ ] El modelo del **nenúfar** es una *colección* de plantas (varios nenúfares y una flor), no un solo nenúfar gigante.
-- [ ] El **canguro** se ve completamente blanco (el original también): el modelo no trae color.
 - [ ] Modelos grandes (ballena ~1400 unidades, baobab ~21): si el encuadre inicial queda mal, ajustar
       `camera-orbit` / `field-of-view`.
 
