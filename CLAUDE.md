@@ -47,7 +47,7 @@ src/
     app.routes.ts          lazy loadComponent por página
     core/
       api/api.ts           API_URL
-      ai/ia.service.ts analyze(), chat()
+      ai/ia.service.ts analyze(), chat(); demo.service.ts + demo-data.ts = MODO DEMO (`?demo=1` / `?demo=0`, 6 fichas sin IA)
       layout/app-nav       barra inferior (móvil) / riel lateral ≥1024px
     shared/
       models/              hallazgo (Hallazgo, AnalysisResult, NuevoHallazgo, Especie), perfil, chat-message
@@ -79,14 +79,14 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 
 ## Pendiente
 - Pantallas de login y registro + interceptor JWT (cuando el backend tenga JWT).
-- Probar la IA real con 50 fotos.
+- Probar la IA real con 50 fotos y llenar la tabla de `docs/pruebas-ia.md`.
 - PWA (manifest + service worker), 3D/RA.
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
 - 2026-11-21: OMNI-12 escáner conectado al backend (`ia.service`, 3 opciones con confianza < 60, campos
   amenazas/impacto/peligro, "Ver en el Atlas 3D" por coincidencia con atlas.json; `discovery` importa
-  `AtlasService`, excepción a la regla de features).
+  `AtlasService`, excepción a la regla de features). OMNI-13 modo demo + `docs/pruebas-ia.md`.
 - 2026-10-14: creado este archivo. `master` → `develop` + `main`. Hook antisecretos. Key fuera del código.
 - 2026-10-14: `feature/jj-arquitectura-base`: arquitectura por features + rediseño completo
   "Explorador" (claymorphism, Fredoka/Nunito, Lucide). Se quitaron SSR y Angular Material.
