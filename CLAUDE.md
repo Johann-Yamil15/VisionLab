@@ -84,6 +84,10 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
+- 2026-11-22: Atlas 3D, datos completos: `atlas.json` con modelo/sonido/habitat/puntos/créditos para los 12
+  elementos (`ElementoAtlas` con `sonido`, `habitat`, `creditoModelo|Sonido|Habitat`), assets comprimidos
+  (111 MB → 11 MB: glb meshopt, mp3 mono, fondos webp), `globe.gl` con import dinámico, ícono "Sin sonido".
+  Falta el visor `/atlas/:id`: ver `docs/atlas3d-pendientes.md`.
 - 2026-11-21: OMNI-12 escáner conectado al backend (`ia.service`, 3 opciones con confianza < 60, campos
   amenazas/impacto/peligro, "Ver en el Atlas 3D" por coincidencia con atlas.json; `discovery` importa
   `AtlasService`, excepción a la regla de features). OMNI-13 modo demo + `docs/pruebas-ia.md`.

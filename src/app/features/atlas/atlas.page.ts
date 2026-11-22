@@ -15,7 +15,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
-import Globe, { GlobeInstance } from 'globe.gl';
+import type { GlobeInstance } from 'globe.gl';
 import { AppIcons } from '../../shared/ui/icons';
 import { AtlasService, CategoriaAtlas, ElementoAtlas } from './data-access/atlas';
 
@@ -137,7 +137,7 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
               }
             </div>
             @if (e.miniatura) {
-              <img class="foto" [src]="e.miniatura" [alt]="'Fotografía de ' + e.nombre" />
+              <img class="foto" [src]="e.miniatura" decoding="async"[alt]="'Fotografía de ' + e.nombre" />
             }
           </div>
           <dl class="datos">
@@ -162,6 +162,17 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
           @if (e.credito) {
             <p class="credito">{{ e.credito }}</p>
           }
+          @for (c of [e.creditoModelo, e.creditoSonido, e.creditoHabitat]; track $index) {
+            @if (c) {
+              <p class="credito">{{ c }}</p>
+            }
+          }
+          @if (!e.sonido) {
+            <p class="sin-sonido">
+              <lucide-icon [img]="icons.VolumeX" [size]="16" aria-hidden="true" />
+              Sin sonido
+            </p>
+          }
           @if (e.modelo) {
             <a class="explorar" [routerLink]="['/atlas', e.id]">
               <lucide-icon [img]="icons.Maximize2" [size]="18" aria-hidden="true" />
@@ -181,6 +192,10 @@ export class AtlasPage implements OnDestroy {
   private readonly contenedor = viewChild.required<ElementRef<HTMLElement>>('globo');
   private globo?: GlobeInstance;
   private resize?: ResizeObserver;
+  private creando = false;
+  private destruido = false;
+  private readonly alCambiarVisibilidad = () =>
+    document.hidden ? this.globo?.pauseAnimation() : this.globo?.resumeAnimation();
 
   protected readonly icons = AppIcons;
   protected readonly categorias: CategoriaAtlas[] = ['fauna', 'flora', 'mineral'];
@@ -230,7 +245,7 @@ export class AtlasPage implements OnDestroy {
         this.resize = new ResizeObserver(() => {
           if (!el.clientWidth || !el.clientHeight) return;
           if (this.globo) this.globo.width(el.clientWidth).height(el.clientHeight);
-          else this.crearGlobo(el);
+          else if (!this.creando) void this.crearGlobo(el);
         });
         this.resize.observe(el);
       });
@@ -268,11 +283,15 @@ export class AtlasPage implements OnDestroy {
     this.globo.pointOfView({ lat: e.lat, lng: e.lng, altitude: 1.6 }, 1000);
   }
 
-  private crearGlobo(el: HTMLElement): void {
+  private async crearGlobo(el: HTMLElement): Promise<void> {
+    this.creando = true;
+    // globe.gl arrastra three.js (~2 MB): se descarga aparte para que la interfaz del atlas pinte primero.
+    const { default: Globe } = await import('globe.gl');
+    if (this.destruido) return;
     this.globo = new Globe(el)
       .globeImageUrl('atlas3d/earth-night.jpg')
       .bumpImageUrl('atlas3d/earth-topology.png')
-      .backgroundImageUrl('atlas3d/night-sky.png')
+      .backgroundImageUrl('atlas3d/night-sky.webp')
       .atmosphereColor('#60a5fa')
       .width(el.clientWidth)
       .height(el.clientHeight)
@@ -297,6 +316,11 @@ export class AtlasPage implements OnDestroy {
       .arcDashGap(0.15)
       .arcDashAnimateTime(matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 3000)
       .arcsData(this.arcos());
+
+    // En pantallas retina renderizar a 3x es innecesario y es lo que más cuesta a la GPU.
+    this.globo.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    // Sin pestaña visible no hay por qué seguir dibujando el planeta.
+    document.addEventListener('visibilitychange', this.alCambiarVisibilidad);
 
     const controles = this.globo.controls();
     controles.autoRotateSpeed = 0.4;
@@ -344,6 +368,8 @@ export class AtlasPage implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destruido = true;
+    document.removeEventListener('visibilitychange', this.alCambiarVisibilidad);
     this.resize?.disconnect();
     this.globo?._destructor();
     this.globo = undefined; // los temporizadores de la entrada revisan esto antes de mover la cámara
