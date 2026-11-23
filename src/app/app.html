@@ -19,9 +19,11 @@
   </svg>
 </div>
 
-<app-nav />
+@if (!enAcceso()) {
+  <app-nav />
+}
 
-<main id="contenido" class="shell-main" tabindex="-1">
+<main id="contenido" class="shell-main" [class.shell-main--acceso]="enAcceso()" tabindex="-1">
   <router-outlet />
 </main>
 

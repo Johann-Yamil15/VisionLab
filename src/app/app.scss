@@ -20,6 +20,12 @@
   z-index: 1;
 }
 
+// Login y registro: sin navegación, el contenido ocupa todo el ancho.
+.shell-main--acceso {
+  padding-bottom: 0;
+  padding-left: 0;
+}
+
 // --- Hojas decorativas ---
 .decor {
   display: none;

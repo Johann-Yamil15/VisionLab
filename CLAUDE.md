@@ -34,7 +34,7 @@ credenciales en connection strings).
   (400 → `SolicitudInvalidaError`, 503/red/timeout → `IaNoDisponibleError`).
 - Las keys viejas (`AIzaSyB-cDig…`, `AIzaSyANor9…`) siguen en el historial: hay que revocarlas.
 - `src/environments/` solo lleva la URL del API, nunca secretos.
-- El `usuarioId` nunca lo manda el cliente (el backend lo ignora).
+- El `usuarioId` nunca lo manda el cliente (el backend lo ignora; sale del JWT). El token vive en localStorage (`visionlab.sesion`).
 
 ## Estructura (desde 2026-10-14, rama feature/jj-arquitectura-base)
 ```
@@ -48,6 +48,7 @@ src/
     core/
       api/api.ts           API_URL
       ai/ia.service.ts analyze(), chat(); demo.service.ts + demo-data.ts = MODO DEMO (`?demo=1` / `?demo=0`, 6 fichas sin IA)
+      auth/                AuthService (sesión JWT en localStorage `visionlab.sesion`), authInterceptor (Bearer a `API_URL`; 401 → cierra sesión), authGuard / invitadoGuard
       layout/app-nav       barra inferior (móvil) / riel lateral ≥1024px
     shared/
       models/              hallazgo (Hallazgo, AnalysisResult, NuevoHallazgo, Especie), perfil, chat-message
@@ -71,19 +72,20 @@ src/
                            hallazgos (las colecciones niveles/logros del backend están vacías) + spec
       info/                about.page
 ```
-Rutas: `/microscopio`, `/microscopio/vista-previa`, `/descubrimiento`, `/almanaque`,
-`/almanaque/:id`, `/atlas`, `/atlas/:id`, `/perfil`, `/acerca` (todo lo demás redirige a `/microscopio`).
+Rutas públicas: `/login`, `/registro` (invitadoGuard), `/atlas`, `/atlas/:id`, `/acerca`. Con sesión (authGuard): `/microscopio`, `/microscopio/vista-previa`, `/descubrimiento`, `/almanaque`,
+`/almanaque/:id`, `/perfil` (todo lo demás redirige a `/microscopio`).
 Convenciones: un feature no importa de otro, salvo `discovery` → `microscope/data-access/captura.store`
 (flujo compartido). Lo que usan dos features va en `shared/`. Componentes `OnPush` + signals.
 Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar chico (límite 6kB).
 
 ## Pendiente
-- Pantallas de login y registro + interceptor JWT (cuando el backend tenga JWT).
+- Recuperar contraseña, y que el nombre de usuario/medallas se refresquen sin recargar tras el login.
 - Probar la IA real con 50 fotos y llenar la tabla de `docs/pruebas-ia.md`.
 - PWA (manifest + service worker), 3D/RA.
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
+- 2026-11-22: login y registro (`features/auth`), `core/auth` (servicio, interceptor JWT, guards), botón "Cerrar sesión" en el perfil, sin barra de navegación en login/registro. Recuperado del stash `auth-jwt-gemini` y adaptado a la arquitectura actual (sin Gemini).
 - 2026-11-22: tarjetas de los puntos 3D: ya no se salen de la pantalla ni se empalman con la historia/chat/botones/nav.
   `ajustarTarjeta()` las mantiene dentro del visor (offset `--desp-x/--desp-y`, `--alto-max`), modo `punto-3d--vertical`
   (tarjeta encima del punto) cuando el visor mide < 600px, y un `ResizeObserver` reajusta si cambia el layout.

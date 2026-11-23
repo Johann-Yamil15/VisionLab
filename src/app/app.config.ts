@@ -6,12 +6,13 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling, withViewTransitions } from '@angular/router';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es-MX';
 import { LOCALE_ID } from '@angular/core';
 import { routes } from './app.routes';
 import { DemoService } from './core/ai/demo.service';
+import { authInterceptor } from './core/auth/auth.interceptor';
 
 registerLocaleData(localeEs);
 
@@ -25,7 +26,7 @@ export const appConfig: ApplicationConfig = {
       withViewTransitions(),
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
     ),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     // Lee ?demo=1 / ?demo=0 al arrancar, antes de que cambie la URL.
     provideAppInitializer(() => void inject(DemoService)),
     { provide: LOCALE_ID, useValue: 'es-MX' },
