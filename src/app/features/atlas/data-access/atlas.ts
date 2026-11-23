@@ -45,6 +45,8 @@ export interface ElementoAtlas {
   puntos: PuntoAtlas[];
   /** Ruta migratoria opcional: se dibuja como arcos animados entre puntos consecutivos. */
   migracion?: { lat: number; lng: number }[];
+  /** Tamaño real para compararlo con una persona de 1.70 m. */
+  tamano?: { metros: number; medida: 'largo' | 'alto' | 'diametro' };
 }
 
 /** Catálogo fijo del Atlas: se lee una vez de public/ y funciona sin internet. */

@@ -33,6 +33,8 @@ export interface Progreso {
   puntosGanados: number;
   medallasNuevas: Medalla[];
   nivelNuevo: Nivel | null;
+  /** Capturas de esa especie contando la nueva; > 1 = repetida (0 XP). */
+  veces?: number;
 }
 
 /** GET /api/usuarios */

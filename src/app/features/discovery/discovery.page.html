@@ -48,8 +48,12 @@
               }
               @case ('guardado') {
                 <span class="save-ok"><lucide-icon [img]="icons.Check" [size]="18" aria-hidden="true" /></span>
-                <span>¡Guardado en tu almanaque!</span>
-                <span class="points"><lucide-icon [img]="icons.Star" [size]="16" aria-hidden="true" /> +{{ puntos() }}</span>
+                @if (veces() > 1) {
+                  <span>¡Ya la tenías! Foto agregada a su <a [routerLink]="['/almanaque', store.guardadoId()]">galería</a> (×{{ veces() }}).</span>
+                } @else {
+                  <span>¡Guardado en tu almanaque!</span>
+                  <span class="points"><lucide-icon [img]="icons.Star" [size]="16" aria-hidden="true" /> +{{ puntos() }}</span>
+                }
               }
               @case ('error') {
                 <lucide-icon [img]="icons.CircleAlert" [size]="20" aria-hidden="true" />

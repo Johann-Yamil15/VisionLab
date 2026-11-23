@@ -30,11 +30,12 @@ export class ToastService {
   /** Un toast por cada cosa ganada al guardar un hallazgo: XP, medallas nuevas y rango nuevo. */
   celebrar(progreso: Progreso | null | undefined): void {
     if (!progreso) return;
-    this.mostrar({
-      tipo: 'puntos',
-      titulo: `+${progreso.puntosGanados} XP`,
-      texto: 'Muestra registrada en tu bitácora de campo.',
-    });
+    const veces = progreso.veces ?? 1;
+    this.mostrar(
+      veces > 1
+        ? { tipo: 'puntos', titulo: `¡Ya la tenías! (×${veces})`, texto: 'Foto agregada a su galería. Las repetidas no dan XP.' }
+        : { tipo: 'puntos', titulo: `+${progreso.puntosGanados} XP`, texto: 'Muestra registrada en tu bitácora de campo.' },
+    );
     for (const m of progreso.medallasNuevas) {
       this.mostrar({
         tipo: 'medalla',
