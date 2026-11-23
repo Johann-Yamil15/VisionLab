@@ -10,7 +10,7 @@ import { AppIcons } from '../../shared/ui/icons';
     <section class="page about">
       <header class="page-header">
         <div>
-          <h1>Acerca de VisionLab</h1>
+          <h1>Acerca de OmniScan</h1>
           <p class="page-subtitle">Un microscopio digital para despertar la curiosidad científica.</p>
         </div>
       </header>
@@ -21,7 +21,7 @@ import { AppIcons } from '../../shared/ui/icons';
           <div>
             <h2>¿Qué es?</h2>
             <p>
-              VisionLab convierte un celular o una computadora en un microscopio con inteligencia artificial. Los niños
+              OmniScan convierte un celular o una computadora en un microscopio con inteligencia artificial. Los niños
               fotografían lo que encuentran en la naturaleza, descubren qué es y lo guardan como una tarjeta en su
               almanaque, mientras ganan puntos y medallas.
             </p>
@@ -66,7 +66,7 @@ import { AppIcons } from '../../shared/ui/icons';
           <div>
             <h2>Importante</h2>
             <p>
-              La inteligencia artificial puede equivocarse. Usa VisionLab con un adulto y nunca toques animales, plantas
+              La inteligencia artificial puede equivocarse. Usa OmniScan con un adulto y nunca toques animales, plantas
               u hongos que no conozcas.
             </p>
           </div>
