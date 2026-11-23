@@ -506,3 +506,18 @@ app-expert-chat {
     animation: none;
   }
 }
+
+// Migración: el modelo sale por la izquierda y el globo entra por la derecha (el fondo no se mueve).
+.visor { transition: transform 0.6s ease, opacity 0.6s ease; }
+.visor--fuera { transform: translateX(-110%); opacity: 0; }
+.mundo {
+  position: absolute;
+  inset: 0;
+  transform: translateX(110%);
+  opacity: 0;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+.mundo--visible { transform: none; opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .visor, .mundo { transition: opacity 0.2s; }
+}

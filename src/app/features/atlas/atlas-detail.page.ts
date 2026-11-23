@@ -22,7 +22,8 @@ import { LucideAngularModule } from 'lucide-angular';
 import { Especie } from '../../shared/models/hallazgo.model';
 import { AppIcons } from '../../shared/ui/icons';
 import { ExpertChatComponent } from '../../shared/ui/expert-chat/expert-chat.component';
-import { AtlasService, ElementoAtlas, NOMBRE_CATEGORIA, TOKEN_CATEGORIA } from './data-access/atlas';
+import { AtlasService, COLOR_CATEGORIA, ElementoAtlas, NOMBRE_CATEGORIA, TOKEN_CATEGORIA } from './data-access/atlas';
+import { MigracionGloboComponent } from './migracion-globo.component';
 
 type EstadoModelo = 'cargando' | 'listo' | 'error';
 
@@ -43,7 +44,7 @@ const TIPO_CHAT = { fauna: 'Otro', flora: 'Plantas', mineral: 'Rocas y minerales
 /** Detalle inmersivo de un elemento del Atlas: modelo 3D sobre su hábitat, sonido, historia y chat. */
 @Component({
   selector: 'app-atlas-detail-page',
-  imports: [DecimalPipe, RouterLink, LucideAngularModule, ExpertChatComponent],
+  imports: [DecimalPipe, RouterLink, LucideAngularModule, ExpertChatComponent, MigracionGloboComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './atlas-detail.page.html',
   styleUrl: './atlas-detail.page.scss',
@@ -61,6 +62,16 @@ export class AtlasDetailPage {
   private readonly audio = viewChild<ElementRef<HTMLAudioElement>>('audio');
 
   protected readonly icons = AppIcons;
+  protected readonly colorCategoria = COLOR_CATEGORIA;
+  /** Muestra el globo con la ruta migratoria en lugar del modelo. */
+  protected readonly verMigracion = signal(false);
+  /** El globo se crea la primera vez y luego solo se desliza (no se vuelve a cargar three.js). */
+  protected readonly mundoCreado = signal(false);
+
+  protected alternarMigracion(): void {
+    this.mundoCreado.set(true);
+    this.verMigracion.update((v) => !v);
+  }
   protected readonly chipColor = TOKEN_CATEGORIA;
   protected readonly nombreCategoria = NOMBRE_CATEGORIA;
 
