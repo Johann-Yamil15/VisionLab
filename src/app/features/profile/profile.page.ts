@@ -4,6 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { LucideAngularModule } from 'lucide-angular';
+import { AuthService } from '../../core/auth/auth.service';
 import { HallazgosService } from '../../shared/data-access/hallazgos.service';
 import { Hallazgo } from '../../shared/models/hallazgo.model';
 import { Perfil } from '../../shared/models/perfil.model';
@@ -24,6 +25,7 @@ export class ProfilePage {
   private readonly perfiles = inject(PerfilService);
   private readonly hallazgos = inject(HallazgosService);
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly icons = AppIcons;
@@ -47,6 +49,10 @@ export class ProfilePage {
 
   constructor() {
     this.cargar();
+  }
+
+  protected salir(): void {
+    this.auth.cerrarSesion();
   }
 
   protected cargar(): void {
