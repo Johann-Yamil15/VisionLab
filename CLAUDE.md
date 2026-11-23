@@ -84,6 +84,10 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
+- 2026-11-22: tarjetas de los puntos 3D: ya no se salen de la pantalla ni se empalman con la historia/chat/botones/nav.
+  `ajustarTarjeta()` las mantiene dentro del visor (offset `--desp-x/--desp-y`, `--alto-max`), modo `punto-3d--vertical`
+  (tarjeta encima del punto) cuando el visor mide < 600px, y un `ResizeObserver` reajusta si cambia el layout.
+  Trampas ya resueltas: medir la altura NATURAL (si no oscila al encogerla) y `focus({ preventScroll: true })`.
 - 2026-11-22: puntos 3D (hotspots) del visor: cada uno es punto pulsante + línea + etiqueta + tarjeta que viven DENTRO del hotspot
   de model-viewer (siguen al modelo y se ocultan detrás). Abrir uno cierra el anterior, gira la cámara hacia la parte
   (cameraTarget/cameraOrbit desde la normal) y la devuelve al cerrar si la persona no movió la vista; se cierran con ✕,

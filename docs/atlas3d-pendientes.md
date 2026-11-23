@@ -18,8 +18,13 @@ Estado al 2026-11-22. Datos en `public/atlas3d/atlas.json`; visor en `/atlas/:id
 - **Puntos 3D (OMNI-7):** punto que pulsa + línea + etiqueta + tarjeta pegada al modelo (sigue al girar y se oculta
   detrás); abrir uno cierra el anterior; la cámara gira hacia la parte y regresa al cerrar; se cierra con ✕, Escape
   (devuelve el foco) o tocando fuera; tocar un punto no gira el modelo; `aria-label`/`aria-expanded`/`aria-controls`;
-  sin pulso ni deslizamiento con "reducir movimiento"; en celular la tarjeta se abre encima del punto.
+  sin pulso ni deslizamiento con "reducir movimiento".
   Probado con mouse y teclado reales (25 comprobaciones) en navegador de escritorio.
+- **La tarjeta de un punto nunca se sale ni choca con otras** (historia, chat, botones de arriba, barra inferior):
+  con poco ancho en el visor (celular, o laptop de ~1024 px con la historia abierta) se abre encima del punto y centrada;
+  mientras la cámara se desliza se mantiene dentro del visor; en pantallas muy bajas (celular horizontal) se encoge y se
+  desplaza por dentro. Medido abriendo los 3 puntos de los 12 modelos (36 tarjetas) en 1280×800, 1024×768, 768×1024,
+  390×844 y 844×390: 0 choques. Antes, en 1024×768, 10 de 12 tarjetas se empalmaban con la de historia.
 - Atlas (controles y ficha), detalle 3D y avisos (toasts) usan el sistema de diseño base (`.clay`, `.btn`, `.chip`…).
 - Si falta modelo, sonido o fondo la página no se rompe (probado bloqueando cada archivo).
 - Peso: `public/atlas3d` ≈ 11 MB (antes 111 MB). Modelos 6.4 MB.

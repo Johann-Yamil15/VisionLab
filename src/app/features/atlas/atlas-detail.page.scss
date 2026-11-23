@@ -267,6 +267,10 @@
   border-radius: var(--r-md);
   background: var(--c-surface);
   box-shadow: 0 4px 0 var(--c-ink);
+  // --desp-x/--desp-y los calcula ajustarTarjeta() para que no se salga del visor ni choque con otras tarjetas.
+  translate: var(--desp-x, 0px) var(--desp-y, 0px);
+  max-height: var(--alto-max, none); // en pantallas muy bajas la tarjeta se encoge y se desplaza por dentro
+  overflow-y: auto;
   transform-origin: left top;
   animation: punto-abrir var(--dur) var(--ease-spring);
 
@@ -309,16 +313,15 @@
   }
 }
 
-// En pantallas angostas la tarjeta se abre ENCIMA del punto: a un lado no cabría y abajo la tapa la tarjeta de historia.
-@media (max-width: 639px) {
-  :host ::ng-deep .punto-3d__tarjeta {
-    top: auto;
-    bottom: 28px;
-    left: 0;
-    width: min(16rem, calc(100vw - 2rem));
-    translate: -50% 0;
-    transform-origin: bottom center;
-  }
+// Con poco ancho en el visor (celular, o laptop con la historia abierta) la tarjeta se abre ENCIMA del punto,
+// centrada: a un lado no cabría y abajo la tapa la tarjeta de historia.
+:host ::ng-deep .punto-3d--vertical .punto-3d__tarjeta {
+  top: auto;
+  bottom: 28px;
+  left: 0;
+  width: min(16rem, calc(var(--ancho, 100vw) - 2rem));
+  translate: calc(-50% + var(--desp-x, 0px)) var(--desp-y, 0px);
+  transform-origin: bottom center;
 }
 
 @keyframes punto-pulso {

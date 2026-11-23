@@ -100,6 +100,8 @@ export class AtlasDetailPage {
   private puntosDom: HTMLElement[] = [];
   private camaraPrevia: { orbit: string; target: string } | null = null;
   private readonly sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Reajusta la tarjeta abierta si cambia el tamaño del visor o de la columna (fuentes que cargan, rotar el celular…).
+  private observador?: ResizeObserver;
 
   // --- Sonido y panel ---
   protected readonly sonando = signal(false);
@@ -130,7 +132,10 @@ export class AtlasDetailPage {
       });
     });
 
-    this.destroyRef.onDestroy(() => this.audio()?.nativeElement.pause());
+    this.destroyRef.onDestroy(() => {
+      this.audio()?.nativeElement.pause();
+      this.observador?.disconnect();
+    });
   }
 
   private async cargarVisor(): Promise<void> {
@@ -162,6 +167,7 @@ export class AtlasDetailPage {
 
   /** Al tocar o arrastrar el modelo deja de girar solo. */
   protected alMoverCamara(e: Event): void {
+    this.ajustarTarjeta();
     if ((e as CustomEvent<{ source: string }>).detail.source !== 'user-interaction') return;
     this.autoRotar.set(false);
     // Si la persona mueve la cámara con la tarjeta abierta, al cerrarla no se le devuelve la vista anterior.
@@ -245,6 +251,7 @@ export class AtlasDetailPage {
       const tarjeta = crear('div', 'punto-3d__tarjeta', raiz);
       tarjeta.id = `punto-3d-${i}`;
       tarjeta.hidden = true;
+      tarjeta.addEventListener('animationend', () => this.ajustarTarjeta());
       tarjeta.setAttribute('role', 'region');
       tarjeta.setAttribute('aria-label', p.etiqueta);
       crear('h2', 'punto-3d__titulo', tarjeta).textContent = p.etiqueta;
@@ -284,11 +291,89 @@ export class AtlasDetailPage {
     if (!visor || !p || !raiz) return;
     this.cerrarPunto(false, false); // la tarjeta anterior se cierra sin devolver la cámara
     this.activo = i;
+    // Con poco ancho (celular, o laptop con la historia abierta) la tarjeta no cabe a un lado del punto:
+    // se abre encima, centrada. El punto acaba en el centro del visor, así que su ancho decide.
+    raiz.classList.toggle('punto-3d--vertical', visor.clientWidth < 600);
+    raiz.style.setProperty('--ancho', `${visor.clientWidth}px`);
+    const tarjeta = raiz.querySelector<HTMLElement>('.punto-3d__tarjeta')!;
+    tarjeta.style.setProperty('--desp-x', '0px');
+    tarjeta.style.setProperty('--desp-y', '0px');
     raiz.classList.add('abierto');
     raiz.querySelector('.punto-3d__boton')?.setAttribute('aria-expanded', 'true');
-    raiz.querySelector<HTMLElement>('.punto-3d__tarjeta')!.hidden = false;
+    tarjeta.hidden = false;
     this.autoRotar.set(false);
     this.irAlPunto(visor, p.posicion, p.normal);
+    this.observarDiseno();
+    // Primer ajuste inmediato (sin esperar un cuadro de animación); la cámara y la animación lo van refinando.
+    this.ajustarTarjeta();
+    requestAnimationFrame(() => this.ajustarTarjeta());
+  }
+
+  private observarDiseno(): void {
+    if (this.observador) return;
+    this.observador = new ResizeObserver(() => this.ajustarTarjeta());
+    const columna = document.querySelector('.columna');
+    const visor = this.visor()?.nativeElement;
+    if (columna) this.observador.observe(columna);
+    if (visor) this.observador.observe(visor);
+  }
+
+  /**
+   * Mantiene la tarjeta abierta dentro del visor: sin salirse de la pantalla ni quedar bajo la tarjeta de historia
+   * o del chat (en celular, la columna de abajo). Se llama con cada cuadro de la cámara, así que sigue al deslizamiento.
+   */
+  private ajustarTarjeta(): void {
+    if (this.activo === null) return;
+    const visor = this.visor()?.nativeElement;
+    const tarjeta = this.puntosDom[this.activo]?.querySelector<HTMLElement>('.punto-3d__tarjeta');
+    if (!visor || !tarjeta || tarjeta.hidden) return;
+    const margen = 8;
+    const v = visor.getBoundingClientRect();
+    const columna = document.querySelector('.columna')?.getBoundingClientRect();
+    const botones = document.querySelector('.acciones')?.getBoundingClientRect(); // Volver, sonido…
+    const barra = document.querySelector('app-nav .nav')?.getBoundingClientRect(); // barra inferior (celular)
+
+    // Se mide la altura natural (sin el límite de la vez anterior); si no, se encoge, "cabe", se estira y oscila.
+    tarjeta.style.removeProperty('--alto-max');
+    const dx0 = parseFloat(tarjeta.style.getPropertyValue('--desp-x')) || 0;
+    const dy0 = parseFloat(tarjeta.style.getPropertyValue('--desp-y')) || 0;
+    const r = tarjeta.getBoundingClientRect();
+    // Posición de la tarjeta sin el desplazamiento actual; se corrige desde ahí.
+    let izq = r.left - dx0;
+    let der = r.right - dx0;
+    let arr = r.top - dy0;
+    let aba = r.bottom - dy0;
+    let dx = 0;
+    let dy = 0;
+
+    // Límite de abajo: la columna de historia/chat (si queda bajo la tarjeta) y la barra inferior de navegación.
+    let limiteBajo = v.bottom - margen;
+    if (columna && columna.left < der && columna.right > izq && columna.top > v.top + margen) limiteBajo = Math.min(limiteBajo, columna.top - margen);
+    if (barra && barra.top > v.top + margen) limiteBajo = Math.min(limiteBajo, barra.top - margen);
+    // En pantallas muy bajas (celular horizontal) la tarjeta se encoge y se desplaza por dentro en vez de taparse.
+    const libre = Math.max(96, limiteBajo - (v.top + margen));
+    if (tarjeta.offsetHeight > libre) {
+      tarjeta.style.setProperty('--alto-max', `${Math.round(libre)}px`);
+      aba = arr + libre;
+    }
+
+    if (izq < v.left + margen) dx = v.left + margen - izq;
+    else if (der > v.right - margen) dx = v.right - margen - der;
+    if (arr < v.top + margen) dy = v.top + margen - arr;
+    else if (aba > limiteBajo) dy = limiteBajo - aba;
+
+    // Si aun así toca los botones de arriba a la izquierda, se corre a la derecha o, si no cabe, hacia abajo.
+    izq += dx;
+    der += dx;
+    arr += dy;
+    aba += dy;
+    if (botones && izq < botones.right + margen && der > botones.left && arr < botones.bottom + margen && aba > botones.top) {
+      const aDerecha = botones.right + margen - izq;
+      if (der + aDerecha <= v.right - margen) dx += aDerecha;
+      else dy += botones.bottom + margen - arr;
+    }
+    tarjeta.style.setProperty('--desp-x', `${Math.round(dx)}px`);
+    tarjeta.style.setProperty('--desp-y', `${Math.round(dy)}px`);
   }
 
   /** Cierra la tarjeta abierta. Con `restaurar` la cámara vuelve a donde estaba; con `devolverFoco` el foco vuelve al punto. */
@@ -299,7 +384,7 @@ export class AtlasDetailPage {
     const boton = raiz.querySelector<HTMLElement>('.punto-3d__boton');
     boton?.setAttribute('aria-expanded', 'false');
     raiz.querySelector<HTMLElement>('.punto-3d__tarjeta')!.hidden = true;
-    if (devolverFoco) boton?.focus();
+    if (devolverFoco) boton?.focus({ preventScroll: true }); // sin desplazar la escena si el punto está en el borde
     this.activo = null;
     if (restaurar) this.restaurarCamara();
   }
