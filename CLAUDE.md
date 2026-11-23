@@ -84,6 +84,12 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
+- 2026-11-22: puntos 3D (hotspots) del visor: cada uno es punto pulsante + línea + etiqueta + tarjeta que viven DENTRO del hotspot
+  de model-viewer (siguen al modelo y se ocultan detrás). Abrir uno cierra el anterior, gira la cámara hacia la parte
+  (cameraTarget/cameraOrbit desde la normal) y la devuelve al cerrar si la persona no movió la vista; se cierran con ✕,
+  Escape (devuelve el foco) o tocando fuera; `pointerdown` se detiene en el punto para no girar el modelo; aria-expanded/
+  aria-controls; sin pulso ni deslizamiento con reducir movimiento. En celular la tarjeta se abre encima del punto.
+  Fix: pausar mientras el audio carga (AbortError) ya no oculta el sonido.
 - 2026-11-22: detalle 3D: el chat del experto sale de la tarjeta de historia y se abre con un botón flotante (`.fab-chat`, círculo de 52px a la
   izquierda del de accesibilidad, mismas medidas y base; ícono X y color sol al abrirse) (panel propio en la misma columna; abrir uno pliega el otro; `--chat-msgs-max` acota la altura de `app-expert-chat`).
   Canguro: modelo nuevo `kangaroo_new` (rinaskylark, CC BY 4.0), con spec-gloss convertido a metal-rough.

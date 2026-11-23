@@ -22,7 +22,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { Especie } from '../../shared/models/hallazgo.model';
 import { AppIcons } from '../../shared/ui/icons';
 import { ExpertChatComponent } from '../../shared/ui/expert-chat/expert-chat.component';
-import { AtlasService, ElementoAtlas, NOMBRE_CATEGORIA, PuntoAtlas, TOKEN_CATEGORIA } from './data-access/atlas';
+import { AtlasService, ElementoAtlas, NOMBRE_CATEGORIA, TOKEN_CATEGORIA } from './data-access/atlas';
 
 type EstadoModelo = 'cargando' | 'listo' | 'error';
 
@@ -30,6 +30,11 @@ type EstadoModelo = 'cargando' | 'listo' | 'error';
 interface Visor extends HTMLElement {
   canActivateAR: boolean;
   activateAR(): Promise<void>;
+  cameraOrbit: string;
+  cameraTarget: string;
+  getCameraOrbit(): { theta: number; phi: number; radius: number };
+  getCameraTarget(): { x: number; y: number; z: number };
+  jumpCameraToGoal(): void;
 }
 
 /** Tipo que espera el chat del experto según la categoría del Atlas. */
@@ -43,6 +48,7 @@ const TIPO_CHAT = { fauna: 'Otro', flora: 'Plantas', mineral: 'Rocas y minerales
   templateUrl: './atlas-detail.page.html',
   styleUrl: './atlas-detail.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(document:keydown.escape)': 'cerrarPunto(true)' },
 })
 export class AtlasDetailPage {
   /** Viene de la ruta /atlas/:id (withComponentInputBinding). */
@@ -89,7 +95,11 @@ export class AtlasDetailPage {
   protected readonly puedeAr = signal(false);
   // Con "reducir movimiento" el modelo no gira solo.
   protected readonly autoRotar = signal(!matchMedia('(prefers-reduced-motion: reduce)').matches);
-  protected readonly puntoActivo = signal<PuntoAtlas | null>(null);
+  // Punto abierto (índice en e.puntos), los elementos DOM de los puntos y la cámara antes de acercarnos.
+  private activo: number | null = null;
+  private puntosDom: HTMLElement[] = [];
+  private camaraPrevia: { orbit: string; target: string } | null = null;
+  private readonly sinMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // --- Sonido y panel ---
   protected readonly sonando = signal(false);
@@ -112,7 +122,8 @@ export class AtlasDetailPage {
         this.estadoModelo.set('cargando');
         this.progreso.set(0);
         this.puedeAr.set(false);
-        this.puntoActivo.set(null);
+        this.activo = null;
+        this.camaraPrevia = null;
         this.sonando.set(false);
         this.sonidoError.set(false);
         this.chatAbierto.set(false);
@@ -146,11 +157,15 @@ export class AtlasDetailPage {
     this.estadoModelo.set('listo');
     this.puedeAr.set(visor.canActivateAR);
     this.crearPuntos(visor, e);
+    this.cerrarAlTocarFuera(visor);
   }
 
   /** Al tocar o arrastrar el modelo deja de girar solo. */
   protected alMoverCamara(e: Event): void {
-    if ((e as CustomEvent<{ source: string }>).detail.source === 'user-interaction') this.autoRotar.set(false);
+    if ((e as CustomEvent<{ source: string }>).detail.source !== 'user-interaction') return;
+    this.autoRotar.set(false);
+    // Si la persona mueve la cámara con la tarjeta abierta, al cerrarla no se le devuelve la vista anterior.
+    if (this.activo !== null) this.camaraPrevia = null;
   }
 
   protected proyectar(): void {
@@ -180,29 +195,136 @@ export class AtlasDetailPage {
   protected alternarSonido(): void {
     const audio = this.audio()?.nativeElement;
     if (!audio) return;
-    if (audio.paused) audio.play().catch(() => this.sonidoError.set(true));
-    else audio.pause();
+    if (audio.paused) {
+      // Pausar mientras aún carga aborta el play() (AbortError): no es un archivo dañado, no se oculta el sonido.
+      audio.play().catch((err: DOMException) => {
+        if (err?.name !== 'AbortError') this.sonidoError.set(true);
+      });
+    } else {
+      audio.pause();
+    }
   }
 
   /**
    * Puntos de interés sobre el modelo. Se crean desde código porque <model-viewer> solo registra
    * un hotspot si su `slot` ya está puesto cuando entra al DOM (con un binding de Angular llegaría tarde).
+   * Cada uno es: botón (el punto) + línea + etiqueta + tarjeta con el texto. Como todo vive dentro del hotspot,
+   * la tarjeta sigue al modelo al girar y se oculta sola cuando la parte queda detrás (`data-visible`).
    */
   private crearPuntos(visor: HTMLElement, e: ElementoAtlas): void {
     visor.querySelectorAll('.punto-3d').forEach((n) => n.remove());
-    e.puntos.forEach((p, i) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'punto-3d';
-      b.slot = `hotspot-${i}`;
-      b.dataset['position'] = p.posicion;
-      b.dataset['normal'] = p.normal;
-      b.dataset['visibilityAttribute'] = 'visible';
-      b.setAttribute('aria-label', p.etiqueta);
-      b.title = p.etiqueta;
-      b.textContent = String(i + 1);
-      b.addEventListener('click', () => this.puntoActivo.set(p));
-      visor.append(b);
+    this.activo = null;
+    const crear = <K extends keyof HTMLElementTagNameMap>(tag: K, clase: string, padre?: HTMLElement) => {
+      const el = document.createElement(tag);
+      el.className = clase;
+      padre?.append(el);
+      return el;
+    };
+    this.puntosDom = e.puntos.map((p, i) => {
+      const raiz = crear('div', 'punto-3d');
+      raiz.slot = `hotspot-${i}`;
+      raiz.dataset['position'] = p.posicion;
+      raiz.dataset['normal'] = p.normal;
+      raiz.dataset['visibilityAttribute'] = 'visible';
+      // Un toque sobre el punto o su tarjeta no debe empezar a girar el modelo.
+      raiz.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+
+      const boton = crear('button', 'punto-3d__boton', raiz);
+      boton.type = 'button';
+      boton.textContent = String(i + 1);
+      boton.setAttribute('aria-label', p.etiqueta);
+      boton.setAttribute('aria-expanded', 'false');
+      boton.setAttribute('aria-controls', `punto-3d-${i}`);
+      boton.addEventListener('click', () => this.alternarPunto(i));
+
+      crear('span', 'punto-3d__linea', raiz).setAttribute('aria-hidden', 'true');
+      const etiqueta = crear('span', 'punto-3d__etiqueta', raiz);
+      etiqueta.textContent = p.etiqueta;
+      etiqueta.setAttribute('aria-hidden', 'true'); // el botón ya tiene su aria-label
+
+      const tarjeta = crear('div', 'punto-3d__tarjeta', raiz);
+      tarjeta.id = `punto-3d-${i}`;
+      tarjeta.hidden = true;
+      tarjeta.setAttribute('role', 'region');
+      tarjeta.setAttribute('aria-label', p.etiqueta);
+      crear('h2', 'punto-3d__titulo', tarjeta).textContent = p.etiqueta;
+      crear('p', 'punto-3d__texto', tarjeta).textContent = p.texto;
+      const cerrar = crear('button', 'punto-3d__cerrar', tarjeta);
+      cerrar.type = 'button';
+      cerrar.textContent = '✕';
+      cerrar.setAttribute('aria-label', 'Cerrar descripción');
+      cerrar.addEventListener('click', () => this.cerrarPunto(true));
+
+      visor.append(raiz);
+      return raiz;
     });
+  }
+
+  /** Tocar fuera de un punto (sin arrastrar) cierra la tarjeta abierta. */
+  private cerrarAlTocarFuera(visor: HTMLElement): void {
+    if (visor.dataset['tocarFuera']) return;
+    visor.dataset['tocarFuera'] = '1';
+    let inicio: [number, number] | null = null;
+    visor.addEventListener('pointerdown', (ev) => (inicio = [ev.clientX, ev.clientY]));
+    visor.addEventListener('click', (ev) => {
+      const movido = inicio ? Math.hypot(ev.clientX - inicio[0], ev.clientY - inicio[1]) : 0;
+      if (movido < 6 && !(ev.target as Element).closest('.punto-3d')) this.cerrarPunto();
+    });
+  }
+
+  private alternarPunto(i: number): void {
+    if (this.activo === i) this.cerrarPunto();
+    else this.abrirPunto(i);
+  }
+
+  private abrirPunto(i: number): void {
+    const visor = this.visor()?.nativeElement;
+    const p = this.elemento()?.puntos[i];
+    const raiz = this.puntosDom[i];
+    if (!visor || !p || !raiz) return;
+    this.cerrarPunto(false, false); // la tarjeta anterior se cierra sin devolver la cámara
+    this.activo = i;
+    raiz.classList.add('abierto');
+    raiz.querySelector('.punto-3d__boton')?.setAttribute('aria-expanded', 'true');
+    raiz.querySelector<HTMLElement>('.punto-3d__tarjeta')!.hidden = false;
+    this.autoRotar.set(false);
+    this.irAlPunto(visor, p.posicion, p.normal);
+  }
+
+  /** Cierra la tarjeta abierta. Con `restaurar` la cámara vuelve a donde estaba; con `devolverFoco` el foco vuelve al punto. */
+  protected cerrarPunto(devolverFoco = false, restaurar = true): void {
+    if (this.activo === null) return;
+    const raiz = this.puntosDom[this.activo];
+    raiz.classList.remove('abierto');
+    const boton = raiz.querySelector<HTMLElement>('.punto-3d__boton');
+    boton?.setAttribute('aria-expanded', 'false');
+    raiz.querySelector<HTMLElement>('.punto-3d__tarjeta')!.hidden = true;
+    if (devolverFoco) boton?.focus();
+    this.activo = null;
+    if (restaurar) this.restaurarCamara();
+  }
+
+  /** La cámara gira suave hacia la parte: la mira de frente (por su normal) y la pone en el centro. */
+  private irAlPunto(visor: Visor, posicion: string, normal: string): void {
+    const orbita = visor.getCameraOrbit();
+    if (!this.camaraPrevia) {
+      const t = visor.getCameraTarget();
+      this.camaraPrevia = { orbit: `${orbita.theta}rad ${orbita.phi}rad ${orbita.radius}m`, target: `${t.x}m ${t.y}m ${t.z}m` };
+    }
+    const [nx, ny, nz] = normal.split(' ').map(parseFloat);
+    const phi = Math.min(2.4, Math.max(0.7, Math.acos(Math.max(-1, Math.min(1, ny)))));
+    visor.cameraTarget = posicion;
+    visor.cameraOrbit = `${Math.atan2(nx, nz)}rad ${phi}rad ${orbita.radius}m`;
+    if (this.sinMovimiento) visor.jumpCameraToGoal();
+  }
+
+  private restaurarCamara(): void {
+    const visor = this.visor()?.nativeElement;
+    const previa = this.camaraPrevia;
+    this.camaraPrevia = null;
+    if (!visor || !previa) return;
+    visor.cameraOrbit = previa.orbit;
+    visor.cameraTarget = previa.target;
+    if (this.sinMovimiento) visor.jumpCameraToGoal();
   }
 }
