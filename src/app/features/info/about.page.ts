@@ -16,7 +16,7 @@ import { AppIcons } from '../../shared/ui/icons';
       </header>
 
       <div class="grid">
-        <article class="clay item item--wide">
+        <article class="clay item">
           <span class="item-icon" style="--c: var(--c-primary)"><lucide-icon [img]="icons.Microscope" [size]="28" aria-hidden="true" /></span>
           <div>
             <h2>¿Qué es?</h2>
@@ -39,7 +39,7 @@ import { AppIcons } from '../../shared/ui/icons';
           </div>
         </article>
 
-        <article class="clay item item--wide">
+        <article class="clay item">
           <span class="item-icon" style="--c: var(--c-primary)"><lucide-icon [img]="icons.Globe" [size]="28" aria-hidden="true" /></span>
           <div>
             <h2>Atlas Vivo 3D</h2>
@@ -61,7 +61,7 @@ import { AppIcons } from '../../shared/ui/icons';
           </div>
         </article>
 
-        <article class="clay item item--wide">
+        <article class="clay item">
           <span class="item-icon" style="--c: var(--c-berry)"><lucide-icon [img]="icons.Users" [size]="28" aria-hidden="true" /></span>
           <div>
             <h2>El equipo</h2>
@@ -72,7 +72,7 @@ import { AppIcons } from '../../shared/ui/icons';
           </div>
         </article>
 
-        <article class="clay item item--wide note">
+        <article class="clay item note">
           <span class="item-icon" style="--c: var(--c-text-muted)"><lucide-icon [img]="icons.Info" [size]="28" aria-hidden="true" /></span>
           <div>
             <h2>Importante</h2>
@@ -89,19 +89,17 @@ import { AppIcons } from '../../shared/ui/icons';
     .grid {
       display: grid;
       gap: var(--s-4);
-      @media (min-width: 768px) {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      @media (min-width: 768px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      @media (min-width: 1280px) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
     .item {
       display: flex;
       gap: var(--s-4);
       padding: var(--s-5);
+      // En columnas el ícono va arriba para que el texto use todo el ancho.
+      @media (min-width: 768px) { flex-direction: column; gap: var(--s-3); }
       h2 { font-size: var(--fs-lg); margin-bottom: var(--s-2); }
       p { line-height: 1.7; }
-    }
-    .item--wide {
-      @media (min-width: 768px) { grid-column: 1 / -1; }
     }
     .item-icon {
       display: grid;
