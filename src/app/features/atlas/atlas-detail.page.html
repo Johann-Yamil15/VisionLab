@@ -28,6 +28,7 @@
               touch-action="pan-y"
               [attr.auto-rotate]="autoRotar() ? '' : null"
               auto-rotate-delay="0"
+              interpolation-decay="100"
               environment-image="neutral"
               shadow-intensity="1"
               ar
@@ -97,16 +98,6 @@
               </span>
             }
           </button>
-        }
-
-        @if (puntoActivo(); as p) {
-          <aside class="punto-info clay" aria-live="polite">
-            <button type="button" class="cerrar btn btn--icon" aria-label="Cerrar descripción" (click)="puntoActivo.set(null)">
-              <lucide-icon [img]="icons.X" [size]="18" aria-hidden="true" />
-            </button>
-            <h2>{{ p.etiqueta }}</h2>
-            <p>{{ p.texto }}</p>
-          </aside>
         }
 
         <!-- ===== Historia (tarjeta) y chat (panel aparte, desde el botón "Preguntar al experto") ===== -->

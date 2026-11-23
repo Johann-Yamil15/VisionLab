@@ -49,7 +49,6 @@
 // Controles, paneles y avisos flotan sobre el modelo.
 .volver,
 .acciones,
-.punto-info,
 .columna,
 .aviso,
 .carga {
@@ -162,8 +161,50 @@
   translate: -50% -50%;
 }
 
+.cerrar {
+  position: absolute;
+  top: var(--s-3);
+  right: var(--s-3);
+  width: 40px;
+  min-width: 40px;
+  min-height: 40px;
+}
+
 // --- Puntos sobre el modelo (los crea el código, por eso ::ng-deep) ---
+// La raíz mide 0x0: su centro es el punto sobre el modelo y todo lo demás se coloca alrededor.
+// Punto + línea + etiqueta + tarjeta viven dentro del hotspot: giran con el modelo y se ocultan juntos.
 :host ::ng-deep .punto-3d {
+  display: block;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  color: var(--c-text);
+
+  // Parte detrás del modelo: el punto se atenúa y se ocultan línea, etiqueta y tarjeta.
+  &:not([data-visible]) {
+    .punto-3d__boton {
+      opacity: 0.3;
+      pointer-events: none;
+      animation: none;
+    }
+
+    .punto-3d__linea,
+    .punto-3d__etiqueta,
+    .punto-3d__tarjeta {
+      display: none;
+    }
+  }
+
+  // Con la tarjeta abierta, la etiqueta sobra (la tarjeta ya lleva el título).
+  &.abierto .punto-3d__etiqueta {
+    display: none;
+  }
+}
+
+:host ::ng-deep .punto-3d__boton {
+  position: absolute;
+  top: -16px;
+  left: -16px;
   display: grid;
   place-items: center;
   width: 32px;
@@ -178,11 +219,12 @@
   font-size: var(--fs-xs);
   font-weight: 800;
   cursor: pointer;
-  transition: opacity 0.2s;
+  animation: punto-pulso 2s ease-in-out infinite;
 
-  &:not([data-visible]) {
-    opacity: 0.3;
-    pointer-events: none;
+  &[aria-expanded='true'] {
+    background: var(--c-sun);
+    color: var(--c-on-sun);
+    animation: none;
   }
 
   &:active {
@@ -191,29 +233,113 @@
   }
 }
 
-.punto-info {
-  bottom: calc(var(--fabs-top) + 5rem); // encima de la cabecera de la tarjeta
-  left: var(--s-4);
-  width: min(22rem, calc(100% - 2rem));
-  padding: var(--s-4) 3.5rem var(--s-4) var(--s-4);
+:host ::ng-deep .punto-3d__linea {
+  position: absolute;
+  top: -1px;
+  left: 16px;
+  width: 28px;
+  height: 2px;
+  background: var(--c-ink);
+  pointer-events: none;
+}
 
-  h2 {
-    font-size: var(--fs-lg);
+:host ::ng-deep .punto-3d__etiqueta {
+  position: absolute;
+  top: -15px;
+  left: 44px;
+  padding: 3px var(--s-3);
+  border: 2px solid var(--c-ink);
+  border-radius: var(--r-pill);
+  background: var(--c-surface);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+:host ::ng-deep .punto-3d__tarjeta {
+  position: absolute;
+  top: -18px;
+  left: 44px;
+  width: min(15rem, calc(100vw - 6rem));
+  padding: var(--s-3) 3rem var(--s-3) var(--s-4);
+  border: var(--border-clay);
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  box-shadow: 0 4px 0 var(--c-ink);
+  // --desp-x/--desp-y los calcula ajustarTarjeta() para que no se salga del visor ni choque con otras tarjetas.
+  translate: var(--desp-x, 0px) var(--desp-y, 0px);
+  max-height: var(--alto-max, none); // en pantallas muy bajas la tarjeta se encoge y se desplaza por dentro
+  overflow-y: auto;
+  transform-origin: left top;
+  animation: punto-abrir var(--dur) var(--ease-spring);
+
+  &[hidden] {
+    display: none;
   }
 
-  p {
+  .punto-3d__titulo {
+    margin: 0;
+    font-size: var(--fs-md);
+  }
+
+  .punto-3d__texto {
     margin: var(--s-1) 0 0;
-    line-height: 1.6;
+    font-size: var(--fs-sm);
+    line-height: 1.55;
   }
 }
 
-.cerrar {
+:host ::ng-deep .punto-3d__cerrar {
   position: absolute;
-  top: var(--s-3);
-  right: var(--s-3);
-  width: 40px;
-  min-width: 40px;
-  min-height: 40px;
+  top: var(--s-2);
+  right: var(--s-2);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 2px solid var(--c-border);
+  border-radius: 50%;
+  background: var(--c-surface);
+  color: var(--c-text);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--c-ink);
+    background: var(--c-bg-alt);
+  }
+}
+
+// Con poco ancho en el visor (celular, o laptop con la historia abierta) la tarjeta se abre ENCIMA del punto,
+// centrada: a un lado no cabría y abajo la tapa la tarjeta de historia.
+:host ::ng-deep .punto-3d--vertical .punto-3d__tarjeta {
+  top: auto;
+  bottom: 28px;
+  left: 0;
+  width: min(16rem, calc(var(--ancho, 100vw) - 2rem));
+  translate: calc(-50% + var(--desp-x, 0px)) var(--desp-y, 0px);
+  transform-origin: bottom center;
+}
+
+@keyframes punto-pulso {
+  0%,
+  100% {
+    box-shadow: 0 3px 0 var(--c-ink), 0 0 0 0 color-mix(in srgb, var(--c-primary) 55%, transparent);
+  }
+
+  50% {
+    box-shadow: 0 3px 0 var(--c-ink), 0 0 0 10px transparent;
+  }
+}
+
+@keyframes punto-abrir {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
 }
 
 // --- Historia (tarjeta) y chat (panel aparte) ---
@@ -368,14 +494,15 @@ app-expert-chat {
     --chat-msgs-max: min(340px, 38dvh);
   }
 
-  .punto-info {
-    bottom: var(--fabs-top);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fab-chat,
-  :host ::ng-deep .punto-3d {
+  .fab-chat {
     transition: none;
+  }
+
+  :host ::ng-deep .punto-3d__boton,
+  :host ::ng-deep .punto-3d__tarjeta {
+    animation: none;
   }
 }
