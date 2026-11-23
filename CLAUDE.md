@@ -76,7 +76,7 @@ Rutas públicas: `/login`, `/registro` (invitadoGuard), `/atlas`, `/atlas/:id`, 
 `/almanaque/:id`, `/perfil` (todo lo demás redirige a `/microscopio`).
 Convenciones: un feature no importa de otro, salvo `discovery` → `microscope/data-access/captura.store`
 (flujo compartido). Lo que usan dos features va en `shared/`. Componentes `OnPush` + signals.
-Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar chico (límite 6kB).
+Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar chico (aviso a 8kB, error a 10kB).
 
 ## Pendiente
 - Recuperar contraseña, y que el nombre de usuario/medallas se refresquen sin recargar tras el login.
