@@ -29,7 +29,7 @@ const sinAcentos = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiscoveryPage {
-  private readonly store = inject(CapturaStore);
+  protected readonly store = inject(CapturaStore);
   private readonly hallazgos = inject(HallazgosService);
   private readonly toasts = inject(ToastService);
   private readonly router = inject(Router);
@@ -40,6 +40,8 @@ export class DiscoveryPage {
   protected readonly foto = this.store.foto();
   protected readonly resultado = computed(() => this.store.resultado());
   protected readonly fotoAbierta = signal(false);
+  /** Capturas de la especie tras guardar; > 1 = repetida. */
+  protected readonly veces = signal(1);
   protected readonly guardado = signal<Guardado>(this.store.guardadoId() ? 'guardado' : 'guardando');
 
   /** Confianza baja con opciones: no se guarda nada hasta que el usuario elija. */
@@ -113,6 +115,7 @@ export class DiscoveryPage {
       .subscribe({
         next: (h) => {
           this.store.marcarGuardado(h.id);
+          this.veces.set(h.progreso?.veces ?? 1);
           this.guardado.set('guardado');
           this.toasts.celebrar(h.progreso);
         },
