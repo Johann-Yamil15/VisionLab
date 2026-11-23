@@ -24,6 +24,7 @@ import { AppIcons } from '../../shared/ui/icons';
 import { ExpertChatComponent } from '../../shared/ui/expert-chat/expert-chat.component';
 import { AtlasService, COLOR_CATEGORIA, ElementoAtlas, NOMBRE_CATEGORIA, TOKEN_CATEGORIA } from './data-access/atlas';
 import { MigracionGloboComponent } from './migracion-globo.component';
+import { CompararTamanoComponent } from './comparar-tamano.component';
 
 type EstadoModelo = 'cargando' | 'listo' | 'error';
 
@@ -44,7 +45,7 @@ const TIPO_CHAT = { fauna: 'Otro', flora: 'Plantas', mineral: 'Rocas y minerales
 /** Detalle inmersivo de un elemento del Atlas: modelo 3D sobre su hábitat, sonido, historia y chat. */
 @Component({
   selector: 'app-atlas-detail-page',
-  imports: [DecimalPipe, RouterLink, LucideAngularModule, ExpertChatComponent, MigracionGloboComponent],
+  imports: [DecimalPipe, RouterLink, LucideAngularModule, ExpertChatComponent, MigracionGloboComponent, CompararTamanoComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './atlas-detail.page.html',
   styleUrl: './atlas-detail.page.scss',
@@ -67,6 +68,8 @@ export class AtlasDetailPage {
   protected readonly verMigracion = signal(false);
   /** El globo se crea la primera vez y luego solo se desliza (no se vuelve a cargar three.js). */
   protected readonly mundoCreado = signal(false);
+  /** Muestra la especie junto a una persona de 1.70 m. */
+  protected readonly verTamano = signal(false);
 
   protected alternarMigracion(): void {
     this.mundoCreado.set(true);

@@ -65,7 +65,9 @@ export class MigracionGloboComponent {
         // La cámara mira al centro de la ruta.
         const lat = ruta.reduce((s, p) => s + p.lat, 0) / ruta.length;
         const lng = ruta.reduce((s, p) => s + p.lng, 0) / ruta.length;
-        this.globo.pointOfView({ lat, lng, altitude: 1.8 }, quieto ? 0 : 1500);
+        // Rutas cortas (el elefante recorre ~300 km) piden acercar más la cámara.
+        const span = Math.max(...ruta.map((p) => Math.max(Math.abs(p.lat - lat), Math.abs(p.lng - lng))));
+        this.globo.pointOfView({ lat, lng, altitude: Math.min(1.8, Math.max(0.35, span / 8)) }, quieto ? 0 : 1500);
         resize.observe(el);
       }),
     );

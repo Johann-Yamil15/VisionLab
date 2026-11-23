@@ -23,7 +23,8 @@
               class="visor"
               [class.visor--lateral]="panelAbierto() || chatAbierto()"
               [class.visor--fuera]="verMigracion()"
-              [attr.inert]="verMigracion() ? '' : null"
+              [class.visor--oculto]="verTamano()"
+              [attr.inert]="verMigracion() || verTamano() ? '' : null"
               [src]="e.modelo"
               [alt]="'Modelo 3D de ' + e.nombre"
               camera-controls
@@ -70,6 +71,10 @@
           />
         }
 
+        @if (verTamano() && e.tamano) {
+          <app-comparar-tamano id="comparar" class="comparar visor" [class.visor--lateral]="panelAbierto() || chatAbierto()" [elemento]="e" />
+        }
+
         <!-- ===== Acciones ===== -->
         <div class="acciones">
           @if (e.sonido && !sonidoError()) {
@@ -88,6 +93,12 @@
             <button type="button" class="accion btn" [class.btn--secondary]="verMigracion()" [attr.aria-pressed]="verMigracion()" (click)="alternarMigracion()">
               <lucide-icon [img]="verMigracion() ? icons.ArrowLeft : icons.Globe" [size]="18" aria-hidden="true" />
               {{ verMigracion() ? e.nombre : 'Migración' }}
+            </button>
+          }
+          @if (e.tamano) {
+            <button type="button" class="accion btn" [class.btn--secondary]="verTamano()" [attr.aria-pressed]="verTamano()" aria-controls="comparar" (click)="verTamano.set(!verTamano())">
+              <lucide-icon [img]="icons.Ruler" [size]="18" aria-hidden="true" />
+              Comparar tamaño
             </button>
           }
           @if (puedeAr()) {

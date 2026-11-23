@@ -521,3 +521,7 @@ app-expert-chat {
 @media (prefers-reduced-motion: reduce) {
   .visor, .mundo { transition: opacity 0.2s; }
 }
+
+// Comparar tamaño: la escena con el maniquí ocupa el lugar del modelo.
+.comparar { position: absolute; inset: 0; }
+.visor--oculto { visibility: hidden; }

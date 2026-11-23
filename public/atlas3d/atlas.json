@@ -36,7 +36,11 @@
         "posicion": "0.3127m 0.2731m -0.5721m",
         "normal": "0.49m -0.62m -0.61m"
       }
-    ]
+    ],
+    "tamano": {
+      "metros": 1.85,
+      "medida": "largo"
+    }
   },
   {
     "id": "elefante-africano",
@@ -75,7 +79,33 @@
         "posicion": "0.4525m 1.018m 0.3088m",
         "normal": "0.75m 0.12m 0.65m"
       }
-    ]
+    ],
+    "migracion": [
+      {
+        "lat": -2.3,
+        "lng": 34.8
+      },
+      {
+        "lat": -1.5,
+        "lng": 35.1
+      },
+      {
+        "lat": -2.65,
+        "lng": 37.26
+      },
+      {
+        "lat": -4.0,
+        "lng": 36.0
+      },
+      {
+        "lat": -2.3,
+        "lng": 34.8
+      }
+    ],
+    "tamano": {
+      "metros": 3.3,
+      "medida": "alto"
+    }
   },
   {
     "id": "panda-gigante",
@@ -114,7 +144,11 @@
         "posicion": "0m -1.494m -3.23m",
         "normal": "0m -0.85m -0.53m"
       }
-    ]
+    ],
+    "tamano": {
+      "metros": 1.5,
+      "medida": "largo"
+    }
   },
   {
     "id": "canguro-rojo",
@@ -128,7 +162,7 @@
     "descripcion": "El marsupial más grande del mundo. Puede saltar más de 8 metros de un solo brinco usando su cola como apoyo.",
     "miniatura": "atlas3d/fotos/canguro-rojo.jpg",
     "modelo": "atlas3d/models/canguro-rojo.glb",
-    "sonido": "",
+    "sonido": "atlas3d/sonidos/canguro-rojo.mp3",
     "habitat": "atlas3d/habitats/desierto-australia.webp",
     "credito": "Foto: fir0002 (flagstaffotos) · GFDL 1.2 · Wikimedia Commons",
     "creditoModelo": "Modelo: \"Kangaroo\" por rinaskylark · Sketchfab (https://sketchfab.com/3d-models/kangaroo-31236db25afe445e8444b0ce8e22d53d) · CC BY 4.0",
@@ -153,7 +187,33 @@
         "posicion": "0.5943m -0.2771m 0.1844m",
         "normal": "-0.1m -1m 0.01m"
       }
-    ]
+    ],
+    "migracion": [
+      {
+        "lat": -25.3,
+        "lng": 133.8
+      },
+      {
+        "lat": -21,
+        "lng": 138
+      },
+      {
+        "lat": -27.5,
+        "lng": 140.5
+      },
+      {
+        "lat": -29,
+        "lng": 135.5
+      },
+      {
+        "lat": -25.3,
+        "lng": 133.8
+      }
+    ],
+    "tamano": {
+      "metros": 1.6,
+      "medida": "alto"
+    }
   },
   {
     "id": "oso-polar",
@@ -192,7 +252,33 @@
         "posicion": "-0.0008m 3.807m 0.6977m",
         "normal": "-0.02m 1m -0.09m"
       }
-    ]
+    ],
+    "migracion": [
+      {
+        "lat": 74,
+        "lng": -40
+      },
+      {
+        "lat": 76,
+        "lng": -18
+      },
+      {
+        "lat": 79,
+        "lng": 10
+      },
+      {
+        "lat": 72,
+        "lng": -20
+      },
+      {
+        "lat": 74,
+        "lng": -40
+      }
+    ],
+    "tamano": {
+      "metros": 2.5,
+      "medida": "largo"
+    }
   },
   {
     "id": "ballena-azul",
@@ -249,7 +335,11 @@
         "lat": 24.5,
         "lng": -111
       }
-    ]
+    ],
+    "tamano": {
+      "metros": 30,
+      "medida": "largo"
+    }
   },
   {
     "id": "secuoya-gigante",
@@ -288,7 +378,11 @@
         "posicion": "-0.2222m 0.0098m -0.0497m",
         "normal": "-0.85m -0.22m -0.47m"
       }
-    ]
+    ],
+    "tamano": {
+      "metros": 85,
+      "medida": "alto"
+    }
   },
   {
     "id": "baobab",
@@ -327,7 +421,11 @@
         "posicion": "-1.833m 13.09m -0.0261m",
         "normal": "-1m 0.01m -0.09m"
       }
-    ]
+    ],
+    "tamano": {
+      "metros": 25,
+      "medida": "alto"
+    }
   },
   {
     "id": "nenufar-gigante",
@@ -366,7 +464,11 @@
         "posicion": "0.2357m 0.1921m 0.8881m",
         "normal": "-0.86m 0.48m -0.19m"
       }
-    ]
+    ],
+    "tamano": {
+      "metros": 3,
+      "medida": "diametro"
+    }
   },
   {
     "id": "obsidiana",
