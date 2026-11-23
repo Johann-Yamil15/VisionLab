@@ -11,7 +11,7 @@ import { AppIcons } from '../../shared/ui/icons';
       <header class="page-header">
         <div>
           <h1>Acerca de OmniScan</h1>
-          <p class="page-subtitle">Un microscopio digital para despertar la curiosidad científica.</p>
+          <p class="page-subtitle">Bio-escáner con IA y Atlas 3D para despertar la curiosidad científica.</p>
         </div>
       </header>
 
@@ -21,9 +21,9 @@ import { AppIcons } from '../../shared/ui/icons';
           <div>
             <h2>¿Qué es?</h2>
             <p>
-              OmniScan convierte un celular o una computadora en un microscopio con inteligencia artificial. Los niños
-              fotografían lo que encuentran en la naturaleza, descubren qué es y lo guardan como una tarjeta en su
-              almanaque, mientras ganan puntos y medallas.
+              OmniScan convierte un celular o una computadora en un bio-escáner con inteligencia artificial. Fotografías
+              lo que encuentras en la naturaleza, descubres qué es y lo guardas como una tarjeta en tu almanaque, mientras
+              subes de rango y ganas medallas. Con el Atlas 3D recorres el planeta y exploras especies de todo el mundo.
             </p>
           </div>
         </article>
@@ -33,8 +33,19 @@ import { AppIcons } from '../../shared/ui/icons';
           <div>
             <h2>Cómo funciona</h2>
             <p>
-              La IA observa la foto y explica el hallazgo con palabras sencillas. Después, un asistente experto responde
-              preguntas solo sobre esa especie, para aprender sin distraerse.
+              La IA analiza la foto y explica el hallazgo: hábitat, alimentación y si es peligroso. Después, un asistente
+              experto responde preguntas solo sobre esa especie. Las especies repetidas suman fotos a su galería.
+            </p>
+          </div>
+        </article>
+
+        <article class="clay item item--wide">
+          <span class="item-icon" style="--c: var(--c-primary)"><lucide-icon [img]="icons.Globe" [size]="28" aria-hidden="true" /></span>
+          <div>
+            <h2>Atlas Vivo 3D</h2>
+            <p>
+              Un globo terráqueo con fauna, flora y minerales. Cada especie tiene su modelo 3D, sonidos, puntos de
+              interés y, en algunas, su ruta migratoria. También funciona en los visores de realidad virtual.
             </p>
           </div>
         </article>
@@ -45,7 +56,7 @@ import { AppIcons } from '../../shared/ui/icons';
             <h2>Nuestra meta</h2>
             <p>
               Estimular la curiosidad, la observación detallada y el aprendizaje experimental, en un entorno seguro y
-              divertido para niños de 7 a 12 años.
+              divertido para jóvenes de 12 a 18 años.
             </p>
           </div>
         </article>
@@ -55,8 +66,8 @@ import { AppIcons } from '../../shared/ui/icons';
           <div>
             <h2>El equipo</h2>
             <p>
-              Hecho por <strong>Johann, Guillermo, Joel y Miguel</strong>: diseño visual, desarrollo, interacción y
-              gamificación. Propuesta para el museo El Rehilete, Pachuca.
+              Hecho por <strong>Johann, Jesús y Guillermo</strong>: Atlas y escáner, visor 3D e inteligencia artificial.
+              Proyecto para el concurso del museo El Rehilete, Pachuca.
             </p>
           </div>
         </article>
