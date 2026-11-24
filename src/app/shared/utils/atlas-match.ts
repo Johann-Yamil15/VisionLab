@@ -3,6 +3,8 @@ export interface ElementoComparable {
   id: string;
   nombre: string;
   nombreCientifico: string;
+  /** Otros nombres comunes (sinónimos) con los que también se reconoce. */
+  alias?: readonly string[];
 }
 
 const normalizar = (t: string) =>
@@ -17,7 +19,7 @@ const seParecen = (a: string, b: string) => a.length >= 4 && b.length >= 4 && (a
 
 /**
  * Busca el elemento del Atlas que corresponde a lo que identificó la IA: primero por nombre
- * científico exacto y, si no, por nombre común (sin acentos ni mayúsculas).
+ * científico exacto y, si no, por nombre común o alias (sin acentos ni mayúsculas).
  * Devuelve undefined si no hay coincidencia (entonces no se muestra "Ver en el Atlas 3D").
  */
 export function buscarEnAtlas<T extends ElementoComparable>(
@@ -33,5 +35,5 @@ export function buscarEnAtlas<T extends ElementoComparable>(
 
   const comun = normalizar(nombreComun ?? '');
   if (!comun) return undefined;
-  return elementos.find((e) => seParecen(normalizar(e.nombre), comun));
+  return elementos.find((e) => [e.nombre, ...(e.alias ?? [])].some((n) => seParecen(normalizar(n), comun)));
 }

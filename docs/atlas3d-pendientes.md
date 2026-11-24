@@ -95,6 +95,21 @@ comparando el render con el original. Revisar siempre contra el original antes d
 Originales sin comprimir: `C:\VisionLab\OmniScan Objetos\` (no versionados).
 Presupuesto al agregar archivos: modelo ≤ 1.5 MB, sonido ≤ 100 KB, fondo ≤ 350 KB.
 
+## Cómo agregar un elemento al Atlas
+Con el script `scripts/atlas-agregar.mjs` (optimiza el modelo, copia los archivos y agrega **solo** la entrada nueva a
+`atlas.json`, sin reescribir el resto del archivo):
+```
+node scripts/atlas-agregar.mjs --id cuarzo-rosa --nombre "Cuarzo rosa" --categoria mineral   --modelo C:\modelososa.glb --credito-modelo "Modelo: \"x\" por Y · Sketchfab (url) · CC BY 4.0"   --lat 19.4 --lng -99.1 --region "Hidalgo, México" --descripcion "Un cuarzo de color rosa pálido."   --alias "cuarzo rosado,rose quartz" --foto rosa.jpg --sonido rosa.mp3 --habitat selva.webp --dry-run
+```
+- Quita `--dry-run` para escribir. `node scripts/atlas-agregar.mjs --ayuda` lista todas las opciones.
+- Optimiza con `gltf-transform` (las opciones de la sección de abajo; `--metalrough` si el modelo es spec-gloss). Requiere
+  `@gltf-transform/cli` (`npm i -D @gltf-transform/cli`). Si el `.glb` ya viene optimizado con meshopt, usa `--sin-optimizar`.
+- Límites: modelo ≤ 1.5 MB, sonido ≤ 100 KB, fondo ≤ 350 KB (`--forzar` los ignora y deja un aviso).
+- `--habitat` acepta un fondo que ya exista en `habitats/` (por nombre) o un archivo nuevo.
+- `--alias` son sinónimos con los que la IA puede nombrar la especie; `buscarEnAtlas` los usa para mostrar "Ver en el Atlas 3D".
+- Queda **pendiente a mano**: los `puntos` 3D (el script deja `puntos: []`; se sacan con el Editor de model-viewer) y revisar el
+  modelo contra el original. Respetar siempre la licencia y poner el crédito.
+
 ## Antes de la presentación (martes)
 - [ ] `npx ng build` sin errores; entrar a varios elementos del Atlas en celular real.
 - [ ] Probar sin internet (decodificador y modelos son locales; el chat necesita el backend o `?demo=1`).

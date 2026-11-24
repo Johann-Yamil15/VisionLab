@@ -23,6 +23,8 @@ export interface ElementoAtlas {
   id: string;
   nombre: string;
   nombreCientifico: string;
+  /** Otros nombres con los que la IA puede identificarlo ("catarina" para "mariquita"). Opcional. */
+  alias?: string[];
   categoria: CategoriaAtlas;
   lat: number;
   lng: number;
