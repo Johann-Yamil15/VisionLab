@@ -75,7 +75,7 @@ src/
 Rutas públicas: `/login`, `/registro` (invitadoGuard), `/atlas`, `/atlas/:id`, `/acerca`. Con sesión (authGuard): `/microscopio`, `/microscopio/vista-previa`, `/descubrimiento`, `/almanaque`,
 `/almanaque/:id`, `/perfil` (todo lo demás redirige a `/microscopio`).
 Convenciones: un feature no importa de otro, salvo `discovery` → `microscope/data-access/captura.store`
-(flujo compartido). Lo que usan dos features va en `shared/`. Componentes `OnPush` + signals.
+(flujo compartido), y `core/ai/ia.service` → `features/atlas/data-access` (manda los nombres del Atlas a la IA). Lo que usan dos features va en `shared/`. Componentes `OnPush` + signals.
 Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar chico (aviso a 8kB, error a 10kB).
 
 ## Pendiente
@@ -85,6 +85,7 @@ Estilos: usar tokens y clases globales; el SCSS de cada componente debe quedar c
 - Las tarjetas ×N se agrupan en el cliente; mover la agrupación al backend.
 
 ## Bitácora de cambios
+- 2026-11-23: `POST /api/analisis` recibe `catalogo` (nombres del Atlas, lo manda `IaService`) y la IA nombra igual que él si el sujeto es claramente uno de ellos. Con las 12 fotos del Atlas y la IA real: coincidencia exacta 8/12 → 11/12.
 - 2026-11-22: login y registro (`features/auth`), `core/auth` (servicio, interceptor JWT, guards), botón "Cerrar sesión" en el perfil, sin barra de navegación en login/registro. Recuperado del stash `auth-jwt-gemini` y adaptado a la arquitectura actual (sin Gemini).
 - 2026-11-22: tarjetas de los puntos 3D: ya no se salen de la pantalla ni se empalman con la historia/chat/botones/nav.
   `ajustarTarjeta()` las mantiene dentro del visor (offset `--desp-x/--desp-y`, `--alto-max`), modo `punto-3d--vertical`
