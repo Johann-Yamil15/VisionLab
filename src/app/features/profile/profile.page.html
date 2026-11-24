@@ -155,6 +155,9 @@
                     <div class="reto-text">
                       <h3>{{ r.nombre }}</h3>
                       <p>{{ r.reto }}</p>
+                      @if (r.detalle) {
+                        <p class="reto-detalle">{{ r.detalle }}</p>
+                      }
                     </div>
                     <div class="reto-progress">
                       <div class="bar bar--sm" role="progressbar" [attr.aria-label]="'Progreso de ' + r.nombre" [attr.aria-valuenow]="r.progreso" aria-valuemin="0" [attr.aria-valuemax]="r.meta">

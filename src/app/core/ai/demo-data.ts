@@ -11,6 +11,7 @@ export const ANALISIS_DEMO: readonly AnalysisResult[] = [
   {
     tipo: 'Tierra y suelos',
     nombreComun: 'Jaguar',
+    familia: 'Felidae',
     grupoAtlas: 'fauna',
     region: 'Selvas de América, de México a Argentina',
     latitud: -3.5,
@@ -74,6 +75,7 @@ export const ANALISIS_DEMO: readonly AnalysisResult[] = [
   {
     tipo: 'Insectos',
     nombreComun: 'Mariquita',
+    familia: 'Coccinellidae',
     grupoAtlas: 'fauna',
     region: 'Europa y América',
     latitud: 48.0,
