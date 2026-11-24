@@ -8,8 +8,22 @@ export interface DatosRapidos {
   lema?: string | null;
 }
 
+/** Grupo del Atlas en el que aparece un hallazgo. */
+export type GrupoAtlas = 'fauna' | 'flora' | 'mineral';
+
+/**
+ * Dónde vive la especie (no dónde se tomó la foto), para ubicarla en el Atlas personal.
+ * Todo vacío si no aplica (objetos, fenómenos) o si el hallazgo es anterior a esta función.
+ */
+export interface UbicacionAtlas {
+  grupoAtlas?: GrupoAtlas | null;
+  region?: string | null;
+  latitud?: number | null;
+  longitud?: number | null;
+}
+
 /** Hallazgo guardado en el almanaque (GET /api/hallazgos). */
-export interface Hallazgo extends DatosRapidos {
+export interface Hallazgo extends DatosRapidos, UbicacionAtlas {
   id: string;
   usuarioId: string;
   tipo: string;
@@ -29,7 +43,7 @@ export interface OpcionAnalisis {
 }
 
 /** Resultado del análisis de la IA (POST /api/analisis). */
-export interface AnalysisResult extends DatosRapidos {
+export interface AnalysisResult extends DatosRapidos, UbicacionAtlas {
   tipo: string;
   nombreComun: string;
   nombreCientifico: string;
@@ -44,7 +58,7 @@ export interface AnalysisResult extends DatosRapidos {
 }
 
 /** Cuerpo de POST /api/hallazgos (el usuario lo pone el servidor). */
-export interface NuevoHallazgo extends DatosRapidos {
+export interface NuevoHallazgo extends DatosRapidos, UbicacionAtlas {
   tipo: string;
   nombreComun: string;
   nombreCientifico: string;

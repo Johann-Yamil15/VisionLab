@@ -11,6 +11,10 @@ export const ANALISIS_DEMO: readonly AnalysisResult[] = [
   {
     tipo: 'Tierra y suelos',
     nombreComun: 'Jaguar',
+    grupoAtlas: 'fauna',
+    region: 'Selvas de América, de México a Argentina',
+    latitud: -3.5,
+    longitud: -62.0,
     nombreCientifico: 'Panthera onca',
     descripcion:
       'El felino más grande de América. Tiene manchas en forma de rosetas y una mordida tan fuerte que puede romper el caparazón de una tortuga. Es un cazador sigiloso que nada muy bien.',
@@ -28,6 +32,10 @@ export const ANALISIS_DEMO: readonly AnalysisResult[] = [
   {
     tipo: 'Plantas',
     nombreComun: 'Nenúfar gigante',
+    grupoAtlas: 'flora',
+    region: 'Cuenca del Amazonas',
+    latitud: -3.2,
+    longitud: -60.0,
     nombreCientifico: 'Victoria amazonica',
     descripcion:
       'Sus hojas flotantes miden hasta 3 metros de ancho y aguantan el peso de un niño. Por debajo tienen espinas y venas gruesas que las hacen fuertes. Sus flores se abren de noche.',
@@ -45,6 +53,10 @@ export const ANALISIS_DEMO: readonly AnalysisResult[] = [
   {
     tipo: 'Rocas y minerales',
     nombreComun: 'Cuarzo amatista',
+    grupoAtlas: 'mineral',
+    region: 'Brasil y Uruguay',
+    latitud: -29.5,
+    longitud: -55.0,
     nombreCientifico: '',
     descripcion:
       'Un cristal morado que se forma dentro de rocas huecas llamadas geodas. Su color viene de pequeñas cantidades de hierro. Los antiguos griegos creían que protegía de las borracheras.',
@@ -62,6 +74,10 @@ export const ANALISIS_DEMO: readonly AnalysisResult[] = [
   {
     tipo: 'Insectos',
     nombreComun: 'Mariquita',
+    grupoAtlas: 'fauna',
+    region: 'Europa y América',
+    latitud: 48.0,
+    longitud: 10.0,
     nombreCientifico: 'Coccinellidae',
     descripcion:
       'Un escarabajo pequeño con el cuerpo redondo y puntitos negros. Sus colores brillantes avisan a los depredadores que sabe mal. Una sola puede comer cientos de pulgones en su vida.',
@@ -79,6 +95,10 @@ export const ANALISIS_DEMO: readonly AnalysisResult[] = [
   {
     tipo: 'Hongos',
     nombreComun: 'Amanita muscaria',
+    grupoAtlas: 'flora',
+    region: 'Bosques del hemisferio norte',
+    latitud: 56.0,
+    longitud: 20.0,
     nombreCientifico: 'Amanita muscaria',
     descripcion:
       'El hongo de cuento: sombrero rojo con motitas blancas. Es venenoso, así que nunca se debe tocar sin guantes ni probar. Vive en simbiosis con las raíces de algunos árboles.',
@@ -96,6 +116,10 @@ export const ANALISIS_DEMO: readonly AnalysisResult[] = [
   {
     tipo: 'Plantas',
     nombreComun: 'Hoja de roble',
+    grupoAtlas: 'flora',
+    region: 'Bosques templados de Europa',
+    latitud: 50.0,
+    longitud: 10.0,
     nombreCientifico: 'Quercus',
     descripcion:
       'Una hoja con el borde ondulado, típica de los robles. En otoño cambia de color y cae al suelo, donde se convierte en abono para el bosque.',
