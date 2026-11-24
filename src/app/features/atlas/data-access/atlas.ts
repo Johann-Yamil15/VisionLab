@@ -53,6 +53,8 @@ export interface ElementoAtlas {
   migracion?: { lat: number; lng: number }[];
   /** Descubierto por la persona (Atlas personal): sin modelo, sonido ni fondo. Solo ella lo ve. */
   propio?: boolean;
+  /** Video corto (30-40 s) del recorrido visual: sustituye al modelo mientras se ve. */
+  video?: string;
   /** Tamaño real para compararlo con una persona de 1.70 m. */
   tamano?: { metros: number; medida: 'largo' | 'alto' | 'diametro' };
 }

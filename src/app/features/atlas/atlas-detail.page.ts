@@ -77,9 +77,26 @@ export class AtlasDetailPage {
   /** Muestra la especie junto a una persona de 1.70 m. */
   protected readonly verTamano = signal(false);
 
+  /** Muestra el video del recorrido en lugar del modelo. */
+  protected readonly verVideo = signal(false);
+
   protected alternarMigracion(): void {
     this.mundoCreado.set(true);
     this.verMigracion.update((v) => !v);
+    this.verVideo.set(false);
+  }
+
+  protected alternarTamano(): void {
+    this.verTamano.update((v) => !v);
+    this.verVideo.set(false);
+  }
+
+  protected alternarVideo(): void {
+    this.verVideo.update((v) => !v);
+    if (!this.verVideo()) return;
+    this.verMigracion.set(false);
+    this.verTamano.set(false);
+    this.audio()?.nativeElement.pause(); // el video trae su propio audio
   }
   protected readonly chipColor = TOKEN_CATEGORIA;
   protected readonly nombreCategoria = NOMBRE_CATEGORIA;
@@ -162,6 +179,7 @@ export class AtlasDetailPage {
         this.sonando.set(false);
         this.sonidoError.set(false);
         this.chatAbierto.set(false);
+        this.verVideo.set(false);
       });
     });
 

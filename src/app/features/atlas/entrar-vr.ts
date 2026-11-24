@@ -180,16 +180,16 @@ export async function entrarVr(inicial?: ElementoAtlas): Promise<void> {
       textura.needsUpdate = true;
     };
     pintar(false);
-    const malla = new THREE.Mesh(new THREE.PlaneGeometry(0.21, 0.07), new THREE.MeshBasicMaterial({ map: textura, transparent: true }));
+    const malla = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 0.06), new THREE.MeshBasicMaterial({ map: textura, transparent: true }));
     return { texto, malla, pintar, accion };
   }
   function barra(botones: Boton[]) {
     const grupo = new THREE.Group();
     botones.forEach((b, i) => {
-      b.malla.position.x = (i - (botones.length - 1) / 2) * 0.23;
+      b.malla.position.x = (i - (botones.length - 1) / 2) * 0.19;
       grupo.add(b.malla);
     });
-    grupo.position.set(0, 0.9, -0.8);
+    grupo.position.set(0, 0.95, -1);
     grupo.rotation.x = -0.5; // inclinada hacia quien mira hacia abajo
     return grupo;
   }
@@ -393,6 +393,7 @@ export async function entrarVr(inicial?: ElementoAtlas): Promise<void> {
         raiz.add(maniqui);
       }
       if (globo?.visible) alternarMigracion();
+      if (pantalla?.visible) cerrarVideo();
       enTamano = !enTamano;
       colocar(enTamano);
       if (enTamano) {
@@ -406,6 +407,7 @@ export async function entrarVr(inicial?: ElementoAtlas): Promise<void> {
     // Migración: el globo toma el lugar del modelo, con la ruta mirando hacia ti.
     let globo: any;
     function alternarMigracion() {
+      if (pantalla?.visible) cerrarVideo();
       if (!globo) {
         const R = 0.7;
         const esfera = new THREE.Group();
@@ -440,6 +442,37 @@ export async function entrarVr(inicial?: ElementoAtlas): Promise<void> {
       pintarActivos();
     }
 
+    // Video del recorrido: una pantalla grande toma el lugar del modelo (como en la web).
+    let pantalla: any;
+    let video: HTMLVideoElement | null = null;
+    function cerrarVideo() {
+      video?.pause();
+      pantalla.visible = false;
+      pivote.visible = true;
+      pintarActivos();
+    }
+    async function alternarVideo() {
+      if (pantalla?.visible) return cerrarVideo();
+      if (!pantalla) {
+        video = Object.assign(document.createElement('video'), { src: url(e.video!), playsInline: true, crossOrigin: 'anonymous' });
+        video.addEventListener('ended', cerrarVideo);
+        const textura = new THREE.VideoTexture(video);
+        textura.colorSpace = THREE.SRGBColorSpace;
+        pantalla = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 2.8 * 9 / 16), new THREE.MeshBasicMaterial({ map: textura }));
+        pantalla.position.copy(VISTA);
+        raiz.add(pantalla);
+      }
+      if (globo?.visible) alternarMigracion();
+      if (enTamano) await alternarTamano();
+      audio?.pause();
+      video!.currentTime = 0;
+      // Si el visor bloquea el audio automático, se ve en silencio en vez de no verse.
+      await video!.play().catch(() => ((video!.muted = true), video!.play()));
+      pantalla.visible = true;
+      pivote.visible = false;
+      pintarActivos();
+    }
+
     const botones: Boton[] = [crearBoton('← Globo', () => irAPlaneta(e))];
     const bSonido = audio
       ? crearBoton('Sonido', () => {
@@ -450,16 +483,18 @@ export async function entrarVr(inicial?: ElementoAtlas): Promise<void> {
       : null;
     const bMigracion = e.migracion?.length ? crearBoton('Migración', alternarMigracion) : null;
     const bTamano = e.tamano ? crearBoton('Tamaño', alternarTamano) : null;
+    const bVideo = e.video ? crearBoton('Video', alternarVideo) : null;
     const bFicha = crearBoton('Ficha', () => {
       ficha.sprite.visible = !ficha.sprite.visible;
       pintarActivos();
     });
-    botones.push(...[bSonido, bMigracion, bTamano, bFicha].filter((b): b is Boton => !!b), salir());
+    botones.push(...[bSonido, bMigracion, bTamano, bVideo, bFicha].filter((b): b is Boton => !!b), salir());
     function pintarActivos() {
       bSonido?.pintar(!!audio && !audio.paused);
       bMigracion?.pintar(!!globo?.visible);
       bTamano?.pintar(enTamano);
       bFicha.pintar(ficha.sprite.visible);
+      bVideo?.pintar(!!pantalla?.visible);
     }
     raiz.add(barra(botones));
     escena.background = fondo ?? new THREE.Color(0x87a8c8);
@@ -487,7 +522,10 @@ export async function entrarVr(inicial?: ElementoAtlas): Promise<void> {
         tarjeta.sprite.visible &&= pivote.visible;
         ficha.sprite.position.set(o.x + lado + 0.5, 1.5, o.z + 0.3);
       },
-      cerrar: () => audio?.pause(),
+      cerrar: () => {
+        audio?.pause();
+        video?.pause();
+      },
     };
   }
 
