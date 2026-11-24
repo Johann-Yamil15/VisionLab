@@ -34,10 +34,6 @@
               interpolation-decay="100"
               environment-image="neutral"
               shadow-intensity="1"
-              ar
-              ar-modes="webxr scene-viewer quick-look"
-              ar-placement="floor"
-              ar-scale="auto"
               (progress)="alProgresar($event)"
               (load)="alCargar()"
               (error)="estadoModelo.set('error')"
@@ -101,10 +97,10 @@
               Comparar tamaño
             </button>
           }
-          @if (puedeAr()) {
-            <button type="button" class="accion btn btn--primary" (click)="proyectar()">
+          @if (puedeVr()) {
+            <button type="button" class="accion btn btn--primary" (click)="entrarVr(e)">
               <lucide-icon [img]="icons.Box" [size]="18" aria-hidden="true" />
-              Proyectar holograma
+              Entrar en VR
             </button>
           }
         </div>

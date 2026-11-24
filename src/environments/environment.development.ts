@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:44312/api',
+  // Relativa: el dev-server la reenvía al backend (proxy.conf.json), así funciona también desde otros dispositivos.
+  apiUrl: '/api',
 };
