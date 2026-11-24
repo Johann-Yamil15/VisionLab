@@ -15,14 +15,21 @@ import {
   viewChild,
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { catchError, of } from 'rxjs';
+import { catchError, of, switchMap } from 'rxjs';
 import { LucideAngularModule } from 'lucide-angular';
 import { Especie } from '../../shared/models/hallazgo.model';
 import { AppIcons } from '../../shared/ui/icons';
 import { ExpertChatComponent } from '../../shared/ui/expert-chat/expert-chat.component';
-import { AtlasService, COLOR_CATEGORIA, ElementoAtlas, NOMBRE_CATEGORIA, TOKEN_CATEGORIA } from './data-access/atlas';
+import {
+  AtlasService,
+  COLOR_CATEGORIA,
+  ElementoAtlas,
+  NOMBRE_CATEGORIA,
+  PREFIJO_PERSONAL,
+  TOKEN_CATEGORIA,
+} from './data-access/atlas';
 import { MigracionGloboComponent } from './migracion-globo.component';
 import { CompararTamanoComponent } from './comparar-tamano.component';
 
@@ -79,11 +86,24 @@ export class AtlasDetailPage {
   protected readonly nombreCategoria = NOMBRE_CATEGORIA;
 
   // undefined = cargando, null = falló la lectura del catálogo.
-  private readonly catalogo = toSignal(inject(AtlasService).elementos$.pipe(catchError(() => of(null))));
-  protected readonly elemento = computed(() => this.catalogo()?.find((e) => e.id === this.id()) ?? null);
+  private readonly atlas = inject(AtlasService);
+  private readonly catalogo = toSignal(this.atlas.elementos$.pipe(catchError(() => of(null))));
+  // Atlas personal: solo se pide cuando la ruta es de un elemento propio (/atlas/mi-...). undefined = cargando.
+  private readonly personales = toSignal(
+    toObservable(this.id).pipe(
+      switchMap((id) =>
+        id.startsWith(PREFIJO_PERSONAL)
+          ? this.atlas.elementos$.pipe(switchMap((base) => this.atlas.personales(base)))
+          : of([] as ElementoAtlas[]),
+      ),
+    ),
+  );
+  protected readonly elemento = computed(
+    () => [...(this.catalogo() ?? []), ...(this.personales() ?? [])].find((e) => e.id === this.id()) ?? null,
+  );
   protected readonly estado = computed(() => {
     const c = this.catalogo();
-    if (c === undefined) return 'cargando';
+    if (c === undefined || (this.id().startsWith(PREFIJO_PERSONAL) && this.personales() === undefined)) return 'cargando';
     return c && this.elemento() ? 'listo' : 'no-encontrado';
   });
 

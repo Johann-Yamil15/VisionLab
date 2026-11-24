@@ -175,7 +175,7 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
               Explorar en 3D
             </a>
           } @else {
-            <p class="pronto">Modelo 3D en preparación.</p>
+            <p class="pronto">{{ e.propio ? 'Descubierto por ti · aún sin modelo 3D.' : 'Modelo 3D en preparación.' }}</p>
           }
         </article>
       }
@@ -198,7 +198,7 @@ export class AtlasPage implements OnDestroy {
   protected readonly chipColor = TOKEN_CATEGORIA;
   protected readonly nombreCategoria = NOMBRE_CATEGORIA;
 
-  private readonly elementos = toSignal(inject(AtlasService).elementos$, { initialValue: [] });
+  private readonly elementos = toSignal(inject(AtlasService).conPersonales$(), { initialValue: [] });
   protected readonly activas = signal(new Set<CategoriaAtlas>(this.categorias));
   protected readonly busqueda = signal('');
   protected readonly seleccionado = signal<ElementoAtlas | null>(null);
@@ -351,7 +351,7 @@ export class AtlasPage implements OnDestroy {
   private crearPin(e: ElementoAtlas): HTMLElement {
     const pin = document.createElement('button');
     pin.type = 'button';
-    pin.className = 'atlas-pin';
+    pin.className = e.propio ? 'atlas-pin atlas-pin--propio' : 'atlas-pin';
     pin.style.setProperty('--pin', COLOR[e.categoria]);
     pin.title = e.nombre;
     pin.setAttribute('aria-label', `${e.nombre}, ${NOMBRE_CATEGORIA[e.categoria]}, ${e.region}`);

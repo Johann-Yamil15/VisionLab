@@ -417,6 +417,13 @@
   }
 }
 
+:host ::ng-deep .atlas-pin--propio {
+  // Lo descubriste tú: relleno blanco con el aro del color de su grupo.
+  background: #fff;
+  border-color: var(--pin);
+  box-shadow: 0 0 0 2px #fff, 0 0 0.9rem var(--pin);
+}
+
 :host ::ng-deep .atlas-pin__nombre {
   position: absolute;
   left: 50%;

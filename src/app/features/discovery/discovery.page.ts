@@ -106,6 +106,10 @@ export class DiscoveryPage {
       colores: r.colores,
       tamano: r.tamano,
       lema: r.lema,
+      grupoAtlas: r.grupoAtlas,
+      region: r.region,
+      latitud: r.latitud,
+      longitud: r.longitud,
       imagenBase64: this.foto,
     };
 
