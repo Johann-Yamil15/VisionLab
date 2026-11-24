@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, delay, map, Observable, of, throwError, timeout } from 'rxjs';
+import { catchError, delay, map, Observable, of, switchMap, throwError, timeout } from 'rxjs';
 import { API_URL } from '../api/api';
 import { AnalysisResult, Especie } from '../../shared/models/hallazgo.model';
+import { AtlasService } from '../../features/atlas/data-access/atlas';
 import { DemoService } from './demo.service';
 
 /** La IA del servidor no respondió (503, sin conexión o se agotó el tiempo). */
@@ -18,6 +19,9 @@ export class SolicitudInvalidaError extends Error {}
 /** Máximo que acepta POST /api/chat. */
 export const MAX_PREGUNTA = 300;
 
+/** Máximo de elementos del Atlas que acepta POST /api/analisis (el servidor descarta el resto). */
+export const MAX_CATALOGO = 60;
+
 /** El CLI tarda 10–20 s; el servidor corta a los 60 s, así que aquí damos un poco más. */
 const ESPERA_MAX_MS = 75_000;
 
@@ -28,12 +32,18 @@ const ESPERA_MAX_MS = 75_000;
 export class IaService {
   private readonly http = inject(HttpClient);
   private readonly demo = inject(DemoService);
+  private readonly atlas = inject(AtlasService);
 
   analyze(imagenDataUrl: string): Observable<AnalysisResult> {
     // Modo demo: ficha precargada, sin llamar a la IA (con una pausa para que se vea la animación).
     if (this.demo.activo()) return of(this.demo.siguienteAnalisis()).pipe(delay(2500));
 
-    return this.http.post<AnalysisResult>(`${API_URL}/analisis`, { imagen: imagenDataUrl }).pipe(
+    // Se manda también el catálogo del Atlas para que la IA nombre igual que él ("Cuarzo amatista", no "Amatista")
+    // y así aparezca "Ver en el Atlas 3D". Si el catálogo no carga, se analiza sin él.
+    return this.atlas.elementos$.pipe(
+      map((els) => els.slice(0, MAX_CATALOGO).map((e) => ({ nombreComun: e.nombre, nombreCientifico: e.nombreCientifico }))),
+      catchError(() => of([])),
+      switchMap((catalogo) => this.http.post<AnalysisResult>(`${API_URL}/analisis`, { imagen: imagenDataUrl, catalogo })),
       timeout(ESPERA_MAX_MS),
       map((r) => ({ ...r, nivelConfianza: Number(r.nivelConfianza) || 0, opciones: r.opciones ?? [] })),
       catchError((err) => throwError(() => this.traducir(err))),
