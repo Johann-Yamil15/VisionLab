@@ -26,6 +26,8 @@ export interface Medalla {
   gris: boolean;
   /** Puntos extra que da al desbloquearse. */
   puntos: number;
+  /** Pista extra del reto (en las medallas por familia: tu mejor familia y cuántas especies llevas). */
+  detalle?: string | null;
 }
 
 /** Lo que se ganó al guardar un hallazgo (viene en la respuesta de POST /api/hallazgos). */

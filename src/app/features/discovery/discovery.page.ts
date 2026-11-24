@@ -106,6 +106,7 @@ export class DiscoveryPage {
       colores: r.colores,
       tamano: r.tamano,
       lema: r.lema,
+      familia: r.familia,
       grupoAtlas: r.grupoAtlas,
       region: r.region,
       latitud: r.latitud,
