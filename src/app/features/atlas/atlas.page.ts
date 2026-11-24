@@ -17,6 +17,7 @@ import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import type { GlobeInstance } from 'globe.gl';
 import { AppIcons } from '../../shared/ui/icons';
+import { entrarVr } from './entrar-vr';
 import { AtlasService, CategoriaAtlas, COLOR_CATEGORIA as COLOR, ElementoAtlas, NOMBRE_CATEGORIA, TOKEN_CATEGORIA } from './data-access/atlas';
 
 interface Arco {
@@ -70,6 +71,13 @@ const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
           </button>
         }
       </div>
+
+      @if (puedeVr()) {
+        <button type="button" class="entrar-vr btn btn--primary" (click)="entrarVr()">
+          <lucide-icon [img]="icons.Box" [size]="20" aria-hidden="true" />
+          Entrar en VR
+        </button>
+      }
 
       <button
         type="button"
@@ -204,6 +212,7 @@ export class AtlasPage implements OnDestroy {
   protected readonly seleccionado = signal<ElementoAtlas | null>(null);
   /** true cuando el planeta ya tiene sus texturas y empieza la animación de entrada. */
   protected readonly listo = signal(false);
+  protected readonly puedeVr = signal(false);
   protected readonly total = computed(() => this.elementos().length || '…');
   // El catálogo empieza cerrado para que la entrada del planeta luzca completa.
   protected readonly catalogoAbierto = signal(false);
@@ -232,6 +241,10 @@ export class AtlasPage implements OnDestroy {
   });
 
   constructor() {
+    void (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr
+      ?.isSessionSupported('immersive-vr')
+      .then((si) => this.puedeVr.set(si))
+      .catch(() => {});
     afterNextRender(() => {
       const el = this.contenedor().nativeElement;
       // El render de three.js corre fuera de Angular para no disparar detección de cambios en cada frame.
@@ -361,6 +374,10 @@ export class AtlasPage implements OnDestroy {
     pin.append(nombre);
     pin.addEventListener('click', () => this.zone.run(() => this.seleccionar(e)));
     return pin;
+  }
+
+  protected entrarVr(): void {
+    entrarVr().catch(() => this.puedeVr.set(false));
   }
 
   ngOnDestroy(): void {

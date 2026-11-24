@@ -525,3 +525,13 @@ app-expert-chat {
 // Comparar tamaño: la escena con el maniquí ocupa el lugar del modelo.
 .comparar { position: absolute; inset: 0; }
 .visor--oculto { visibility: hidden; }
+
+// Video del recorrido: ocupa el lugar del modelo, centrado sobre el hábitat.
+.recorrido {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: rgb(0 0 0 / 0.35);
+}

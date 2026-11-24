@@ -32,13 +32,12 @@ import {
 } from './data-access/atlas';
 import { MigracionGloboComponent } from './migracion-globo.component';
 import { CompararTamanoComponent } from './comparar-tamano.component';
+import { entrarVr } from './entrar-vr';
 
 type EstadoModelo = 'cargando' | 'listo' | 'error';
 
 /** Lo que usamos del elemento <model-viewer> (la librería se carga bajo demanda). */
 interface Visor extends HTMLElement {
-  canActivateAR: boolean;
-  activateAR(): Promise<void>;
   cameraOrbit: string;
   cameraTarget: string;
   getCameraOrbit(): { theta: number; phi: number; radius: number };
@@ -78,9 +77,26 @@ export class AtlasDetailPage {
   /** Muestra la especie junto a una persona de 1.70 m. */
   protected readonly verTamano = signal(false);
 
+  /** Muestra el video del recorrido en lugar del modelo. */
+  protected readonly verVideo = signal(false);
+
   protected alternarMigracion(): void {
     this.mundoCreado.set(true);
     this.verMigracion.update((v) => !v);
+    this.verVideo.set(false);
+  }
+
+  protected alternarTamano(): void {
+    this.verTamano.update((v) => !v);
+    this.verVideo.set(false);
+  }
+
+  protected alternarVideo(): void {
+    this.verVideo.update((v) => !v);
+    if (!this.verVideo()) return;
+    this.verMigracion.set(false);
+    this.verTamano.set(false);
+    this.audio()?.nativeElement.pause(); // el video trae su propio audio
   }
   protected readonly chipColor = TOKEN_CATEGORIA;
   protected readonly nombreCategoria = NOMBRE_CATEGORIA;
@@ -126,7 +142,8 @@ export class AtlasDetailPage {
   protected readonly visorListo = signal(false);
   protected readonly estadoModelo = signal<EstadoModelo>('cargando');
   protected readonly progreso = signal(0);
-  protected readonly puedeAr = signal(false);
+  /** Visores como Quest: realidad virtual inmersiva dentro del hábitat. */
+  protected readonly puedeVr = signal(false);
   // Con "reducir movimiento" el modelo no gira solo.
   protected readonly autoRotar = signal(!matchMedia('(prefers-reduced-motion: reduce)').matches);
   // Punto abierto (índice en e.puntos), los elementos DOM de los puntos y la cámara antes de acercarnos.
@@ -157,12 +174,12 @@ export class AtlasDetailPage {
       untracked(() => {
         this.estadoModelo.set('cargando');
         this.progreso.set(0);
-        this.puedeAr.set(false);
         this.activo = null;
         this.camaraPrevia = null;
         this.sonando.set(false);
         this.sonidoError.set(false);
         this.chatAbierto.set(false);
+        this.verVideo.set(false);
       });
     });
 
@@ -194,7 +211,10 @@ export class AtlasDetailPage {
     const e = this.elemento();
     if (!visor || !e) return;
     this.estadoModelo.set('listo');
-    this.puedeAr.set(visor.canActivateAR);
+    void (navigator as Navigator & { xr?: { isSessionSupported(m: string): Promise<boolean> } }).xr
+      ?.isSessionSupported('immersive-vr')
+      .then((si) => this.puedeVr.set(si))
+      .catch(() => {});
     this.crearPuntos(visor, e);
     this.cerrarAlTocarFuera(visor);
   }
@@ -208,8 +228,9 @@ export class AtlasDetailPage {
     if (this.activo !== null) this.camaraPrevia = null;
   }
 
-  protected proyectar(): void {
-    void this.visor()?.nativeElement.activateAR().catch(() => this.puedeAr.set(false));
+  protected entrarVr(e: ElementoAtlas): void {
+    this.audio()?.nativeElement.pause(); // la VR pone su propio sonido
+    entrarVr(e).catch(() => this.puedeVr.set(false));
   }
 
   // Historia y chat comparten la columna: abrir uno pliega el otro.

@@ -27,6 +27,7 @@
 .titulo,
 .filtros,
 .abrir-catalogo,
+.entrar-vr,
 .catalogo,
 .ficha {
   position: absolute;
@@ -454,4 +455,11 @@
   .arranque-barra span {
     animation: none;
   }
+}
+
+// Solo aparece en visores con WebXR (Quest).
+.entrar-vr {
+  bottom: 1.5rem;
+  left: 50%;
+  translate: -50% 0;
 }
