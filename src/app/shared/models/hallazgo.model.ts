@@ -24,6 +24,8 @@ export interface UbicacionAtlas {
 
 /** Hallazgo guardado en el almanaque (GET /api/hallazgos). */
 export interface Hallazgo extends DatosRapidos, UbicacionAtlas {
+  /** Familia taxonómica del animal en latín ("Felidae"); vacía si no es un animal o es un hallazgo antiguo. */
+  familia?: string | null;
   id: string;
   usuarioId: string;
   tipo: string;
@@ -44,6 +46,8 @@ export interface OpcionAnalisis {
 
 /** Resultado del análisis de la IA (POST /api/analisis). */
 export interface AnalysisResult extends DatosRapidos, UbicacionAtlas {
+  /** Familia taxonómica del animal en latín ("Felidae"); vacía si no es un animal. */
+  familia?: string | null;
   tipo: string;
   nombreComun: string;
   nombreCientifico: string;
@@ -59,6 +63,7 @@ export interface AnalysisResult extends DatosRapidos, UbicacionAtlas {
 
 /** Cuerpo de POST /api/hallazgos (el usuario lo pone el servidor). */
 export interface NuevoHallazgo extends DatosRapidos, UbicacionAtlas {
+  familia?: string | null;
   tipo: string;
   nombreComun: string;
   nombreCientifico: string;

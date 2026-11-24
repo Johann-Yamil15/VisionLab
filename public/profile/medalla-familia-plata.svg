@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Medalla Familia de plata">
+  <defs>
+    <linearGradient id="aro" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef1f5"/>
+      <stop offset="1" stop-color="#8a93a1"/>
+    </linearGradient>
+    <radialGradient id="disco" cx="0.35" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#f7f9fb"/>
+      <stop offset="1" stop-color="#b4bcc8"/>
+    </radialGradient>
+  </defs>
+  <circle cx="60" cy="58" r="52" fill="url(#aro)"/>
+  <circle cx="60" cy="58" r="52" fill="none" stroke="#8a93a1" stroke-width="2" opacity=".55"/>
+  <circle cx="60" cy="58" r="42" fill="url(#disco)" stroke="#8a93a1" stroke-width="1.5" opacity=".98"/>
+  <path d="M30 40 A38 38 0 0 1 72 20" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+  <!-- huella de animal -->
+  <g fill="#5d6675" opacity=".9">
+    <ellipse cx="60" cy="68" rx="15" ry="12"/>
+    <ellipse cx="41" cy="52" rx="6.5" ry="8.5" transform="rotate(-18 41 52)"/>
+    <ellipse cx="53" cy="41" rx="6.5" ry="9"/>
+    <ellipse cx="67" cy="41" rx="6.5" ry="9"/>
+    <ellipse cx="79" cy="52" rx="6.5" ry="8.5" transform="rotate(18 79 52)"/>
+  </g>
+  <!-- cinta con la cantidad -->
+  <rect x="34" y="92" width="52" height="22" rx="11" fill="#7c8593" stroke="#fff" stroke-width="2.5"/>
+  <text x="60" y="108" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#fff">x5</text>
+</svg>
